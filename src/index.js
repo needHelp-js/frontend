@@ -3,10 +3,15 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import OpcionCrearPartida from './components/OpcionCrearPartida'
+
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <div>
+      <App />
+      <OpcionCrearPartida />
+    </div>
   </React.StrictMode>,
   document.getElementById('root')
 );

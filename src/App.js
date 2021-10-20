@@ -1,9 +1,9 @@
 import './App.css';
 
 
-function App(){
+const App = () => {
   return(
-    <h1>Bienvenido a Misterio</h1>
+    <h1 style={{textAlign: 'center'}}>Bienvenido a Misterio</h1>
   );
 }
 
