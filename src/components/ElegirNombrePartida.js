@@ -4,11 +4,12 @@ import { Button} from '@mui/material';
 import Stack from '@mui/material/Stack'
 import './inputs.css'
 
-function ElegirNombrePartida() {
+function ElegirNombrePartida({setTieneNombrePartida}) {
   
   const endpoint = 'http://127.0.0.1:5000/createGame';
   const [nombrePartida, setNombrePartida] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [responseID, setResponseID] = useState(0);
   
   function sendName(event){
     event.preventDefault();
@@ -29,11 +30,15 @@ function ElegirNombrePartida() {
           const error = (data && data.message) || response.status;
           return Promise.reject(error);
         }
+        
+        setResponseID(data[0].id);
+
       })
       .catch(error => {
         setErrorMessage(error.toString());
-        console.error('Error', errorMessage);
+        console.error('Hubo un error:', errorMessage);
       });
+      setTieneNombrePartida();
   }
 
   return(

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import './OpcionCrearPartida.css';
 import ElegirNombrePartida from './ElegirNombrePartida';
+import ElegirNickname from './ElegirNickname';
 
 const BotonOpcionCrearPartida = ({setCreando}) => {
 
@@ -19,13 +20,22 @@ const BotonOpcionCrearPartida = ({setCreando}) => {
 const OpcionCrearPartida = () =>{
 
     const [creando, setCreando] = useState(false);
+    const [tieneNombrePartida, setTieneNombrePartida] = useState(false);
   
     if(creando){
-      return (
-        <div>
-          <ElegirNombrePartida />
-        </div>
-      );
+      if(tieneNombrePartida){
+        return(
+          <div>
+            <ElegirNickname />
+          </div>
+        )
+      }else{
+        return (
+          <div>
+            <ElegirNombrePartida setTieneNombrePartida={() => setTieneNombrePartida(true)}/>
+          </div>
+        );
+      }
     }else{
       return <BotonOpcionCrearPartida setCreando={() => setCreando(true)}/>;
     }
