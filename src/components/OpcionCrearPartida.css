@@ -2,3 +2,8 @@
     text-align: center;
     margin-top: 5%;
 }
+.inputBox{
+    display: flex;
+    justify-content: center;
+    margin-top: 5%;
+}
