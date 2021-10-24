@@ -32,13 +32,15 @@ function ElegirNombrePartida({setTieneNombrePartida}) {
         }
         
         setResponseID(data[0].id);
+        if(data){ // esperamos la respuesta antes de re-renderizar
+          setTieneNombrePartida();
+        }
 
       })
       .catch(error => {
         setErrorMessage(error.toString());
         console.error('Hubo un error:', errorMessage);
       });
-      setTieneNombrePartida();
   }
 
   return(
