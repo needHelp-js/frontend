@@ -6,17 +6,20 @@ import {setupServer} from 'msw/node';
 
 
 const MOCK_GET = [
-        {"nombre": "los pibis", "jugadores": 3}, 
-        {"nombre": "boquita", "jugadores": 5}, 
-        {"nombre": "piolas", "jugadores": 2}
+        {"name": "los pibis", "playerCount": 3}, 
+        {"name": "boquita", "playerCount": 5}, 
+        {"name": "piolas", "playerCount": 2}
 ];
+
 
 
 const server = setupServer(
     rest.get('/partidas', (req, res, ctx) => {
         return res(ctx.json(MOCK_GET))
     }),
-    
+    rest.get('/vacia', (req, res, ctx) => {
+        return res(ctx.json([]))
+    }),
     rest.get('/apagado', (req, res, ctx) => {
         return res(ctx.status(404))
     })
@@ -34,14 +37,14 @@ describe('ListarPartidas', () => {
 
     const names = Object.keys(MOCK_GET);
 
-    test('Renderiza ListarPartidas sin conexión.', () => {
+    test('No hay conexión.', () => {
         render(<ListarPartidas url="/apagado" />);
         for (var i = 0; i < titles.len; i++){
             expect(screen.getByText(names[i])).toBeInTheDocument();
         }
     });
     
-    test('Renderiza ListarPartidas cuando hay conexión.', () => {
+    test('Hay conexión y al menos una partida.', () => {
         render(<ListarPartidas url="/partidas" />);
         for (var i = 0; i < names.len; i++){ 
             expect(screen.getByText(names[i])).toBeInTheDocument();
@@ -49,6 +52,10 @@ describe('ListarPartidas', () => {
         }
     });
 
+    test('Hay conexión y no hay partidas.', () => {
+        render(<ListarPartidas url="vacia"/>);
+        expect(screen.getByText("No hay partidas.")).toBeInTheDocument();
+     });
 
 });
 

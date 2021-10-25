@@ -46,6 +46,54 @@ async function postAPI(url, payload){
 }
 */
 
+function mostrarFilas(rows) {
+    if (rows){
+        if (rows.length > 0){
+            return(
+                rows.map(row => (
+                <TableRow
+                    key={row.nombre}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0}}}
+                >
+                <TableCell component="th" scope="row">
+                    {row.name ? row.name :
+                        console.log("falta atributo nombre")}
+                </TableCell>
+                <TableCell align="right">
+                    {row.playerCount ? row.playerCount :
+                        console.log("falta atributo jugadores")}
+                </TableCell>
+                <TableCell align="right"> 
+                <Button variant="outlined"> 
+                    Unirse 
+                </Button> 
+                </TableCell>
+                </TableRow>
+                ))
+            );
+          } 
+         else {
+            return(
+                <TableRow>
+                <TableCell>
+                    No hay partidas.
+                </TableCell>
+                </TableRow>
+            );
+          }
+      }
+
+    return(
+        <TableRow> 
+        <TableCell> 
+        <ErrorIcon/> 
+            Sin conexión, actualice la lista.             
+        </TableCell>
+        </TableRow>
+    );
+    
+}
+
 function TablaPartidas(props) {
     
     const [rows, setRows] = useState([]);
@@ -65,37 +113,31 @@ function TablaPartidas(props) {
     console.log(rows);
     return (
         <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table 
+            sx={{ minWidth: 650 }}
+            aria-label="simple table"
+        >
         <TableHead>
         <TableRow>
-            <TableCell>Nombre de la partida</TableCell>
-            <TableCell align="right">Jugadores dentro</TableCell>
-            <TableCell align="right"> <Button
-                variant="contained"  
-                endIcon={<RefreshIcon />}
-                onClick={refresh}
-          > Actualizar </Button> </TableCell>
- 
-          </TableRow>
+        <TableCell>
+            Nombre de la partida
+        </TableCell>
+        <TableCell align="right">
+            Jugadores dentro
+        </TableCell>
+        <TableCell align="right"> 
+        <Button
+            variant="contained"  
+            endIcon={<RefreshIcon />}
+            onClick={refresh}
+        >
+            Actualizar 
+        </Button> 
+        </TableCell>
+        </TableRow>
         </TableHead>
         <TableBody>
-          {rows ? rows.map(row => (
-            <TableRow 
-              key={row.nombre}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row.nombre ? row.nombre : 
-                    console.log("falta atributo nombre")}
-              </TableCell>
-              <TableCell align="right">{row.jugadores ? row.jugadores : 
-                    console.log("falta atributo jugadores")}
-              </TableCell>
-              <TableCell align="right"> <Button variant="outlined"> Unirse </Button> </TableCell>
-
-
-            </TableRow>
-          )) : <TableRow> <TableCell><ErrorIcon/> Sin conexión, actualice la lista. </TableCell></TableRow>}
+        {mostrarFilas(rows)} 
         </TableBody>
         </Table>
         </TableContainer>
