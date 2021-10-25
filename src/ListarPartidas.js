@@ -27,32 +27,13 @@ async function getAPI(url){
 
 }
 
-/*
-async function postAPI(url, payload){
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {"Content-Type": "application/json" },
-            body: payload
-        });
-    
-        const text = await response.text();
-        return text;
-
-        }
-     catch (error){
-        console.log(error);
-    }
-}
-*/
-
 function mostrarFilas(rows) {
     if (rows){
         if (rows.length > 0){
             return(
                 rows.map(row => (
                 <TableRow
-                    key={row.nombre}
+                    key={row.name}
                     sx={{ '&:last-child td, &:last-child th': { border: 0}}}
                 >
                 <TableCell component="th" scope="row">
@@ -97,20 +78,15 @@ function mostrarFilas(rows) {
 function TablaPartidas(props) {
     
     const [rows, setRows] = useState([]);
+    const [refresh, setRefresh] = useState(false); 
     
-    const refresh = () => {
-        async function fetchData(){
-            const result = await getAPI(props.url);
-            setRows(result);
-        }
-          
-        fetchData();
-    }
+    useEffect(async () => {
+        if (refresh) {
+            const data = await getAPI(props.url);
+            setRows(data);
+            setRefresh(false);
+        }});
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(refresh, []);
-  
-    console.log(rows);
     return (
         <TableContainer component={Paper}>
         <Table 
@@ -129,7 +105,7 @@ function TablaPartidas(props) {
         <Button
             variant="contained"  
             endIcon={<RefreshIcon />}
-            onClick={refresh}
+            onClick={() => setRefresh(true)}
         >
             Actualizar 
         </Button> 
