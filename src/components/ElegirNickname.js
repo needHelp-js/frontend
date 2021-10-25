@@ -1,13 +1,13 @@
+import React from 'react';
 import Textfield from '@mui/material/TextField';
 
 function ElegirNickname(props) {
-
-  return(
-    <Textfield 
+  return (
+    <Textfield
       id="nickname"
-      name="nickname" 
-      label = "Nickname"
-      onChange={event => props.setNickName(event.target.value)}
+      name="nickname"
+      label="Nickname"
+      onChange={(event) => props.setNickName(event.target.value)}
     />
   );
 }

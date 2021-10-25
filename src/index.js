@@ -3,17 +3,16 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import OpcionCrearPartida from './components/OpcionCrearPartida'
-
+import OpcionCrearPartida from './components/OpcionCrearPartida';
 
 ReactDOM.render(
   <React.StrictMode>
     <div>
       <App />
-      <OpcionCrearPartida endpoint='http://127.0.0.1:5000/createGame'/>
+      <OpcionCrearPartida endpoint="http://0.0.0.0:8000/games" />
     </div>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );
 
 // If you want to start measuring performance in your app, pass a function
