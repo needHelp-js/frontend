@@ -13,6 +13,11 @@ const server = setupServer(
           ctx.status(200),
       )
   }),
+  rest.post('/createGameFail', (req, res, ctx) => {
+      return res(
+          ctx.status(400),
+      )
+  }),
 
 );
 
@@ -73,7 +78,7 @@ describe('OpcionCrearPartida', () => {
   });
 
   it('Hace el POST al backend', async () => {
-    render(<OpcionCrearPartida />)
+    render(<OpcionCrearPartida endpoint='/createGame'/>)
     userEvent.click(screen.getByRole('button'));
     await userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
     await userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
@@ -81,4 +86,15 @@ describe('OpcionCrearPartida', () => {
     const recibido = sessionStorage.getItem('post-recibido');
     expect(recibido).toBe('true');
   });
+
+  it('Maneja un error en el POST', async () => {
+    render(<OpcionCrearPartida endpoint='/createGameFail'/>)
+    userEvent.click(screen.getByRole('button'));
+    await userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
+    await userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
+    await userEvent.click(screen.getByRole('button'));
+    expect(await screen.findByText(/error/)).toBeInTheDocument();
+
+  });
+
 });

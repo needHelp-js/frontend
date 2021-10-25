@@ -10,7 +10,7 @@ ReactDOM.render(
   <React.StrictMode>
     <div>
       <App />
-      <OpcionCrearPartida />
+      <OpcionCrearPartida endpoint='http://127.0.0.1:5000/createGame'/>
     </div>
   </React.StrictMode>,
   document.getElementById('root')
