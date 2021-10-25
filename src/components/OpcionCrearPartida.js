@@ -25,7 +25,7 @@ const OpcionCrearPartida = () =>{
     const [nickName, setNickName] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [responseID, setResponseID] = useState(0);
-    const endpoint = 'http://127.0.0.1:5000/createGame';
+    const endpoint = '/createGame';
 
     function sendGameData(event){
       event.preventDefault();
@@ -64,11 +64,9 @@ const OpcionCrearPartida = () =>{
             <form onSubmit={sendGameData}>
               <Stack direction="row" alignItems="center" spacing={2}> 
                 <ElegirNombrePartida 
-                  nombrePartida={nombrePartida}
                   setNombrePartida={setNombrePartida}
                 />
                 <ElegirNickname
-                  nickName={nickName}
                   setNickName={setNickName}
                 />
                 <Button type="submit" variant="contained">
