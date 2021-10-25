@@ -80,12 +80,17 @@ function TablaPartidas(props) {
     const [rows, setRows] = useState([]);
     const [refresh, setRefresh] = useState(false); 
     
-    useEffect(async () => {
-        if (refresh) {
-            const data = await getAPI(props.url);
-            setRows(data);
-            setRefresh(false);
-        }});
+    useEffect(() => {
+        async function fetchData() {
+            if (refresh) {
+                const data = await getAPI(props.url);
+                setRows(data);
+                setRefresh(false);
+            }
+            
+        }
+        fetchData();
+    }, [refresh, props.url]);
 
     return (
         <TableContainer component={Paper}>
