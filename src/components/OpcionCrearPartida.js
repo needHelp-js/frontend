@@ -1,23 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import './OpcionCrearPartida.css';
+import './Opciones.css';
 import ElegirNombrePartida from './ElegirNombrePartida';
 import ElegirNickname from './ElegirNickname';
 
-const BotonOpcionCrearPartida = ({ setCreando }) => (
-  <div className="botonOpcionCrearPartida">
-    <Button
-      variant="contained"
-      onClick={setCreando}
-    >
-      Crear una partida
-    </Button>
-  </div>
-);
+
 
 const OpcionCrearPartida = (props) => {
-  const [creando, setCreando] = useState(false);
+  
   const [nombrePartida, setNombrePartida] = useState('');
   const [nickName, setNickName] = useState('');
   const [hasError, setHasError] = useState(false);
@@ -66,7 +57,6 @@ const OpcionCrearPartida = (props) => {
     );
   }
 
-  if (creando) {
     return (
       <div className="inputBox">
         <form onSubmit={sendGameData}>
@@ -84,8 +74,6 @@ const OpcionCrearPartida = (props) => {
         </form>
       </div>
     );
-  }
-  return <BotonOpcionCrearPartida setCreando={() => setCreando(true)} />;
 };
 
 export default OpcionCrearPartida;

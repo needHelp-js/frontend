@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import OpcionCrearPartida from './components/OpcionCrearPartida';
+import Opciones from './components/Opciones';
 
 ReactDOM.render(
   <React.StrictMode>
     <div>
       <App />
-      <OpcionCrearPartida endpoint="http://0.0.0.0:8000/games" />
+      <Opciones />
     </div>
   </React.StrictMode>,
   document.getElementById('root'),
