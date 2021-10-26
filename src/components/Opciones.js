@@ -29,14 +29,14 @@ const BotonOpcionCrearPartida = ({ setCreando }) => (
 function Opciones() {
   const [listando, setListando] = useState(false);
   const [creando, setCreando] = useState(false);
-  const PARTIDAS_URL = 'http://192.168.0.152:81/partidas';
+  const PARTIDAS_URL = 'http://0.0.0.0:8000/games';
   if (listando) {
     return (
       <ListarPartidas url={PARTIDAS_URL} />
     );
   } if (creando) {
     return (
-      <CrearPartida endpoint="http://127.0.0.1:5000/createGame" />
+      <CrearPartida endpoint={PARTIDAS_URL} />
 
     );
   }

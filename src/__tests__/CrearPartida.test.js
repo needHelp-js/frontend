@@ -86,7 +86,7 @@ describe('CrearPartida', () => {
     await userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
     await userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
     await userEvent.click(screen.getByRole('button'));
-    expect(await screen.findByText(/error/)).toBeInTheDocument();
+    expect(await screen.findByText(/recargue/)).toBeInTheDocument();
 
   });
 

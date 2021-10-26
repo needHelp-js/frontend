@@ -1,76 +1,109 @@
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import './Opciones.css';
 import ElegirNombrePartida from './ElegirNombrePartida';
 import ElegirNickname from './ElegirNickname';
+import Lobby from './Lobby';
+import './Opciones.css';
+
+async function sendGameData(endpoint, nickname, nombrePartida) {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      gameName: nombrePartida,
+      hostNickname: nickname,
+    }),
+  };
+
+  const data = fetch(endpoint, requestOptions)
+    .then(async (response) => {
+      const isJson = response.headers.get('content-type')?.includes('application/json');
+      const data = isJson && await response.json();
+      if (!response.ok) {
+        const error = (data && data.Error) || response.status;
+        return Promise.reject(error);
+      }
+      return data;
+    })
+    .catch((error) => {
+      return Promise.reject(error);
+    });
+    return data;
+}
+
 
 const CrearPartida = (props) => {
+  
   const [nombrePartida, setNombrePartida] = useState('');
-  const [nickName, setNickName] = useState('');
-  const [hasError, setHasError] = useState(false);
+  const [nickname, setNickname] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const { endpoint } = props;
+  const [hasError, setHasError] = useState(false);
+  const [submited, setSubmited] = useState(false);
+  const [creada, setCreada] = useState(false);
+  const [idPartida, setIdPartida] = useState(0);
+  const [idHost, setIdHost] = useState(0);
 
-  function sendGameData(event) {
-    event.preventDefault();
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        gameName: nombrePartida,
-        hostNickname: nickName,
-      }),
-    };
-
-    fetch(endpoint, requestOptions)
-      .then(async (response) => {
-        const isJson = response.headers.get('content-type')?.includes('application/json');
-        const data = isJson && await response.json();
-        if (!response.ok) {
-          const error = (data && data.message) || response.status;
-          return Promise.reject(error);
-        }
-        return null;
+  useEffect(() => { 
+    async function sendData(){
+      setHasError(false);
+      sendGameData(props.endpoint, nickname, nombrePartida)
+      .then(async (response) =>{
+        setIdPartida(response.idPartida);
+        setIdHost(response.idHost);
+        setSubmited(false);
+        setCreada(true);
       })
       .catch((error) => {
-        setErrorMessage(error.toString());
-        console.error('Hubo un error:', errorMessage);
+        setErrorMessage(error);
         setHasError(true);
       });
-  }
-
-  useEffect(() => function cleanup() { // cleanup function
-    setErrorMessage('');
-  });
+    }
+    if(submited){
+      sendData();
+    }
+  },[submited, props.endpoint]);
 
   if (hasError) {
     return (
       <div>
         <p className="errorMessage">
-          Hubo un error, por favor recargue la pagina..
+          {errorMessage} , por favor recargue la pagina..
         </p>
       </div>
     );
   }
+  if (creada){
+    return(
+      <Lobby 
+      idPartida={idPartida}
+      nombrePartida={nombrePartida}
+      idHost={idHost}
+      nicknameHost={nickname}
+      />
+    );
+  }
 
-  return (
-    <div className="inputBox">
-      <form onSubmit={sendGameData}>
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <ElegirNombrePartida
-            setNombrePartida={setNombrePartida}
-          />
-          <ElegirNickname
-            setNickName={setNickName}
-          />
-          <Button type="submit" variant="contained">
-            Crear
-          </Button>
-        </Stack>
-      </form>
-    </div>
-  );
+    return (
+      <div className="inputBox">
+        <form onSubmit={ event =>{ 
+          event.preventDefault();
+          setSubmited(true);
+          }}>
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <ElegirNombrePartida
+              setNombrePartida={setNombrePartida}
+            />
+            <ElegirNickname
+              setNickName={setNickname}
+            />
+            <Button type="submit" variant="contained">
+              Crear
+            </Button>
+          </Stack>
+        </form>
+      </div>
+    );
 };
 
 export default CrearPartida;
