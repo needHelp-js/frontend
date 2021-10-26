@@ -16,6 +16,7 @@ const server = setupServer(
   rest.post('/createGameFail', (req, res, ctx) => {
       return res(
           ctx.status(400),
+          ctx.json([{'Error' : 'Partida p ya existe'}])
       )
   }),
 
@@ -64,7 +65,6 @@ describe('ElegirNickName', () => {
 describe('CrearPartida', () => {
   it('Renderiza la interfaz para ingresar datos de la partida', () => {
     render(<CrearPartida />)
-    userEvent.click(screen.getByRole('button'));
     expect(screen.getAllByRole('textbox')[0]).toBeInTheDocument();
     expect(screen.getAllByRole('textbox')[1]).toBeInTheDocument();
     expect(screen.getByLabelText(/Nombre de la Partida/)).toBeInTheDocument();
@@ -86,7 +86,7 @@ describe('CrearPartida', () => {
     await userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
     await userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
     await userEvent.click(screen.getByRole('button'));
-    expect(await screen.findByText(/error/)).toBeInTheDocument();
+    expect(await screen.findByText(/recargue/)).toBeInTheDocument();
 
   });
 

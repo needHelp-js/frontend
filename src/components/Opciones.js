@@ -29,7 +29,7 @@ const BotonOpcionCrearPartida = ({ setCreando }) => (
 function Opciones() {
   const [listando, setListando] = useState(false);
   const [creando, setCreando] = useState(false);
-  const PARTIDAS_URL = 'http://0.0.0.0:8000/games';
+  const PARTIDAS_URL = 'http://localhost:8000/games';
   if (listando) {
     return (
       <ListarPartidas url={PARTIDAS_URL} />

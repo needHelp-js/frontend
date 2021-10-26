@@ -3,8 +3,8 @@ import './App.css';
 
 function App() {
   return (
-    <div>
-      <h1 style={{ 'text-align': 'center' }}>Bienvenido a Misterio</h1>
+    <div className="tituloPrincipal">
+      <h1>Bienvenido a Misterio</h1>
     </div>
   );
 }
