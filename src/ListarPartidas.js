@@ -86,8 +86,7 @@ function TablaPartidas(props) {
                 const data = await getAPI(props.url);
                 setRows(data);
                 setRefresh(false);
-            }
-            
+            } 
         }
         fetchData();
     }, [refresh, props.url]);

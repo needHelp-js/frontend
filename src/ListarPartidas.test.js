@@ -53,16 +53,14 @@ test('1. Caso de exito: hay conexión y al menos una partida', async () => {
         expect(count).toBeInTheDocument();
     }
 
-    screen.debug();
 });
 
 
-test('2. Casoo de excepción: no hay conexión.', async () => {
+test('2. Caso de excepción: no hay conexión.', async () => {
     render(<ListarPartidas url='/apagado' />);
     const actualizar = await screen.getByRole('button'); 
     await userEvent.click(actualizar);
     const mgs = await screen.findByText('Sin conexión, actualice la lista.');
-    screen.debug();
 });
 
 test('3. Caso de excepción: hay conexión pero no hay partidas.', async () => {
@@ -72,6 +70,5 @@ test('3. Caso de excepción: hay conexión pero no hay partidas.', async () => {
     const msg = await screen.findByText('No hay partidas.');
     expect(msg).toBeInTheDocument();
 
-    screen.debug();
 });
     
