@@ -16,12 +16,13 @@ const server = setupServer(
   rest.post('/createGameFail', (req, res, ctx) => {
       return res(
           ctx.status(400),
+          ctx.json([{'Error' : 'Partida p ya existe'}])
       )
   }),
 
 );
 
-beforeAll(() => server.listen());
+beforeAll(() => server.listen({ onUnhandledRequest: "bypass" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
@@ -64,7 +65,6 @@ describe('ElegirNickName', () => {
 describe('CrearPartida', () => {
   it('Renderiza la interfaz para ingresar datos de la partida', () => {
     render(<CrearPartida />)
-    userEvent.click(screen.getByRole('button'));
     expect(screen.getAllByRole('textbox')[0]).toBeInTheDocument();
     expect(screen.getAllByRole('textbox')[1]).toBeInTheDocument();
     expect(screen.getByLabelText(/Nombre de la Partida/)).toBeInTheDocument();

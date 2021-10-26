@@ -43,16 +43,20 @@ const CrearPartida = (props) => {
   const [creada, setCreada] = useState(false);
   const [idPartida, setIdPartida] = useState(0);
   const [idHost, setIdHost] = useState(0);
+  const { endpoint } = props;
 
   useEffect(() => { 
+    let isMounted = true;
     async function sendData(){
       setHasError(false);
-      sendGameData(props.endpoint, nickname, nombrePartida)
+      sendGameData(endpoint, nickname, nombrePartida)
       .then(async (response) =>{
-        setIdPartida(response.idPartida);
-        setIdHost(response.idHost);
-        setSubmited(false);
-        setCreada(true);
+        if(isMounted){
+          setIdPartida(response?.idPartida);
+          setIdHost(response?.idHost);
+          setSubmited(false);
+          setCreada(true);
+        }
       })
       .catch((error) => {
         setErrorMessage(error);
@@ -62,7 +66,11 @@ const CrearPartida = (props) => {
     if(submited){
       sendData();
     }
-  },[submited, props.endpoint]);
+    return () => {
+      isMounted = false;
+    };
+
+  },[submited, endpoint, nickname, nombrePartida]);
 
   if (hasError) {
     return (
