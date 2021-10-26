@@ -7,7 +7,7 @@ import ElegirNickname from './ElegirNickname';
 
 
 
-const OpcionCrearPartida = (props) => {
+const CrearPartida = (props) => {
   
   const [nombrePartida, setNombrePartida] = useState('');
   const [nickName, setNickName] = useState('');
@@ -76,4 +76,4 @@ const OpcionCrearPartida = (props) => {
     );
 };
 
-export default OpcionCrearPartida;
+export default CrearPartida;

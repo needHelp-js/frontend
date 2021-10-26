@@ -3,7 +3,7 @@ import { useState } from "react";
 import ListarPartidas from "./ListarPartidas";
 import Button from '@mui/material/Button';
 import './Opciones.css';
-import OpcionCrearPartida from "./OpcionCrearPartida";
+import CrearPartida from "./CrearPartida";
 
 const BotonOpcionListarPartidas = ({ setListando }) => (
     <div className="botonOpcionListarPartida">
@@ -38,7 +38,7 @@ function Opciones () {
         );
     }else if(creando){
         return(
-            <OpcionCrearPartida endpoint={PARTIDAS_URL} />
+            <CrearPartida endpoint={PARTIDAS_URL} />
 
         );
     }else{
