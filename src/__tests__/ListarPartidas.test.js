@@ -1,7 +1,7 @@
 import 'whatwg-fetch';
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import ListarPartidas from './ListarPartidas.js';
+import ListarPartidas from '../components/ListarPartidas';
 import {rest} from 'msw';
 import {setupServer} from 'msw/node';
 import {useEffect } from 'react';

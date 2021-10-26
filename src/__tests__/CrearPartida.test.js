@@ -4,7 +4,7 @@ import {rest} from 'msw';
 import {setupServer} from 'msw/node';
 import ElegirNickname from '../components/ElegirNickname';
 import ElegirNombrePartida from '../components/ElegirNombrePartida';
-import OpcionCrearPartida from '../components/OpcionCrearPartida';
+import CrearPartida from '../components/CrearPartida';
 
 const server = setupServer(
   rest.post('/createGame', (req, res, ctx) => {
@@ -61,14 +61,9 @@ describe('ElegirNickName', () => {
   });
 });
 
-describe('OpcionCrearPartida', () => {
-  it('Renderiza un boton para la opcion de crear una partida', () => {
-    render(<OpcionCrearPartida />);
-    expect(screen.getByRole('button')).toBeInTheDocument();
-  });
-
+describe('CrearPartida', () => {
   it('Renderiza la interfaz para ingresar datos de la partida', () => {
-    render(<OpcionCrearPartida />)
+    render(<CrearPartida />)
     userEvent.click(screen.getByRole('button'));
     expect(screen.getAllByRole('textbox')[0]).toBeInTheDocument();
     expect(screen.getAllByRole('textbox')[1]).toBeInTheDocument();
@@ -78,8 +73,7 @@ describe('OpcionCrearPartida', () => {
   });
 
   it('Hace el POST al backend', async () => {
-    render(<OpcionCrearPartida endpoint='/createGame'/>)
-    userEvent.click(screen.getByRole('button'));
+    render(<CrearPartida endpoint='/createGame'/>)
     await userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
     await userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
     await userEvent.click(screen.getByRole('button'));
@@ -88,8 +82,7 @@ describe('OpcionCrearPartida', () => {
   });
 
   it('Maneja un error en el POST', async () => {
-    render(<OpcionCrearPartida endpoint='/createGameFail'/>)
-    userEvent.click(screen.getByRole('button'));
+    render(<CrearPartida endpoint='/createGameFail'/>)
     await userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
     await userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
     await userEvent.click(screen.getByRole('button'));
