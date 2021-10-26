@@ -5,10 +5,7 @@ import './Opciones.css';
 import ElegirNombrePartida from './ElegirNombrePartida';
 import ElegirNickname from './ElegirNickname';
 
-
-
 const CrearPartida = (props) => {
-  
   const [nombrePartida, setNombrePartida] = useState('');
   const [nickName, setNickName] = useState('');
   const [hasError, setHasError] = useState(false);
@@ -57,23 +54,23 @@ const CrearPartida = (props) => {
     );
   }
 
-    return (
-      <div className="inputBox">
-        <form onSubmit={sendGameData}>
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <ElegirNombrePartida
-              setNombrePartida={setNombrePartida}
-            />
-            <ElegirNickname
-              setNickName={setNickName}
-            />
-            <Button type="submit" variant="contained">
-              Crear
-            </Button>
-          </Stack>
-        </form>
-      </div>
-    );
+  return (
+    <div className="inputBox">
+      <form onSubmit={sendGameData}>
+        <Stack direction="row" alignItems="center" spacing={2}>
+          <ElegirNombrePartida
+            setNombrePartida={setNombrePartida}
+          />
+          <ElegirNickname
+            setNickName={setNickName}
+          />
+          <Button type="submit" variant="contained">
+            Crear
+          </Button>
+        </Stack>
+      </form>
+    </div>
+  );
 };
 
 export default CrearPartida;
