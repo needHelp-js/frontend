@@ -1,12 +1,18 @@
 import { Button } from '@mui/material';
-import React from 'react';
+import React, { useEffect, createRef } from 'react';
 
 function Lobby(props) {
   const {
-    idPartida, nombrePartida, idHost, nicknameHost, isHost,
+    idPartida, nombrePartida, idPlayer, nicknamePlayer, isHost,
   } = props;
-
-  console.log('isHost:', isHost);
+  const socketURL = 'ws://localhost:8000/games/'.concat(idPartida, '/ws/', idPlayer);
+  const playerSocket = createRef();
+  useEffect(() => {
+    playerSocket.current = new WebSocket(socketURL);
+    playerSocket.current.onopen = () => {
+      console.log('socket created:', idPartida, idPlayer);
+    };
+  }, [idPartida, idPlayer, playerSocket, socketURL]);
 
   if (isHost) {
     return (
@@ -17,11 +23,11 @@ function Lobby(props) {
         <p>
           Usted es el Host:
           {' '}
-          {nicknameHost}
+          {nicknamePlayer}
           {' '}
           ID:
           {' '}
-          {idHost}
+          {idPlayer}
         </p>
         <Button variant="outlined">
           Iniciar Partida
@@ -36,17 +42,14 @@ function Lobby(props) {
         {nombrePartida}
       </h2>
       <p>
-        Usted es el Host:
+        Usted es el Jugador:
         {' '}
-        {nicknameHost}
+        {nicknamePlayer}
         {' '}
         ID:
         {' '}
-        {idHost}
+        {idPlayer}
       </p>
-      <Button variant="outlined" disabled>
-        Iniciar Partida
-      </Button>
     </div>
 
   );

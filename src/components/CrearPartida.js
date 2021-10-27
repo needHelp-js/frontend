@@ -102,8 +102,8 @@ const CrearPartida = (props) => {
       <Lobby
         idPartida={idPartida}
         nombrePartida={nombrePartida}
-        idHost={idHost}
-        nicknameHost={nickname}
+        idPlayer={idHost}
+        nicknamePlayer={nickname}
         isHost
       />
     );
