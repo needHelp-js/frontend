@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Opciones from './components/Opciones';
 import './index.css';
@@ -8,7 +7,6 @@ import './index.css';
 ReactDOM.render(
   <React.StrictMode>
     <div>
-      <App />
       <Opciones />
     </div>
   </React.StrictMode>,

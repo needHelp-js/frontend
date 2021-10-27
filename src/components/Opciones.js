@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import ListarPartidas from './ListarPartidas';
 import './Opciones.css';
 import CrearPartida from './CrearPartida';
+import App from '../App';
 
 const BotonOpcionListarPartidas = ({ setListando }) => (
   <div className="botonOpcionListarPartida">
@@ -42,6 +43,7 @@ function Opciones() {
   }
   return (
     <div>
+      <App />
       <BotonOpcionListarPartidas setListando={() => setListando(true)} />
       <BotonOpcionCrearPartida setCreando={() => setCreando(true)} />
     </div>

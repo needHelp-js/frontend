@@ -104,12 +104,16 @@ const CrearPartida = (props) => {
         nombrePartida={nombrePartida}
         idHost={idHost}
         nicknameHost={nickname}
+        isHost
       />
     );
   }
   if (validationFail) {
     return (
       <div>
+        <h1>
+          Crear una Partida
+        </h1>
         <InputCrearPartida
           setNombrePartida={setNombrePartida}
           setNickname={setNickname}
@@ -123,11 +127,16 @@ const CrearPartida = (props) => {
   }
 
   return (
-    <InputCrearPartida
-      setNombrePartida={setNombrePartida}
-      setNickname={setNickname}
-      setSubmited={setSubmited}
-    />
+    <div>
+      <h1>
+        Crear una Partida
+      </h1>
+      <InputCrearPartida
+        setNombrePartida={setNombrePartida}
+        setNickname={setNickname}
+        setSubmited={setSubmited}
+      />
+    </div>
   );
 };
 
