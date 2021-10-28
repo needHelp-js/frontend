@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ErrorIcon from '@mui/icons-material/Error';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 async function getAPI(url) {
   try {
@@ -44,7 +45,9 @@ function mostrarFilas(rows) {
             </TableCell>
             <TableCell align="right">
               <Button variant="outlined">
-                Unirse
+                 <Link to="lobby">
+                    Unirse
+                </Link>
               </Button>
             </TableCell>
           </TableRow>
@@ -106,6 +109,7 @@ function TablaPartidas(props) {
                 endIcon={<RefreshIcon />}
                 onClick={() => setRefresh(true)}
               >
+                
                 Actualizar
               </Button>
             </TableCell>

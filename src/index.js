@@ -1,16 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Opciones from './components/Opciones';
+import ListarPartidas from './components/ListarPartidas';
+import Lobby from './components/Lobby';
 import './index.css';
 
 ReactDOM.render(
   <React.StrictMode>
+    <BrowserRouter>
     <div>
-      <App />
-      <Opciones />
+    <Switch>
+      <Route path='/partidas'>
+        <ListarPartidas url='http://192.168.0.152:81/partidas'/>
+      </Route>
+      <Route path='/lobby'> 
+        <Lobby/>
+      </Route>
+    </Switch>
     </div>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root'),
 );
