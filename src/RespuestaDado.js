@@ -1,7 +1,6 @@
 import './RespuestaDado.css';
 import * as React from 'react';
 import Button from '@mui/material/Button';
-import { useState, useEffect } from 'react';
 
 
 async function get(url){
@@ -24,47 +23,77 @@ async function get(url){
 const DadoUrl = 'http://127.0.0.1:5000/dado';
 
 
-// Botón para tirar el dado si es el turno del jugador 
+let diceRef = React.createRef();
 
-/* Mostrar el resultado */
+
+async function rollDice() {
+    const num = await get(DadoUrl);
+    toggleClasses(diceRef.current);
+    diceRef.current.setAttribute("data-roll", num.resultado);
+}
+  
+  function toggleClasses(die) {
+    die.classList.toggle("odd-roll");
+    die.classList.toggle("even-roll");
+  }
 
 function RespuestaDado(){
-
-    const [dado, setDado ] = useState(1);
-
-    const [click, setClick] = useState(false);
-
-    useEffect(() => {
-        async function fetchData() {
-            if (click) {
-                const data = await get(DadoUrl);
-                setDado(data.resultado);
-                setClick(false);
-            }
-        }
-        fetchData();
-    }, [click]);
-
+    
     return(
+    
     <div>
         
+       
         <Button
 
-        onClick={()=>
-            
-            setClick(true)
-        
-        }
+        onClick = {rollDice}
+
+    
 
         variant="contained"
 
         >
             Tirar Dado
 
-        </Button>
-
-        <p>{dado}</p>
-
+        </Button> 
+        
+        <div class="dice">
+            <ol class="die-list even-roll" data-roll="1" id="die-1" ref={diceRef}>
+                <li class="die-item" data-side="1">
+                    <span class="dot"></span>
+                </li>
+                <li class="die-item" data-side="2">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </li>
+                <li class="die-item" data-side="3">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </li>
+                <li class="die-item" data-side="4">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </li>
+                <li class="die-item" data-side="5">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </li>
+                <li class="die-item" data-side="6">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </li>
+            </ol>
+        </div>
     </div>
 
     );
