@@ -1,5 +1,7 @@
 import { Button } from '@mui/material';
 import React, { useEffect, createRef } from 'react';
+import ListarJugadores from './ListarJugadores';
+import './Lobby.css';
 
 function Lobby(props) {
   const {
@@ -29,9 +31,13 @@ function Lobby(props) {
           {' '}
           {idPlayer}
         </p>
-        <Button variant="outlined">
-          Iniciar Partida
-        </Button>
+        <h4>Jugadores en la partida:</h4>
+        <ListarJugadores />
+        <div style={{ 'text-align': 'center' }}>
+          <Button variant="outlined">
+            Iniciar Partida
+          </Button>
+        </div>
       </div>
 
     );
@@ -50,6 +56,8 @@ function Lobby(props) {
         {' '}
         {idPlayer}
       </p>
+      <h4>Jugadores en la partida:</h4>
+      <ListarJugadores />
     </div>
 
   );

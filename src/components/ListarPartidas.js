@@ -27,6 +27,7 @@ async function getAPI(url) {
 
 function mostrarFilas(rows) {
   if (rows) {
+    console.log(rows);
     if (rows.length > 0) {
       return (
         rows.map((row) => (
