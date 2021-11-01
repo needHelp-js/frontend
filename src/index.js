@@ -7,16 +7,17 @@ import ListarPartidas from './components/ListarPartidas';
 import Lobby from './components/Lobby';
 import './index.css';
 
+const URL = 'http://192.168.0.152:81';
+
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
     <div>
     <Switch>
       <Route path='/partidas'>
-        <ListarPartidas url='http://192.168.0.152:81/partidas'/>
+        <ListarPartidas url={URL + '/partidas'}/>
       </Route>
-      <Route path='/lobby'> 
-        <Lobby/>
+      <Route path='/lobby' component ={Lobby}> 
       </Route>
     </Switch>
     </div>

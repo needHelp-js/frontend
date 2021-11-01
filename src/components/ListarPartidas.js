@@ -45,7 +45,13 @@ function mostrarFilas(rows) {
             </TableCell>
             <TableCell align="right">
               <Button variant="outlined">
-                 <Link to="lobby">
+                 <Link to={{
+                    pathname:'/lobby', 
+                    state:{
+                        idPartida: row.id, 
+                        nombrePartida: row.name
+                        }
+                 }}>
                     Unirse
                 </Link>
               </Button>
