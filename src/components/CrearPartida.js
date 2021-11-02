@@ -4,7 +4,7 @@ import Stack from '@mui/material/Stack';
 import ElegirNombrePartida from './ElegirNombrePartida';
 import ElegirNickname from './ElegirNickname';
 import Lobby from './Lobby';
-import './Opciones.css';
+import './Main.css';
 
 async function sendGameData(endpoint, nickname, nombrePartida) {
   const requestOptions = {
