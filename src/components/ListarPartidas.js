@@ -11,6 +11,9 @@ import { useState, useEffect } from 'react';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ErrorIcon from '@mui/icons-material/Error';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import TextField from '@mui/material/TextField';
+import {URL_LOBBY} from '../routes.js';
 
 async function getAPI(url) {
   try {
@@ -25,7 +28,8 @@ async function getAPI(url) {
   }
 }
 
-function mostrarFilas(rows) {
+
+function mostrarFilas(disabled, nickName, rows) {
   if (rows) {
     console.log(rows);
     if (rows.length > 0) {
@@ -44,9 +48,29 @@ function mostrarFilas(rows) {
                 : console.log('falta atributo jugadores')}
             </TableCell>
             <TableCell align="right">
-              <Button variant="outlined">
-                Unirse
-              </Button>
+                  <Link
+                    style={ disabled ? 
+                            {pointerEvents: 'none', textDecoration : 'none'} 
+                            : {textDecoration: 'none'} }
+                    
+                    to={{
+                        pathname: URL_LOBBY, 
+                        state:{
+                        guestName: nickName,
+                        idPartida: row.id, 
+                        nombrePartida: row.name
+                     }}
+                    }>
+                   
+                   <Button 
+                     color={disabled ? "error" : "primary"} 
+                     variant="outlined"
+                   >
+                    Unirse
+                    </Button>
+                
+
+                </Link>
             </TableCell>
           </TableRow>
         ))
@@ -71,6 +95,7 @@ function mostrarFilas(rows) {
     </TableRow>
   );
 }
+
 
 function TablaPartidas(props) {
   const [rows, setRows] = useState([]);
@@ -107,30 +132,58 @@ function TablaPartidas(props) {
                 endIcon={<RefreshIcon />}
                 onClick={() => setRefresh(true)}
               >
+                
                 Actualizar
               </Button>
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {mostrarFilas(rows)}
+          {mostrarFilas(props.disabled, props.nickName, rows)}
         </TableBody>
       </Table>
     </TableContainer>
   );
 }
 
+
 TablaPartidas.propTypes = {
   url: PropTypes.string,
 };
 
+
+const isAlphaNumeric = str => /^[a-z0-9]+$/gi.test(str);
+
 function ListarPartidas(props) {
+  const [nickName, setNickName] = useState('jugador');
+  const [badNickName, setBadNickName] = useState(false);
+
+  useEffect(() => {
+    if (isAlphaNumeric(nickName)){
+        setBadNickName(false);    
+    } else {
+        setBadNickName(true);
+    }});
+
   return (
-    <div>
-      <TablaPartidas url={props.url} />
+    <div style={{margin:50}}>
+      <TextField
+          style={{margin:10}}
+          id="nickname"
+          label="Nickname"
+          defaultValue=""
+          error={badNickName}
+          onChange={(event) => setNickName(event.target.value)}
+        />
+      <TablaPartidas 
+          disabled={badNickName} 
+          url={props.url} 
+          nickName={nickName}
+      />
     </div>
   );
 }
+
 
 ListarPartidas.propTypes = {
   url: PropTypes.string,

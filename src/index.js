@@ -1,14 +1,36 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
-import Opciones from './components/Opciones';
+import ListarPartidas from './components/ListarPartidas';
+import Lobby from './components/Lobby';
+import Main from './components/Main';
+import CrearPartida from './components/CrearPartida';
 import './index.css';
+import {
+        URL_LOCAL, 
+        URL_HOME, 
+        URL_LISTAR_PARTIDAS, 
+        URL_CREAR_PARTIDA, 
+        URL_LOBBY
+       } from './routes.js';
 
 ReactDOM.render(
   <React.StrictMode>
+    <BrowserRouter>
     <div>
-      <Opciones />
+    <Switch>
+      <Route exact path={URL_HOME} component={Main}/>
+      <Route path={URL_LISTAR_PARTIDAS}>
+        <ListarPartidas url={URL_LOCAL}/>
+      </Route>
+      <Route path={URL_CREAR_PARTIDA}>
+        <CrearPartida endpoint={URL_LOCAL}/>
+      </Route>
+      <Route path={URL_LOBBY} component={Lobby}/>
+    </Switch>
     </div>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root'),
 );

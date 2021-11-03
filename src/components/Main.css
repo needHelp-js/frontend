@@ -1,6 +1,7 @@
 .botonOpcionCrearPartida{
     text-align: center;
     margin-top: 2%;
+    text-decoration: none;
 }
 .inputBox{
     display: flex;
@@ -16,4 +17,5 @@
 }
 h1{
     text-align: center;
+    text-decoration: none;
 }

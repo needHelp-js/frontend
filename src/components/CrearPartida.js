@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Lobby from './Lobby';
 import InputCrearPartida from './InputCrearPartida';
-import './Opciones.css';
+import './Main.css';
 
 function handleValidate(nickname, nombrePartida) {
   if (nickname.length < 1) {
