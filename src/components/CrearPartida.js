@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import ElegirNombrePartida from './ElegirNombrePartida';
-import ElegirNickname from './ElegirNickname';
 import Lobby from './Lobby';
+import InputCrearPartida from './InputCrearPartida';
 import './Opciones.css';
+
+function handleValidate(nickname, nombrePartida) {
+  if (nickname.length < 1) {
+    return [false, 'El nickname debe tener al menos un caractér'];
+  } if (nombrePartida.length < 1) {
+    return [false, 'El nombre de la partida debe tener al menos un caractér'];
+  }
+  return [true, ''];
+}
 
 async function sendGameData(endpoint, nickname, nombrePartida) {
   const requestOptions = {
@@ -19,99 +25,110 @@ async function sendGameData(endpoint, nickname, nombrePartida) {
   const data = fetch(endpoint, requestOptions)
     .then(async (response) => {
       const isJson = response.headers.get('content-type')?.includes('application/json');
-      const data = isJson && await response.json();
+      const payload = isJson && await response.json();
       if (!response.ok) {
-        const error = (data && data.Error) || response.status;
+        const error = (payload && payload.Error) || response.status;
         return Promise.reject(error);
       }
-      return data;
+      return payload;
     })
-    .catch((error) => {
-      return Promise.reject(error);
-    });
-    return data;
+    .catch((error) => Promise.reject(error));
+  return data;
 }
 
-
 const CrearPartida = (props) => {
-  
   const [nombrePartida, setNombrePartida] = useState('');
   const [nickname, setNickname] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [hasError, setHasError] = useState(false);
+  const [validationFail, setValidationFail] = useState(false);
   const [submited, setSubmited] = useState(false);
   const [creada, setCreada] = useState(false);
   const [idPartida, setIdPartida] = useState(0);
   const [idHost, setIdHost] = useState(0);
   const { endpoint } = props;
 
-  useEffect(() => { 
+  useEffect(() => {
     let isMounted = true;
-    async function sendData(){
+    async function sendData() {
       setHasError(false);
-      sendGameData(endpoint, nickname, nombrePartida)
-      .then(async (response) =>{
-        if(isMounted){
-          setIdPartida(response?.idPartida);
-          setIdHost(response?.idHost);
-          setSubmited(false);
-          setCreada(true);
-        }
-      })
-      .catch((error) => {
-        setErrorMessage(error);
-        setHasError(true);
-      });
+      const validate = handleValidate(nickname, nombrePartida);
+      const validated = validate[0];
+      const validationMessage = validate[1];
+      if (!validated) {
+        setErrorMessage(validationMessage);
+        setValidationFail(true);
+        setSubmited(false);
+        setNickname('');
+        setNombrePartida('');
+        isMounted = false;
+      } else {
+        sendGameData(endpoint, nickname, nombrePartida)
+          .then(async (response) => {
+            if (isMounted) {
+              setIdPartida(response?.idPartida);
+              setIdHost(response?.idHost);
+              setSubmited(false);
+              setCreada(true);
+            }
+          })
+          .catch((error) => {
+            setErrorMessage(error);
+            setHasError(true);
+          });
+      }
     }
-    if(submited){
+    if (submited) {
       sendData();
     }
     return () => {
       isMounted = false;
     };
-
-  },[submited, endpoint, nickname, nombrePartida]);
+  }, [submited, endpoint, nickname, nombrePartida]);
 
   if (hasError) {
     return (
       <div>
         <p className="errorMessage">
-          {errorMessage} , por favor recargue la pagina..
+          {errorMessage}
+          {' '}
+          , por favor recargue la pagina..
         </p>
       </div>
     );
   }
-  if (creada){
-    return(
-      <Lobby 
-      idPartida={idPartida}
-      nombrePartida={nombrePartida}
-      idHost={idHost}
-      nicknameHost={nickname}
+  if (creada) {
+    return (
+      <Lobby
+        idPartida={idPartida}
+        nombrePartida={nombrePartida}
+        idHost={idHost}
+        nicknameHost={nickname}
       />
     );
   }
-
+  if (validationFail) {
     return (
-      <div className="inputBox">
-        <form onSubmit={ event =>{ 
-          event.preventDefault();
-          setSubmited(true);
-          }}>
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <ElegirNombrePartida
-              setNombrePartida={setNombrePartida}
-            />
-            <ElegirNickname
-              setNickName={setNickname}
-            />
-            <Button type="submit" variant="contained">
-              Crear
-            </Button>
-          </Stack>
-        </form>
+      <div>
+        <InputCrearPartida
+          setNombrePartida={setNombrePartida}
+          setNickname={setNickname}
+          setSubmited={setSubmited}
+        />
+        <p className="errorMessage">
+          {errorMessage}
+        </p>
       </div>
     );
+  }
+
+  return (
+    <InputCrearPartida
+      setNombrePartida={setNombrePartida}
+      setNickname={setNickname}
+      setSubmited={setSubmited}
+    />
+  );
 };
 
 export default CrearPartida;
