@@ -19,12 +19,10 @@ async function getPlayers(idPartida) {
       return payload;
     })
     .catch((error) => Promise.reject(error));
-  console.log('respuesta al get', data);
   return data;
 }
 
 function mostrarJugadores(rows) {
-  console.log('en la func rows es', rows);
   let res = [];
   if (rows) {
     if (rows.length > 0) {
@@ -47,7 +45,6 @@ function ListarJugadores(props) {
       if (playerJoined) {
         getPlayers(idPartida)
           .then(async (response) => {
-            console.log('response es', response);
             setRows(response?.players);
             setPlayerJoined(false);
           })
