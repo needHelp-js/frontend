@@ -1,6 +1,6 @@
 import './RespuestaDado.css';
-import * as React from 'react';
 import Button from '@mui/material/Button';
+import React, {useEffect, useState, createRef} from 'react';
 
 
 async function get(url){
@@ -11,25 +11,27 @@ async function get(url){
         });
 
         const json = await response.json();
+        if(!response.ok){
+            alert(json.Error);
+        }
         return json;
 
-    } catch (error) {
+    } catch (error){
         console.log(error);
     }
 
 }
 
 
-const DadoUrl = 'http://127.0.0.1:5000/dado';
+const DadoUrl = 'http://localhost:8000/games/5/dice/10';
 
 
 let diceRef = React.createRef();
 
 
 async function rollDice() {
-    const num = await get(DadoUrl);
-    toggleClasses(diceRef.current);
-    diceRef.current.setAttribute("data-roll", num.resultado);
+    await get(DadoUrl);
+  
 }
   
   function toggleClasses(die) {
@@ -38,6 +40,27 @@ async function rollDice() {
   }
 
 function RespuestaDado(){
+
+    const socketURL = 'ws://localhost:8000/games/5/ws/10';
+    const [player, setPlayer] = useState(false);
+    const playerSocket = createRef();
+    
+    useEffect(() => {
+        playerSocket.current = new WebSocket(socketURL);
+        setPlayer(true);
+
+        playerSocket.current.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            console.log(message);
+            if(message.type === 'DICE_ROLL_EVENT') {
+                console.log('ha tirado el dado', message?.payload.playerNickname);
+                toggleClasses(diceRef.current);
+                diceRef.current.setAttribute("data-roll", message.payload);
+                setPlayer(true);
+            }
+        };
+ 
+    }, [socketURL]);
     
     return(
     
