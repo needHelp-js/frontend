@@ -23,7 +23,7 @@ async function requestStart(idPartida, idPlayer) {
 function Lobby(props) {
   const {
     idPartida, nombrePartida, idPlayer, nicknamePlayer, isHost,
-  } = props;
+  } = props.location.state;
   const [playerJoined, setPlayerJoined] = useState(false);
   const [starting, setStarting] = useState(false);
   const socketURL = 'ws://localhost:8000/games/'.concat(idPartida, '/ws/', idPlayer);

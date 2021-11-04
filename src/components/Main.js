@@ -34,7 +34,6 @@ const BotonOpcionCrearPartida = () => (
 );
 
 function Main() {
-  const PARTIDAS_URL = 'http://localhost:8000/games';
   return (
     <div>
        <Typography align="center" variant="h1">
