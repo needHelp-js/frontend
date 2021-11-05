@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import React, { useEffect, createRef, useState } from 'react';
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 import { URL_PARTIDA } from '../routes';
 import ListarJugadores from './ListarJugadores';
 import './Lobby.css';
@@ -46,7 +46,7 @@ function Lobby(props) {
       if (message.type === 'PLAYER_JOINED_EVENT') {
         console.log('se unio a la partida', message?.payload.playerNickname);
         setPlayerJoined(true);
-      }else if(message.type === 'BEGIN_GAME_EVENT'){
+      } else if (message.type === 'BEGIN_GAME_EVENT') {
         console.log('comienza la partida!!');
         setStarted(true);
       }
@@ -65,10 +65,10 @@ function Lobby(props) {
     }
   }, [starting, idPartida, idPlayer]);
 
-  if(started){
-    return(
+  if (started) {
+    return (
       <Redirect to={{
-        pathname: URL_PARTIDA
+        pathname: URL_PARTIDA,
       }}
       />
     );

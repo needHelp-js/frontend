@@ -5,7 +5,9 @@ import ElegirNombrePartida from './ElegirNombrePartida';
 import ElegirNickname from './ElegirNickname';
 
 function InputCrearPartida(props) {
-  const { nombrePartida, nickname, setNombrePartida, setNickname, setSubmited } = props;
+  const {
+    nombrePartida, nickname, setNombrePartida, setNickname, setSubmited,
+  } = props;
   return (
     <div className="inputBox">
       <form onSubmit={(event) => {

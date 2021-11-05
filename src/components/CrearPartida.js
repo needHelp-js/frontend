@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Lobby from './Lobby';
+import { Redirect } from 'react-router-dom';
+import { URL_LOBBY } from '../routes';
 import InputCrearPartida from './InputCrearPartida';
 import './Main.css';
-import { URL_LOBBY } from '../routes';
-import { Redirect } from 'react-router'
 
 function handleValidate(nickname, nombrePartida) {
   if (nickname.length < 1) {
@@ -96,14 +95,15 @@ const CrearPartida = (props) => {
     return (
       <Redirect to={{
         pathname: URL_LOBBY,
-        state:{
-          idPartida: idPartida,
-          nombrePartida: nombrePartida,
+        state: {
+          idPartida,
           idPlayer: idHost,
+          nombrePartida,
           nicknamePlayer: nickname,
-          isHost: true
-        }
-      }}/>
+          isHost: true,
+        },
+      }}
+      />
     );
   }
   if (validationFail || hasError) {
