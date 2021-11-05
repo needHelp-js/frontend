@@ -22,6 +22,9 @@ const server = setupServer(
 
 );
 
+const nombrePartida = 'UnNombreParaLaPartida';
+const nickname = 'UnNombreParaElJugador';
+
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
@@ -34,7 +37,6 @@ describe ('ElegirNombrePartida', () => {
   });
 
   it('Actualiza el nombre de la partida', () =>{
-    const nombrePartida = 'UnNombreParaLaPartida';
     const setNombrePartida = jest.fn();
 
     render(<ElegirNombrePartida setNombrePartida={setNombrePartida}/>);
@@ -52,7 +54,6 @@ describe('ElegirNickName', () => {
   });
 
   it('Actualiza el nickname', () =>{
-    const nickname = 'UnNombreParaElJugador';
     const setNickName = jest.fn();
 
     render(<ElegirNickname setNickName={setNickName}/>);
@@ -74,8 +75,8 @@ describe('CrearPartida', () => {
 
   it('Hace el POST al backend', async () => {
     render(<CrearPartida endpoint='/createGame'/>)
-    await userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
-    await userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
+    await userEvent.type(screen.getByLabelText(/Nombre de la Partida/), nombrePartida);
+    await userEvent.type(screen.getByLabelText(/Nickname/), nickname);
     await userEvent.click(screen.getByRole('button'));
     const recibido = sessionStorage.getItem('post-recibido');
     expect(recibido).toBe('true');

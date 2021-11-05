@@ -1,5 +1,7 @@
 import { Button } from '@mui/material';
 import React, { useEffect, createRef, useState } from 'react';
+import { Redirect } from 'react-router';
+import { URL_PARTIDA } from '../routes';
 import ListarJugadores from './ListarJugadores';
 import './Lobby.css';
 
@@ -8,7 +10,8 @@ async function requestStart(idPartida, idPlayer) {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
   };
-  const endpoint = 'http://localhost:8000/games'.concat('/', idPartida, '/begin/', idPlayer);
+  const endpointPrefix = process.env.REACT_APP_URL_SERVER;
+  const endpoint = endpointPrefix.concat('/', idPartida, '/begin/', idPlayer);
   const data = fetch(endpoint, requestOptions)
     .then(async (response) => {
       if (!response.ok) {
@@ -26,7 +29,9 @@ function Lobby(props) {
   } = props.location.state;
   const [playerJoined, setPlayerJoined] = useState(false);
   const [starting, setStarting] = useState(false);
-  const socketURL = 'ws://localhost:8000/games/'.concat(idPartida, '/ws/', idPlayer);
+  const [started, setStarted] = useState(false);
+  const wsPrefix = process.env.REACT_APP_URL_WS;
+  const socketURL = wsPrefix.concat('/', idPartida, '/ws/', idPlayer);
   const playerSocket = createRef();
 
   useEffect(() => {
@@ -41,6 +46,9 @@ function Lobby(props) {
       if (message.type === 'PLAYER_JOINED_EVENT') {
         console.log('se unio a la partida', message?.payload.playerNickname);
         setPlayerJoined(true);
+      }else if(message.type === 'BEGIN_GAME_EVENT'){
+        console.log('comienza la partida!!');
+        setStarted(true);
       }
     };
   }, [idPartida, idPlayer, socketURL]);
@@ -56,6 +64,15 @@ function Lobby(props) {
       startGame();
     }
   }, [starting, idPartida, idPlayer]);
+
+  if(started){
+    return(
+      <Redirect to={{
+        pathname: URL_PARTIDA
+      }}
+      />
+    );
+  }
 
   if (isHost) {
     return (
