@@ -7,7 +7,7 @@ async function getPlayers(idPartida) {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   };
-  const endpoint = 'http://0.0.0.0:8000/games/'.concat(idPartida);
+  const endpoint = 'http://localhost:8000/games/'.concat(idPartida);
   const data = fetch(endpoint, requestOptions)
     .then(async (response) => {
       const isJson = response.headers.get('content-type')?.includes('application/json');

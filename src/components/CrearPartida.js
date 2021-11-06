@@ -99,7 +99,6 @@ const CrearPartida = (props) => {
           idPartida,
           idPlayer: idHost,
           nombrePartida,
-          nicknamePlayer: nickname,
           isHost: true,
         },
       }}

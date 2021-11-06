@@ -25,7 +25,7 @@ async function requestStart(idPartida, idPlayer) {
 
 function Lobby(props) {
   const {
-    idPartida, nombrePartida, idPlayer, nicknamePlayer, isHost,
+    idPartida, nombrePartida, idPlayer, isHost,
   } = props.location.state;
   const [playerJoined, setPlayerJoined] = useState(false);
   const [starting, setStarting] = useState(false);
@@ -37,19 +37,23 @@ function Lobby(props) {
   useEffect(() => {
     playerSocket.current = new WebSocket(socketURL);
     setPlayerJoined(true);
+    let isMounted = true;
 
     playerSocket.current.onopen = () => {
       console.log('socket created:', idPartida, idPlayer);
     };
     playerSocket.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      if (message.type === 'PLAYER_JOINED_EVENT') {
-        console.log('se unio a la partida', message?.payload.playerNickname);
+      if (message.type === 'PLAYER_JOINED_EVENT' && isMounted) {
         setPlayerJoined(true);
-      } else if (message.type === 'BEGIN_GAME_EVENT') {
-        console.log('comienza la partida!!');
+      } else if (message.type === 'BEGIN_GAME_EVENT' && isMounted) {
         setStarted(true);
+        isMounted = false;
       }
+    };
+
+    return () => {
+      isMounted = false;
     };
   }, [idPartida, idPlayer, socketURL]);
 
@@ -57,7 +61,7 @@ function Lobby(props) {
     async function startGame() {
       requestStart(idPartida, idPlayer)
         .catch((error) => {
-          console.error('no se pudo crear la partida', error);
+          console.error('no se pudo iniciar la partida', error);
         });
     }
     if (starting) {
