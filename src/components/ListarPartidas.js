@@ -13,11 +13,12 @@ import ErrorIcon from '@mui/icons-material/Error';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
-import {URL_LOBBY} from '../routes.js';
+import { Redirect } from "react-router-dom";
+import {URL_LOBBY, URL_LOCAL} from '../routes.js';
 
 async function getAPI(url) {
   try {
-    const response = await fetch(url, {
+    const response = await fetch(url, {  
       headers: { 'Content-Type': 'application/json' },
     });
 
@@ -25,9 +26,79 @@ async function getAPI(url) {
     return json;
   } catch (error) {
     console.log(error);
+    return null; 
   }
 }
 
+async function patchAPI(url) {
+  try {
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const json = await response.json();
+    const status = await response.status;
+    return [json , status];
+
+  } catch (error) {
+    alert(error);
+    return [null, null]; 
+  }
+}
+
+function BotonUnirse(props){
+  const {disabled, idPartida, nickName, nombrePartida} = props;
+  const [idJugador, setIdJugador] = useState(0);
+  const [clicked, setClicked] = useState(false);
+  const [redirect, setRedirect] = useState(false);
+  
+  useEffect(() => {
+    async function fetchData() {
+      if (clicked){
+        const [json, status] = await patchAPI( URL_LOCAL + `/${idPartida}/join`); 
+        if (status == 200){
+            setIdJugador(json.playerId);
+            setRedirect(true);
+        }
+        if (status == 403){
+            alert(json.Error);
+        }
+        setClicked(false);
+      }
+    }
+    fetchData();
+  }, [clicked]);
+  
+  if (redirect){
+    return(
+       <Redirect 
+          to={{
+          pathname: URL_LOBBY, 
+          state:{
+          guestName: nickName,
+          idJugador: idJugador,
+          idPartida: idPartida, 
+          nombrePartida: nombrePartida
+         }
+        }} 
+      />
+    ); 
+  }
+
+  return(  
+    <div>
+     <Button 
+       color={disabled ? "error" : "primary"} 
+       variant="outlined"
+       onClick={() => setClicked(true)}
+     >
+      Unirse
+    </Button>
+    </div>
+  
+  );
+}
 
 function mostrarFilas(disabled, nickName, rows) {
   if (rows) {
@@ -47,29 +118,12 @@ function mostrarFilas(disabled, nickName, rows) {
                 : console.log('falta atributo jugadores')}
             </TableCell>
             <TableCell align="right">
-                  <Link
-                    style={ disabled ? 
-                            {pointerEvents: 'none', textDecoration : 'none'} 
-                            : {textDecoration: 'none'} }
-                    
-                    to={{
-                        pathname: URL_LOBBY, 
-                        state:{
-                        guestName: nickName,
-                        idPartida: row.id, 
-                        nombrePartida: row.name
-                     }}
-                    }>
-                   
-                   <Button 
-                     color={disabled ? "error" : "primary"} 
-                     variant="outlined"
-                   >
-                    Unirse
-                    </Button>
-                
-
-                </Link>
+                  <BotonUnirse
+                    disabled={disabled}
+                    nickName={nickName}
+                    idPartida={row.id}
+                    nombrePartida={row.name}
+                  />
             </TableCell>
           </TableRow>
         ))
