@@ -7,7 +7,7 @@ async function getPlayers(idPartida) {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   };
-  const endpoint = 'http://localhost:8000/games/'.concat(idPartida);
+  const endpoint = process.env.REACT_APP_URL_SERVER.concat('/', idPartida);
   const data = fetch(endpoint, requestOptions)
     .then(async (response) => {
       const isJson = response.headers.get('content-type')?.includes('application/json');
@@ -41,8 +41,9 @@ function ListarJugadores(props) {
   const { playerJoined, setPlayerJoined, idPartida } = props;
 
   useEffect(() => {
+    let isMounted = true;
     async function updatePlayers() {
-      if (playerJoined) {
+      if (playerJoined && isMounted) {
         getPlayers(idPartida)
           .then(async (response) => {
             setRows(response?.players);
@@ -54,6 +55,9 @@ function ListarJugadores(props) {
       }
     }
     updatePlayers();
+    return () => {
+      isMounted = false;
+    }
   }, [playerJoined, idPartida, setPlayerJoined]);
 
   return (

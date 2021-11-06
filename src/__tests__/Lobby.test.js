@@ -26,7 +26,7 @@ const state = {
 };
 history.push('/lobby', state);
 
-const urlWebsocket = 'ws://localhost:8000/games/'.concat(idPartida, '/ws/', idPlayer);
+const urlWebsocket = process.env.REACT_APP_URL_WS.concat('/',idPartida, '/ws/', idPlayer);
 const wsServer = new WS(urlWebsocket);
 wsServer.on('connection', (socket) => {
   socket.send(JSON.stringify({
@@ -47,16 +47,17 @@ const players2 = {
     { id: idPlayer2, nickname: nicknamePlayer2 },
   ],
 };
-const urlServer = 'http://localhost:8000/games/';
+const urlServer = process.env.REACT_APP_URL_SERVER;
 const server = setupServer(
-  rest.get(urlServer.concat(idPartida), (req, res, ctx) => res(
+  rest.get(urlServer.concat('/', idPartida), (req, res, ctx) => res(
     ctx.status(200),
     ctx.json(players),
   )),
-  rest.patch(urlServer.concat(idPartida, '/begin/', idPlayer), (req, res, ctx) => {
+  rest.patch(urlServer.concat('/', idPartida, '/begin/', idPlayer), (req, res, ctx) => {
     wsServer.send(JSON.stringify({
       type: 'BEGIN_GAME_EVENT',
     }));
+    sessionStorage.setItem('empezoPartida',true);
     return res(ctx.status(200));
   }),
 );
@@ -89,7 +90,7 @@ describe('Lobby', () => {
     expect(await screen.findByText(nicknamePlayer)).toBeInTheDocument();
 
     server.use(
-      rest.get(urlServer.concat(idPartida), (req, res, ctx) => res(
+      rest.get(urlServer.concat('/', idPartida), (req, res, ctx) => res(
         ctx.status(200),
         ctx.json(players2),
       )),
@@ -112,7 +113,9 @@ describe('Lobby', () => {
     );
 
     await wsServer.connected;
-    act(() => { userEvent.click(screen.getByRole('button')); });
-    expect(await screen.findByText(/Bienvenido/)).toBeInTheDocument();
+    expect(await screen.findByText(nicknamePlayer)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button'));
+    const comienzo = sessionStorage.getItem('empezoPartida');
+    expect(comienzo).toBe('true');
   });
 });
