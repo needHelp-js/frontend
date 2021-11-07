@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import List from '@mui/material/List';
 import { ListItem, ListItemText } from '@mui/material';
 
-async function getPlayers(idPartida) {
+async function getPlayers(idPartida, idPlayer) {
   const requestOptions = {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   };
-  const endpoint = process.env.REACT_APP_URL_SERVER.concat('/', idPartida);
+  const endpoint = process.env.REACT_APP_URL_SERVER.concat(
+    '/', idPartida, '?gameId=', idPartida, '&playerId=', idPlayer);
   const data = fetch(endpoint, requestOptions)
     .then(async (response) => {
       const isJson = response.headers.get('content-type')?.includes('application/json');
@@ -38,13 +39,13 @@ function mostrarJugadores(rows) {
 
 function ListarJugadores(props) {
   const [rows, setRows] = useState([]);
-  const { playerJoined, setPlayerJoined, idPartida } = props;
+  const { playerJoined, setPlayerJoined, idPartida, idPlayer } = props;
 
   useEffect(() => {
     let isMounted = true;
     async function updatePlayers() {
       if (playerJoined && isMounted) {
-        getPlayers(idPartida)
+        getPlayers(idPartida, idPlayer)
           .then(async (response) => {
             setRows(response?.players);
             setPlayerJoined(false);
