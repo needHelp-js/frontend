@@ -11,7 +11,6 @@ import { useState, useEffect } from 'react';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ErrorIcon from '@mui/icons-material/Error';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import { Redirect } from "react-router-dom";
 import {URL_LOBBY, URL_LOCAL} from '../routes.js';
@@ -25,7 +24,6 @@ async function getAPI(url) {
     const json = await response.json();
     return json;
   } catch (error) {
-    console.log(error);
     return null; 
   }
 }
@@ -42,7 +40,6 @@ async function patchAPI(url) {
     return [json , status];
 
   } catch (error) {
-    alert(error);
     return [null, null]; 
   }
 }
@@ -68,7 +65,7 @@ function BotonUnirse(props){
       }
     }
     fetchData();
-  }, [clicked]);
+  }, [clicked, idPartida]);
   
   if (redirect){
     return(
@@ -100,6 +97,14 @@ function BotonUnirse(props){
   );
 }
 
+
+BotonUnirse.propTypes = {
+  disabled : PropTypes.bool, 
+  idPartida : PropTypes.number, 
+  nickName : PropTypes.string, 
+  nombrePartida : PropTypes.string
+};
+
 function mostrarFilas(disabled, nickName, rows) {
   if (rows) {
     if (rows.length > 0) {
@@ -111,11 +116,11 @@ function mostrarFilas(disabled, nickName, rows) {
           >
             <TableCell component="th" scope="row">
               {row.name ? row.name
-                : console.log('falta atributo nombre')}
+                : undefined}
             </TableCell>
             <TableCell align="right">
               {row.playerCount ? row.playerCount
-                : console.log('falta atributo jugadores')}
+                : undefined}
             </TableCell>
             <TableCell align="right">
                   <BotonUnirse
@@ -216,7 +221,7 @@ function ListarPartidas(props) {
         setBadNickName(false);    
     } else {
         setBadNickName(true);
-    }});
+    }}, [nickName]);
 
   return (
     <div style={{margin:50}}>
