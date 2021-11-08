@@ -23,6 +23,11 @@ async function requestStart(idPartida, idPlayer) {
   return data;
 }
 
+const playerSocket = createRef();
+function createSocket(socketURL){
+  playerSocket.current = new WebSocket(socketURL);
+}
+
 function Lobby(props) {
   const {
     idPartida, nombrePartida, idPlayer, isHost,
@@ -32,10 +37,9 @@ function Lobby(props) {
   const [started, setStarted] = useState(false);
   const wsPrefix = process.env.REACT_APP_URL_WS;
   const socketURL = wsPrefix.concat('/', idPartida, '/ws/', idPlayer);
-  const playerSocket = createRef();
 
   useEffect(() => {
-    playerSocket.current = new WebSocket(socketURL);
+    createSocket(socketURL);
     setPlayerJoined(true);
     let isMounted = true;
 
@@ -73,6 +77,11 @@ function Lobby(props) {
     return (
       <Redirect to={{
         pathname: URL_PARTIDA,
+        state:{
+          idPartida: idPartida,
+          idPlayer: idPlayer,
+          playerSocketjson: JSON.stringify(playerSocket),
+        }
       }}
       />
     );
