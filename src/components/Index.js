@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import ListarPartidas from './ListarPartidas';
-import Lobby from './Lobby';
+import Lobby from './Lobby/Lobby';
 import Main from './Main';
-import CrearPartida from './CrearPartida';
+import CrearPartida from './CrearPartida/CrearPartida';
 import Partida from './Partida';
 import {
   URL_HOME,

@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import React, { useEffect, createRef, useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { URL_PARTIDA } from '../routes';
+import { URL_PARTIDA } from '../../routes';
 import ListarJugadores from './ListarJugadores';
 import './Lobby.css';
 
