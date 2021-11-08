@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Lobby from './Lobby';
+import { Redirect } from 'react-router-dom';
+import { URL_LOBBY } from '../routes';
 import InputCrearPartida from './InputCrearPartida';
-import './Opciones.css';
+import './Main.css';
 
 function handleValidate(nickname, nombrePartida) {
   if (nickname.length < 1) {
@@ -75,6 +76,10 @@ const CrearPartida = (props) => {
           .catch((error) => {
             setErrorMessage(error);
             setHasError(true);
+            setSubmited(false);
+            setNombrePartida('');
+            setNickname('');
+            isMounted = false;
           });
       }
     }
@@ -84,33 +89,31 @@ const CrearPartida = (props) => {
     return () => {
       isMounted = false;
     };
-  }, [submited, endpoint, nickname, nombrePartida]);
+  }, [submited, endpoint]);
 
-  if (hasError) {
-    return (
-      <div>
-        <p className="errorMessage">
-          {errorMessage}
-          {' '}
-          , por favor recargue la pagina..
-        </p>
-      </div>
-    );
-  }
   if (creada) {
     return (
-      <Lobby
-        idPartida={idPartida}
-        nombrePartida={nombrePartida}
-        idHost={idHost}
-        nicknameHost={nickname}
+      <Redirect to={{
+        pathname: URL_LOBBY,
+        state: {
+          idPartida,
+          idPlayer: idHost,
+          nombrePartida,
+          isHost: true,
+        },
+      }}
       />
     );
   }
-  if (validationFail) {
+  if (validationFail || hasError) {
     return (
       <div>
+        <h1>
+          Crear una Partida
+        </h1>
         <InputCrearPartida
+          nombrePartida={nombrePartida}
+          nickname={nickname}
           setNombrePartida={setNombrePartida}
           setNickname={setNickname}
           setSubmited={setSubmited}
@@ -123,11 +126,18 @@ const CrearPartida = (props) => {
   }
 
   return (
-    <InputCrearPartida
-      setNombrePartida={setNombrePartida}
-      setNickname={setNickname}
-      setSubmited={setSubmited}
-    />
+    <div>
+      <h1>
+        Crear una Partida
+      </h1>
+      <InputCrearPartida
+        nombrePartida={nombrePartida}
+        nickname={nickname}
+        setNombrePartida={setNombrePartida}
+        setNickname={setNickname}
+        setSubmited={setSubmited}
+      />
+    </div>
   );
 };
 
