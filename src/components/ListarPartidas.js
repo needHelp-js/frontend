@@ -13,7 +13,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import PropTypes from 'prop-types';
 import TextField from '@mui/material/TextField';
 import { Redirect } from "react-router-dom";
-import {URL_LOBBY, URL_LOCAL} from '../routes.js';
+import {URL_LOBBY} from '../routes.js';
 
 async function getAPI(url) {
   try {
@@ -54,7 +54,7 @@ function BotonUnirse(props){
   useEffect(() => {
     async function fetchData() {
       if (clicked){
-        const [json, status] = await patchAPI( URL_LOCAL + `/${idPartida}/join`); 
+        const [json, status] = await patchAPI(`/${idPartida}/join`); 
         if (status == 200){
             setIdJugador(json.playerId);
             setRedirect(true);
