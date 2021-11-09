@@ -85,7 +85,8 @@ function BotonUnirse(props){
 
   return(  
     <div>
-     <Button 
+     <Button
+       disabled={disabled}
        color={disabled ? "error" : "primary"} 
        variant="outlined"
        onClick={() => setClicked(true)}
