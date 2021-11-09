@@ -28,7 +28,7 @@ async function getAPI(url) {
   }
 }
 
-async function patchAPI(url) {
+async function patchAPI(url, payload) {
   try {
     const response = await fetch(url, {
       body: JSON.stringify(payload),
@@ -54,7 +54,9 @@ function BotonUnirse(props){
   useEffect(() => {
     async function fetchData() {
       if (clicked){
-        const [json, status] = await patchAPI(`/${idPartida}/join`); 
+        const [json, status] = await patchAPI(`/${idPartida}/join`, 
+            {'playerNickname': nickName});
+
         if (status == 200){
             setIdJugador(json.playerId);
             setRedirect(true);
@@ -85,7 +87,8 @@ function BotonUnirse(props){
 
   return(  
     <div>
-     <Button 
+     <Button
+       disabled = {disabled}
        color={disabled ? "error" : "primary"} 
        variant="outlined"
        onClick={() => setClicked(true)}
