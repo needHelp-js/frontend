@@ -54,7 +54,7 @@ function BotonUnirse(props){
   useEffect(() => {
     async function fetchData() {
       if (clicked){
-        const [json, status] = await patchAPI(`/${idPartida}/join`, 
+        const [json, status] = await patchAPI(`${process.env.REACT_APP_URL_SERVER}/${idPartida}/join`, 
             {'playerNickname': nickName});
 
         if (status == 200){
