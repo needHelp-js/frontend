@@ -113,6 +113,7 @@ function Lobby(props) {
         playerJoined={playerJoined}
         setPlayerJoined={setPlayerJoined}
         idPartida={idPartida}
+        idPlayer={idPlayer}
       />
     </div>
 
