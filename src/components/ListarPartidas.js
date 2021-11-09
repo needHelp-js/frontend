@@ -31,6 +31,10 @@ async function getAPI(url) {
 async function patchAPI(url) {
   try {
     const response = await fetch(url, {
+<<<<<<< Updated upstream
+=======
+      body: JSON.stringify(payload),
+>>>>>>> Stashed changes
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
     });
@@ -73,10 +77,9 @@ function BotonUnirse(props){
           to={{
           pathname: URL_LOBBY, 
           state:{
-          guestName: nickName,
-          idJugador: idJugador,
-          idPartida: idPartida, 
-          nombrePartida: nombrePartida
+            idPartida: idPartida, 
+            nombrePartida: nombrePartida,
+            idPlayer: idJugador
          }
         }} 
       />
