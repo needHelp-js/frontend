@@ -31,10 +31,7 @@ async function getAPI(url) {
 async function patchAPI(url) {
   try {
     const response = await fetch(url, {
-<<<<<<< Updated upstream
-=======
       body: JSON.stringify(payload),
->>>>>>> Stashed changes
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
     });
