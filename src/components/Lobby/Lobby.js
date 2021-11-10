@@ -3,6 +3,7 @@ import React, { useEffect, createRef, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { URL_PARTIDA } from '../../routes';
 import ListarJugadores from './ListarJugadores';
+import connectionSocket from '../connectionSocket'
 import './Lobby.css';
 
 async function requestStart(idPartida, idPlayer) {
@@ -23,9 +24,9 @@ async function requestStart(idPartida, idPlayer) {
   return data;
 }
 
-const playerSocket = createRef();
+//const playerSocket = new connectionSocket();
 function createSocket(socketURL){
-  playerSocket.current = new WebSocket(socketURL);
+  connectionSocket.init(new WebSocket(socketURL));
 }
 
 function Lobby(props) {
@@ -40,13 +41,14 @@ function Lobby(props) {
 
   useEffect(() => {
     createSocket(socketURL);
+    console.log('ws singleton es:',connectionSocket.getInstance());
     setPlayerJoined(true);
     let isMounted = true;
 
-    playerSocket.current.onopen = () => {
+    connectionSocket.getInstance().onopen = () => {
       console.log('socket created:', idPartida, idPlayer);
     };
-    playerSocket.current.onmessage = (event) => {
+    connectionSocket.getInstance().onmessage = (event) => {
       const message = JSON.parse(event.data);
       if (message.type === 'PLAYER_JOINED_EVENT' && isMounted) {
         setPlayerJoined(true);
@@ -80,7 +82,7 @@ function Lobby(props) {
         state:{
           idPartida: idPartida,
           idPlayer: idPlayer,
-          playerSocketjson: JSON.stringify(playerSocket),
+          connectionSocket: connectionSocket
         }
       }}
       />
@@ -122,6 +124,7 @@ function Lobby(props) {
         playerJoined={playerJoined}
         setPlayerJoined={setPlayerJoined}
         idPartida={idPartida}
+        idPlayer={idPlayer}
       />
     </div>
 

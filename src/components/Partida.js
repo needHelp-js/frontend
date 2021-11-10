@@ -51,13 +51,13 @@ async function getGameInfo(idPartida, idPlayer) {
 }
 
 function Partida(props){
-  const { idPartida, idPlayer, playerSocketjson } = props.location.state;
-  const playerSocket = JSON.parse(playerSocketjson);
+  const { idPartida, idPlayer, connectionSocket } = props.location.state;
   const [suspecting, setSuspecting] = useState(false);
   const [isTurn, setIsTurn] = useState(false);
 
   useEffect(() =>{
-    playerSocket.current.onmessage = (event) =>{
+    console.log('en partida ws singleton:', connectionSocket.getInstance());
+    connectionSocket.getInstance().onmessage = (event) =>{
       const message = JSON.parse(event.data);
         if (message.type === 'SUSPICION_MADE_EVENT') {
           console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
