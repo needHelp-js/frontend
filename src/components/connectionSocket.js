@@ -3,13 +3,9 @@ class SingletonAlreadyInitialized extends Error {
 
 class SocketSingleton {
 
-  #socket
+  static #socket = null;
 
-  constructor() {
-    this.#socket = null;
-  }
-
-  init(socket) {
+  static init(socket) {
 
       if (this.#socket !== null) {
         throw new SingletonAlreadyInitialized("Singleton already has an instance");
@@ -18,11 +14,10 @@ class SocketSingleton {
       this.#socket = socket;
   }
 
-  getInstance() {
+  static getInstance() {
     return this.#socket;
   }
 }
 
-const connectionSocket = new SocketSingleton();
 
-export default connectionSocket;
+export default SocketSingleton;
