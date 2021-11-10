@@ -20,4 +20,4 @@ class SocketSingleton {
 }
 
 
-export default SocketSingleton;
+export {SocketSingleton, SingletonAlreadyInitialized};
