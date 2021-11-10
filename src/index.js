@@ -4,6 +4,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import Index from './components/Index';
 import './index.css';
+import ElegirVictima from './components/ElegirVictima';
 
 require('dotenv').config();
 

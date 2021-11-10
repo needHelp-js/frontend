@@ -28,6 +28,8 @@ async function getGameInfo(idPartida, idPlayer) {
 
 function Partida(props){
   const { idPartida, idPlayer } = props.location.state;
+  const [suspecting, setSuspecting] = useState(false);
+  const [victima, setVictima] = useState('');
 
   useEffect(() =>{
     console.log('en partida ws singleton:', SocketSingleton.getInstance());
@@ -39,9 +41,35 @@ function Partida(props){
     };
   },[]);
 
+  useEffect(() =>{
+    async function suspect(){
+      sendSuspect(idPartida, idPlayer,"Conde","Momia")
+        .then(() =>{
+          setSuspecting(false);
+        });
+    }
+
+    if(suspecting){
+      suspect();
+    }
+  },[suspecting]);
+
+  function elegir(victimaImg){
+    setVictima(victimaImg);
+    console.log('elegimos vistima', victima, victimaImg);
+  }
+
   return(
     <div>
       <h2>Bienvenido a la Partida</h2>
+        <div className='suspectButton'>
+          <Button 
+          variant='contained'
+          onClick={() =>{setSuspecting(true);}}
+          >
+            Sospechar
+          </Button>
+        </div>
     </div>
   )
 
