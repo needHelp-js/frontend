@@ -30,6 +30,7 @@ function Lobby(props) {
   const [playerJoined, setPlayerJoined] = useState(false);
   const [starting, setStarting] = useState(false);
   const [started, setStarted] = useState(false);
+  const [nPlayers, setNPlayers] = useState(0);
   const wsPrefix = process.env.REACT_APP_URL_WS;
   const socketURL = wsPrefix.concat('/', idPartida, '/ws/', idPlayer);
   const playerSocket = createRef();
@@ -78,7 +79,7 @@ function Lobby(props) {
     );
   }
 
-  if (isHost) {
+  if (isHost && nPlayers >= 2) {
     return (
       <div>
         <h2>
@@ -88,13 +89,14 @@ function Lobby(props) {
         <ListarJugadores
           playerJoined={playerJoined}
           setPlayerJoined={setPlayerJoined}
+          setNPlayers={setNPlayers}
           idPartida={idPartida}
           idPlayer={idPlayer}
         />
         <div className="startButton">
           <Button
             variant="outlined"
-            onClick={() => { setStarting(true); }}
+            onClick={() => setStarting(true)}
           >
             Iniciar Partida
           </Button>
@@ -112,9 +114,18 @@ function Lobby(props) {
       <ListarJugadores
         playerJoined={playerJoined}
         setPlayerJoined={setPlayerJoined}
+        setNPlayers={setNPlayers}
         idPartida={idPartida}
         idPlayer={idPlayer}
       />
+      <div className="startButton">
+        <Button
+          variant="outlined"
+          disabled
+        >
+          Iniciar Partida
+        </Button>
+      </div>
     </div>
 
   );
