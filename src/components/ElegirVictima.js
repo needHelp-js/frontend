@@ -8,24 +8,23 @@ import mayordomo from '../Misterio_cartas/mayordomo.png'
 import conde from '../Misterio_cartas/conde.png'
 import condesa from '../Misterio_cartas/condesa.png'
 
-const victimas = [amaDeLlaves, doncella, jardinero, mayordomo, conde, condesa];
-
-
-function ElegirVictima(){
-  const [victim, setVictim] = useState('');
+function Elegirvictimaa(props){
+  const { victima, setVictima } = props;
   const [newSelected, setNewSelected] = useState('');
 
   function handleClick(id){
-    console.log('vamos a cambiar',id);
+    console.log('vamos a sospechar',id);
     setNewSelected(id);
     const img = document.getElementById(id);
     img.className = "selectedCard";
   }
 
   useEffect(() => {
-    if(victim != newSelected){
-      document.getElementById(newSelected).className = "optionCard";
-      setVictim(newSelected);
+    if(victima != newSelected && victima == ''){
+      setVictima(newSelected);
+    }else if(victima != newSelected && victima != ''){
+      document.getElementById(victima).className = "optionCard";
+      setVictima(newSelected);
     }
 
   },[newSelected]);
@@ -46,8 +45,36 @@ function ElegirVictima(){
       alt={'doncella'}
       onClick={() => {handleClick("doncella")}} 
       />
+      <img 
+      id="jardinero"
+      className="optionCard"
+      src={jardinero}
+      alt={'jardinero'}
+      onClick={() => {handleClick("jardinero")}} 
+      />
+      <img 
+      id="mayordomo"
+      className="optionCard"
+      src={mayordomo}
+      alt={'mayordomo'}
+      onClick={() => {handleClick("mayordomo")}} 
+      />
+      <img 
+      id="conde"
+      className="optionCard"
+      src={conde}
+      alt={'conde'}
+      onClick={() => {handleClick("conde")}} 
+      />
+      <img 
+      id="condesa"
+      className="optionCard"
+      src={condesa}
+      alt={'condesa'}
+      onClick={() => {handleClick("condesa")}} 
+      />
     </Stack>
   );
 }
 
-export default ElegirVictima;
+export default Elegirvictimaa;
