@@ -8,7 +8,7 @@ import jekyllHyde from '../Misterio_cartas/Jekyll_hyde.png'
 import momia from '../Misterio_cartas/momia.png'
 import './Partida.css';
 
-function ElegirMonstruo(){
+function ElegirMonstruo(props){
   const { monstruo, setMonstruo } = props;
   const [newSelected, setNewSelected] = useState('');
 
@@ -32,46 +32,46 @@ function ElegirMonstruo(){
   return(
     <Stack direction='row' alignItems="center" spacing={2}>
       <img 
-      id="dracula"
+      id="Drácula"
       className="optionCard"
       src={dracula}
-      alt={'dracula'}
-      onClick={() => {handleClick("dracula")}} 
+      alt={'Drácula'}
+      onClick={() => {handleClick("Drácula")}} 
       />
       <img 
-      id="fantasma"
+      id="Fantasma"
       className="optionCard"
       src={fantasma}
-      alt={'fantasma'}
-      onClick={() => {handleClick("fantasma")}} 
+      alt={'Fantasma'}
+      onClick={() => {handleClick("Fantasma")}} 
       />
       <img 
-      id="frankenstein"
+      id="Frankenstein"
       className="optionCard"
       src={frankenstein}
-      alt={'frankenstein'}
-      onClick={() => {handleClick("frankenstein")}} 
+      alt={'Frankenstein'}
+      onClick={() => {handleClick("Frankenstein")}} 
       />
       <img 
-      id="momia"
+      id="Momia"
       className="optionCard"
       src={momia}
-      alt={'momia'}
-      onClick={() => {handleClick("momia")}} 
+      alt={'Momia'}
+      onClick={() => {handleClick("Momia")}} 
       />
       <img 
-      id="hombreLobo"
+      id="Hombre Lobo"
       className="optionCard"
       src={hombreLobo}
-      alt={'hombreLobo'}
-      onClick={() => {handleClick("hombreLobo")}} 
+      alt={'Hombre Lobo'}
+      onClick={() => {handleClick("Hombre Lobo")}} 
       />
       <img 
-      id="jekyllHyde"
+      id="Dr. Jekyll Mr Hyde"
       className="optionCard"
       src={jekyllHyde}
-      alt={'jekyllHyde'}
-      onClick={() => {handleClick("jekyllHyde")}} 
+      alt={'Dr. Jekyll Mr Hyde'}
+      onClick={() => {handleClick("Dr. Jekyll Mr Hyde")}} 
       />
     </Stack>
   );

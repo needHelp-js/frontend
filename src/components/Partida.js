@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button } from '@mui/material';
-import SocketSingleton from "./connectionSocket";
+import { SocketSingleton } from "./connectionSocket";
 import './Partida.css';
+import Sospechar from "./Sospechar";
 
 
 
@@ -29,7 +30,7 @@ async function getGameInfo(idPartida, idPlayer) {
 function Partida(props){
   const { idPartida, idPlayer } = props.location.state;
   const [suspecting, setSuspecting] = useState(false);
-  const [victima, setVictima] = useState('');
+  const [suspected, setSuspected] = useState(false);
 
   useEffect(() =>{
     console.log('en partida ws singleton:', SocketSingleton.getInstance());
@@ -41,22 +42,33 @@ function Partida(props){
     };
   },[]);
 
-  useEffect(() =>{
-    async function suspect(){
-      sendSuspect(idPartida, idPlayer,"Conde","Momia")
-        .then(() =>{
-          setSuspecting(false);
-        });
-    }
+  if(suspecting){
+    return(
+      <Sospechar 
+        suspected={suspected}
+        setSuspected={setSuspected}
+        setSuspecting={setSuspecting}
+        idPartida={idPartida}
+        idPlayer={idPlayer}
+      />
+    );
 
-    if(suspecting){
-      suspect();
-    }
-  },[suspecting]);
-
-  function elegir(victimaImg){
-    setVictima(victimaImg);
-    console.log('elegimos vistima', victima, victimaImg);
+  }
+  if(suspected){
+    return(
+      <div>
+        <h2>Bienvenido a la Partida</h2>
+          <div className='suspectButton'>
+            <Button 
+            variant='contained'
+            disabled
+            onClick={() => setSuspecting(true)}
+            >
+              Sospechar
+            </Button>
+          </div>
+      </div>
+    ); 
   }
 
   return(
@@ -65,7 +77,7 @@ function Partida(props){
         <div className='suspectButton'>
           <Button 
           variant='contained'
-          onClick={() =>{setSuspecting(true);}}
+          onClick={() => setSuspecting(true)}
           >
             Sospechar
           </Button>

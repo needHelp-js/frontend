@@ -17,13 +17,13 @@ async function sendSuspect(idPartida, idPlayer, victima, monstruo){
 
   const data = fetch(endpoint, requestOptions)
     .then(async (response) => {
-      const isJson = response.headers.get('content-type')?.includes('application/json');
-      const payload = isJson && await response.json();
       if (!response.ok) {
+        const isJson = response.headers.get('content-type')?.includes('application/json');
+        const payload = isJson && await response.json();
         const error = (payload && payload.Error) || response.status;
         return Promise.reject(error);
       }
-      return payload;
+      return '';
     })
     .catch((error) => Promise.reject(error));
   return data;
@@ -32,10 +32,9 @@ async function sendSuspect(idPartida, idPlayer, victima, monstruo){
 
 
 function Sospechar(props){
-  const { setSuspecting, idPartida, idPlayer } = props;
+  const { suspected, setSuspected, setSuspecting, idPartida, idPlayer } = props;
   const [victima, setVictima] = useState('');
   const [monstruo, setMonstruo] = useState('');
-  const [suspected, setSuspected] = useState(false);
 
 
   useEffect(() =>{
@@ -43,6 +42,9 @@ function Sospechar(props){
       sendSuspect(idPartida, idPlayer, victima, monstruo)
         .then(() =>{
           setSuspecting(false);
+        })
+        .catch((error) =>{
+          console.error(error);
         });
     }
 
