@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
-import ElegirVictima from "./ElegirVictima";
-import ElegirMonstruo from "./ElegirMonstruo";
+import Stack from '@mui/material/Stack';
+import ElegirVictima from './ElegirVictima';
+import ElegirMonstruo from './ElegirMonstruo';
 
-async function sendSuspect(idPartida, idPlayer, victima, monstruo){
+async function sendSuspect(idPartida, idPlayer, victima, monstruo) {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -27,46 +28,46 @@ async function sendSuspect(idPartida, idPlayer, victima, monstruo){
     })
     .catch((error) => Promise.reject(error));
   return data;
-
 }
 
-
-function Sospechar(props){
-  const { suspected, setSuspected, setSuspecting, idPartida, idPlayer } = props;
+function Sospechar(props) {
+  const {
+    suspected, setSuspected, setSuspecting, idPartida, idPlayer,
+  } = props;
   const [victima, setVictima] = useState('');
   const [monstruo, setMonstruo] = useState('');
 
-
-  useEffect(() =>{
-    async function suspect(){
+  useEffect(() => {
+    async function suspect() {
       sendSuspect(idPartida, idPlayer, victima, monstruo)
-        .then(() =>{
+        .then(() => {
           setSuspecting(false);
         })
-        .catch((error) =>{
+        .catch((error) => {
           console.error(error);
         });
     }
 
-    if(suspected){
+    if (suspected) {
       suspect();
     }
-  },[suspected]);
+  }, [suspected]);
 
-  return(
+  return (
     <div>
-      <ElegirVictima victima={victima} setVictima={setVictima}/>
-      <ElegirMonstruo monstruo={monstruo} setMonstruo={setMonstruo}/>
-      <Button 
-        variant='contained'
-        onClick={() => setSuspected(true)}
-      >
-        Sospechar
-      </Button>
+      <Stack alignItems="center">
+        <ElegirVictima victima={victima} setVictima={setVictima} />
+        <ElegirMonstruo monstruo={monstruo} setMonstruo={setMonstruo} />
+        <Button
+          variant="contained"
+          onClick={() => setSuspected(true)}
+        >
+          Sospechar
+        </Button>
+      </Stack>
 
     </div>
   );
-
 }
 
 export default Sospechar;
