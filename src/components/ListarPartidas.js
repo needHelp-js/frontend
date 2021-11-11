@@ -11,26 +11,106 @@ import { useState, useEffect } from 'react';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ErrorIcon from '@mui/icons-material/Error';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
-import { URL_LOBBY } from '../routes.js';
+import { Redirect } from "react-router-dom";
+import {URL_LOBBY} from '../routes.js';
 
 async function getAPI(url) {
   try {
-    const response = await fetch(url, {
+    const response = await fetch(url, {  
       headers: { 'Content-Type': 'application/json' },
     });
 
     const json = await response.json();
     return json;
   } catch (error) {
-    console.log(error);
+    return null; 
   }
 }
 
+async function patchAPI(url, payload) {
+  try {
+    const response = await fetch(url, {
+      body: JSON.stringify(payload),
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const json = await response.json();
+    const status = await response.status;
+    return [json , status];
+
+  } catch (error) {
+    return [null, null]; 
+  }
+}
+
+function BotonUnirse(props){
+  const {disabled, idPartida, nickName, nombrePartida} = props;
+  const [idJugador, setIdJugador] = useState(0);
+  const [clicked, setClicked] = useState(false);
+  const [redirect, setRedirect] = useState(false);
+  
+  useEffect(() => {
+    async function fetchData() {
+      if (clicked){
+        const [json, status] = await patchAPI(`${process.env.REACT_APP_URL_SERVER}/${idPartida}/join`, 
+            {'playerNickname': nickName});
+
+        if (status == 200){
+            setIdJugador(json.playerId);
+            setRedirect(true);
+        }
+        if (status == 403){
+            alert(json.Error);
+        }
+        setClicked(false);
+      }
+    }
+    fetchData();
+  }, [clicked, idPartida]);
+  
+  if (redirect){
+    return(
+       <Redirect 
+          to={{
+          pathname: URL_LOBBY, 
+          state:{
+            idPartida: idPartida, 
+            nombrePartida: nombrePartida,
+            idPlayer: idJugador
+         }
+        }} 
+      />
+    ); 
+  }
+
+  return(  
+    <div>
+     <Button
+       data-testid="unirse"
+       disabled = {disabled}
+       color={disabled ? "error" : "primary"} 
+       variant="outlined"
+       onClick={() => setClicked(true)}
+     >
+      Unirse
+    </Button>
+    </div>
+  
+  );
+}
+
+
+BotonUnirse.propTypes = {
+  disabled : PropTypes.bool, 
+  idPartida : PropTypes.number, 
+  nickName : PropTypes.string, 
+  nombrePartida : PropTypes.string
+};
+
 function mostrarFilas(disabled, nickName, rows) {
   if (rows) {
-    console.log(rows);
     if (rows.length > 0) {
       return (
         rows.map((row) => (
@@ -40,36 +120,19 @@ function mostrarFilas(disabled, nickName, rows) {
           >
             <TableCell component="th" scope="row">
               {row.name ? row.name
-                : console.log('falta atributo nombre')}
+                : undefined}
             </TableCell>
             <TableCell align="right">
               {row.playerCount ? row.playerCount
-                : console.log('falta atributo jugadores')}
+                : undefined}
             </TableCell>
             <TableCell align="right">
-              <Link
-                style={disabled
-                  ? { pointerEvents: 'none', textDecoration: 'none' }
-                  : { textDecoration: 'none' }}
-
-                to={{
-                  pathname: URL_LOBBY,
-                  state: {
-                    guestName: nickName,
-                    idPartida: row.id,
-                    nombrePartida: row.name,
-                  },
-                }}
-              >
-
-                <Button
-                  color={disabled ? 'error' : 'primary'}
-                  variant="outlined"
-                >
-                  Unirse
-                </Button>
-
-              </Link>
+                  <BotonUnirse
+                    disabled={disabled}
+                    nickName={nickName}
+                    idPartida={row.id}
+                    nombrePartida={row.name}
+                  />
             </TableCell>
           </TableRow>
         ))
@@ -94,6 +157,7 @@ function mostrarFilas(disabled, nickName, rows) {
     </TableRow>
   );
 }
+
 
 function TablaPartidas(props) {
   const [rows, setRows] = useState([]);
@@ -130,7 +194,7 @@ function TablaPartidas(props) {
                 endIcon={<RefreshIcon />}
                 onClick={() => setRefresh(true)}
               >
-
+                
                 Actualizar
               </Button>
             </TableCell>
@@ -144,42 +208,44 @@ function TablaPartidas(props) {
   );
 }
 
+
 TablaPartidas.propTypes = {
   url: PropTypes.string,
 };
 
-const isAlphaNumeric = (str) => /^[a-z0-9]+$/gi.test(str);
+
+const isAlphaNumeric = str => /^[a-z0-9]+$/gi.test(str);
 
 function ListarPartidas(props) {
   const [nickName, setNickName] = useState('jugador');
   const [badNickName, setBadNickName] = useState(false);
 
   useEffect(() => {
-    if (isAlphaNumeric(nickName)) {
-      setBadNickName(false);
+    if (isAlphaNumeric(nickName)){
+        setBadNickName(false);    
     } else {
-      setBadNickName(true);
-    }
-  });
+        setBadNickName(true);
+    }}, [nickName]);
 
   return (
-    <div style={{ margin: 50 }}>
+    <div style={{margin:50}}>
       <TextField
-        style={{ margin: 10 }}
-        id="nickname"
-        label="Nickname"
-        defaultValue=""
-        error={badNickName}
-        onChange={(event) => setNickName(event.target.value)}
-      />
-      <TablaPartidas
-        disabled={badNickName}
-        url={props.url}
-        nickName={nickName}
+          style={{margin:10}}
+          id="nickname"
+          label="Nickname"
+          defaultValue=""
+          error={badNickName}
+          onChange={(event) => setNickName(event.target.value)}
+        />
+      <TablaPartidas 
+          disabled={badNickName} 
+          url={props.url} 
+          nickName={nickName}
       />
     </div>
   );
 }
+
 
 ListarPartidas.propTypes = {
   url: PropTypes.string,
