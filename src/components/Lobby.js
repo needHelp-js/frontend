@@ -14,8 +14,11 @@ async function requestStart(idPartida, idPlayer) {
   const endpoint = endpointPrefix.concat('/', idPartida, '/begin/', idPlayer);
   const data = fetch(endpoint, requestOptions)
     .then(async (response) => {
+      console.log('response es:',response);
       if (!response.ok) {
-        const error = response.status;
+        const isJson = response.headers.get('content-type')?.includes('application/json');
+        const payload = isJson && await response.json();
+        const error = (payload.Error) || response.status;
         return Promise.reject(error);
       }
     })
@@ -30,7 +33,9 @@ function Lobby(props) {
   const [playerJoined, setPlayerJoined] = useState(false);
   const [starting, setStarting] = useState(false);
   const [started, setStarted] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const [nPlayers, setNPlayers] = useState(0);
+  const [errorMessage, setErrorMessage] = useState('');
   const wsPrefix = process.env.REACT_APP_URL_WS;
   const socketURL = wsPrefix.concat('/', idPartida, '/ws/', idPlayer);
   const playerSocket = createRef();
@@ -62,7 +67,10 @@ function Lobby(props) {
     async function startGame() {
       requestStart(idPartida, idPlayer)
         .catch((error) => {
-          console.error('no se pudo iniciar la partida', error);
+          setErrorMessage(error);
+          setHasError(true);
+          setStarting(false);
+          console.error('no se pudo iniciar la partida', errorMessage);
         });
     }
     if (starting) {
@@ -76,6 +84,36 @@ function Lobby(props) {
         pathname: URL_PARTIDA,
       }}
       />
+    );
+  }
+
+  if (hasError) {
+    return (
+      <div>
+        <h2>
+          {nombrePartida}
+        </h2>
+        <h4>Jugadores en la partida:</h4>
+        <ListarJugadores
+          playerJoined={playerJoined}
+          setPlayerJoined={setPlayerJoined}
+          setNPlayers={setNPlayers}
+          idPartida={idPartida}
+          idPlayer={idPlayer}
+        />
+        <p>
+          {errorMessage}
+        </p>
+        <div className="startButton">
+          <Button
+            variant="outlined"
+            onClick={() => setStarting(true)}
+          >
+            Iniciar Partida
+          </Button>
+        </div>
+      </div>
+
     );
   }
 

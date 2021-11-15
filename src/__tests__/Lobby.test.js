@@ -21,7 +21,6 @@ const state = {
   idPartida,
   idPlayer,
   nombrePartida,
-  nicknamePlayer,
   isHost: true,
 };
 history.push('/lobby', state);
@@ -58,6 +57,7 @@ const server = setupServer(
       type: 'BEGIN_GAME_EVENT',
     }));
     sessionStorage.setItem('empezoPartida',true);
+    console.log('no queremos este server ahora');
     return res(ctx.status(200));
   }),
 );
@@ -106,6 +106,13 @@ describe('Lobby', () => {
   });
 
   it('Inicia la partida correctamente', async () => {
+    server.use(
+      rest.get(urlServer.concat('/', idPartida), (req, res, ctx) => res(
+        ctx.status(200),
+        ctx.json(players2),
+        )),
+    );
+    
     render(
       <Router history={history}>
         <Index />
@@ -117,5 +124,50 @@ describe('Lobby', () => {
     await userEvent.click(screen.getByRole('button'));
     const comienzo = sessionStorage.getItem('empezoPartida');
     expect(comienzo).toBe('true');
+    sessionStorage.setItem('empezoPartida', false)
+  });
+
+  it('Maneja error cuando no hay suficiente jugadores para iniciar', async () => {
+    const idPartida3 = 3;
+    const idPlayer3 = 3;
+    const history2 = createMemoryHistory();
+    const state2 = {
+      idPartida3,
+      idPlayer3,
+      nombrePartida,
+      isHost: true,
+    };
+    history2.push('/lobby', state2);
+
+    server.use(
+      rest.get(urlServer.concat('/', idPartida3), (req, res, ctx) => {
+        console.log('buen get');
+        return res(
+          ctx.status(200),
+          ctx.json(players2),
+        );
+      }));
+    server.use(
+      rest.patch(urlServer.concat('/', idPartida3, '/begin/', idPlayer3), (req, res, ctx) => {
+        console.log('buen patch bro');
+        return res(
+          ctx.status(403), 
+          ctx.json({Error: 'No hay suficientes jugadores para empezar la partida'})
+        );
+      }),
+    ); 
+
+
+    render(
+      <Router history={history2}>
+        <Index />
+      </Router>,
+    );
+
+    await wsServer.connected;
+    await userEvent.click(screen.getByRole('button'));
+    const comienzo = sessionStorage.getItem('empezoPartida');
+    expect(comienzo).not.toBe('true');
+    //expect(screen.findByText(/No hay/)).toBeInTheDocument();
   });
 });
