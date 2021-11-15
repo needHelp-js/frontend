@@ -31,6 +31,8 @@ function Partida(props){
   const { idPartida, idPlayer } = props.location.state;
   const [suspecting, setSuspecting] = useState(false);
   const [suspected, setSuspected] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() =>{
     console.log('en partida ws singleton:', SocketSingleton.getInstance());
@@ -42,12 +44,33 @@ function Partida(props){
     };
   },[]);
 
+  if(hasError){
+    return(
+      <div>
+        <h2>Bienvenido a la Partida</h2>
+        <div className='suspectButton'>
+          <Button 
+          variant='contained'
+          onClick={() => setSuspecting(true)}
+          >
+            Sospechar
+          </Button>
+        </div>
+        <p>
+          {errorMessage}
+        </p>
+      </div>
+    );
+  }
+
   if(suspecting){
     return(
       <Sospechar 
         suspected={suspected}
         setSuspected={setSuspected}
         setSuspecting={setSuspecting}
+        setHasError={setHasError}
+        setErrorMessage={setErrorMessage}
         idPartida={idPartida}
         idPlayer={idPlayer}
       />

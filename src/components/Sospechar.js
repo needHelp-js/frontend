@@ -21,7 +21,7 @@ async function sendSuspect(idPartida, idPlayer, victima, monstruo) {
       if (!response.ok) {
         const isJson = response.headers.get('content-type')?.includes('application/json');
         const payload = isJson && await response.json();
-        const error = (payload && payload.Error) || response.status;
+        const error = (payload.Error) || response.status;
         return Promise.reject(error);
       }
       return '';
@@ -32,7 +32,7 @@ async function sendSuspect(idPartida, idPlayer, victima, monstruo) {
 
 function Sospechar(props) {
   const {
-    suspected, setSuspected, setSuspecting, idPartida, idPlayer,
+    suspected, setSuspected, setSuspecting, idPartida, idPlayer, setHasError, setErrorMessage,
   } = props;
   const [victima, setVictima] = useState('');
   const [monstruo, setMonstruo] = useState('');
@@ -44,7 +44,11 @@ function Sospechar(props) {
           setSuspecting(false);
         })
         .catch((error) => {
+          setSuspected(false);
+          setSuspecting(false);
+          setErrorMessage(error);
           console.error(error);
+          setHasError(true);
         });
     }
 
@@ -52,6 +56,10 @@ function Sospechar(props) {
       suspect();
     }
   }, [suspected]);
+
+  useEffect(() =>{
+    setHasError(false);
+  },[]);
 
   return (
     <div>

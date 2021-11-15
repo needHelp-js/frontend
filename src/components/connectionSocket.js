@@ -17,6 +17,13 @@ class SocketSingleton {
   static getInstance() {
     return this.#socket;
   }
+
+  static destroy(){
+    if(this.#socket !== null){
+      this.#socket.close();
+      this.#socket = null;
+    }
+  }
 }
 
 
