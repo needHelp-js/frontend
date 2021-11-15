@@ -14,7 +14,6 @@ async function requestStart(idPartida, idPlayer) {
   const endpoint = endpointPrefix.concat('/', idPartida, '/begin/', idPlayer);
   const data = fetch(endpoint, requestOptions)
     .then(async (response) => {
-      console.log('response es:',response);
       if (!response.ok) {
         const isJson = response.headers.get('content-type')?.includes('application/json');
         const payload = isJson && await response.json();

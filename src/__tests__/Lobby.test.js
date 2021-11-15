@@ -9,9 +9,9 @@ import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import Index from '../components/Index';
 
-const idPartida = 1;
-const idPlayer = 1;
-const idPlayer2 = 2;
+let idPartida = 1;
+let idPlayer = 1;
+let idPlayer2 = 2;
 const nombrePartida = 'nombreDeLaPartida';
 const nicknamePlayer = 'nicknameDelJugador';
 const nicknamePlayer2 = 'nicknameDelJugador2';
@@ -57,7 +57,6 @@ const server = setupServer(
       type: 'BEGIN_GAME_EVENT',
     }));
     sessionStorage.setItem('empezoPartida',true);
-    console.log('no queremos este server ahora');
     return res(ctx.status(200));
   }),
 );
@@ -127,36 +126,29 @@ describe('Lobby', () => {
     sessionStorage.setItem('empezoPartida', false)
   });
 
-  it('Maneja error cuando no hay suficiente jugadores para iniciar', async () => {
-    const idPartida3 = 3;
-    const idPlayer3 = 3;
+  it('No permite iniciar la partida si no hay suficientes jugadores', async () => {
+    idPartida = 3;
+    idPlayer = 3;
     const history2 = createMemoryHistory();
     const state2 = {
-      idPartida3,
-      idPlayer3,
+      idPartida,
+      idPlayer,
       nombrePartida,
       isHost: true,
     };
     history2.push('/lobby', state2);
 
     server.use(
-      rest.get(urlServer.concat('/', idPartida3), (req, res, ctx) => {
-        console.log('buen get');
-        return res(
-          ctx.status(200),
-          ctx.json(players2),
-        );
-      }));
-    server.use(
-      rest.patch(urlServer.concat('/', idPartida3, '/begin/', idPlayer3), (req, res, ctx) => {
-        console.log('buen patch bro');
-        return res(
+      rest.patch(urlServer.concat('/', idPartida, '/begin/', idPlayer), (req, res, ctx) => res(
           ctx.status(403), 
           ctx.json({Error: 'No hay suficientes jugadores para empezar la partida'})
-        );
-      }),
-    ); 
-
+        )
+      ),
+      rest.get(urlServer.concat('/', idPartida), (req, res, ctx) => res(
+        ctx.status(200),
+        ctx.json(players2),
+        )),
+      );
 
     render(
       <Router history={history2}>
@@ -168,6 +160,5 @@ describe('Lobby', () => {
     await userEvent.click(screen.getByRole('button'));
     const comienzo = sessionStorage.getItem('empezoPartida');
     expect(comienzo).not.toBe('true');
-    //expect(screen.findByText(/No hay/)).toBeInTheDocument();
   });
 });
