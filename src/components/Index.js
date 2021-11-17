@@ -32,8 +32,6 @@ function Index() {
         </Route>
         <Route path={URL_LOBBY} component={Lobby} />
         <Route path={URL_PARTIDA} component={Partida} />
-        <Route path={URL_VICTIMA} component={ElegirVictima} />
-        <Route path={URL_MONSTRUO} component={ElegirMonstruo} />
       </Switch>
     </div>
   );
