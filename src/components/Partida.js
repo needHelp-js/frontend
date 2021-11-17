@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
-import { SocketSingleton } from "./connectionSocket";
+import { SocketSingleton } from './connectionSocket';
 import './Partida.css';
-import Sospechar from "./Sospechar";
-
-
+import Sospechar from './Sospechar';
 
 async function getGameInfo(idPartida, idPlayer) {
   const requestOptions = {
@@ -12,7 +10,8 @@ async function getGameInfo(idPartida, idPlayer) {
     headers: { 'Content-Type': 'application/json' },
   };
   const endpoint = process.env.REACT_APP_URL_SERVER.concat(
-    '/', idPartida, '?gameId=', idPartida, '&playerId=', idPlayer);
+    '/', idPartida, '?gameId=', idPartida, '&playerId=', idPlayer,
+  );
   const data = fetch(endpoint, requestOptions)
     .then(async (response) => {
       const isJson = response.headers.get('content-type')?.includes('application/json');
@@ -27,7 +26,7 @@ async function getGameInfo(idPartida, idPlayer) {
   return data;
 }
 
-function Partida(props){
+function Partida(props) {
   const { idPartida, idPlayer } = props.location.state;
   const [suspecting, setSuspecting] = useState(false);
   const [suspectComplete, setSuspectComplete] = useState(false);
@@ -35,26 +34,26 @@ function Partida(props){
   const [errorMessage, setErrorMessage] = useState('');
   const [suspectMessage, setSuspectMessage] = useState('');
 
-  useEffect(() =>{
+  useEffect(() => {
     console.log('en partida ws singleton:', SocketSingleton.getInstance());
-    SocketSingleton.getInstance().onmessage = (event) =>{
+    SocketSingleton.getInstance().onmessage = (event) => {
       const message = JSON.parse(event.data);
-        if (message.type === 'SUSPICION_MADE_EVENT') {
-          const mensajeSospecha = 'Se sospecho por '.concat(message.payload.card1Name, ' y ', message.payload.card2Name);
-          setSuspectMessage(mensajeSospecha);
-          console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
-        }
+      if (message.type === 'SUSPICION_MADE_EVENT') {
+        const mensajeSospecha = 'Se sospecho por '.concat(message.payload.card1Name, ' y ', message.payload.card2Name);
+        setSuspectMessage(mensajeSospecha);
+        console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
+      }
     };
-  },[]);
+  }, []);
 
-  if(hasError && !suspecting){
-    return(
+  if (hasError && !suspecting) {
+    return (
       <div>
         <h2>Bienvenido a la Partida</h2>
-        <div className='suspectButton'>
-          <Button 
-          variant='contained'
-          onClick={() => setSuspecting(true)}
+        <div className="suspectButton">
+          <Button
+            variant="contained"
+            onClick={() => setSuspecting(true)}
           >
             Sospechar
           </Button>
@@ -66,8 +65,8 @@ function Partida(props){
     );
   }
 
-  if(suspecting){
-    return(
+  if (suspecting) {
+    return (
       <Sospechar
         setSuspecting={setSuspecting}
         setSuspectComplete={setSuspectComplete}
@@ -77,43 +76,40 @@ function Partida(props){
         idPlayer={idPlayer}
       />
     );
-
   }
-  if(suspectComplete){
-    return(
+  if (suspectComplete) {
+    return (
       <div>
         <h2>Bienvenido a la Partida</h2>
-          <div className='suspectButton'>
-            <Button 
-            variant='contained'
+        <div className="suspectButton">
+          <Button
+            variant="contained"
             disabled
             onClick={() => setSuspecting(true)}
-            >
-              Sospechar
-            </Button>
-            <p>
-              {suspectMessage}
-            </p>
-          </div>
-      </div>
-    ); 
-  }
-
-  return(
-    <div>
-      <h2>Bienvenido a la Partida</h2>
-        <div className='suspectButton'>
-          <Button 
-          variant='contained'
-          onClick={() => setSuspecting(true)}
           >
             Sospechar
           </Button>
+          <p>
+            {suspectMessage}
+          </p>
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h2>Bienvenido a la Partida</h2>
+      <div className="suspectButton">
+        <Button
+          variant="contained"
+          onClick={() => setSuspecting(true)}
+        >
+          Sospechar
+        </Button>
+      </div>
     </div>
-  )
-
-
+  );
 }
 
 export default Partida;
