@@ -32,16 +32,19 @@ async function sendSuspect(idPartida, idPlayer, victima, monstruo) {
 
 function Sospechar(props) {
   const {
-    suspected, setSuspected, setSuspecting, idPartida, idPlayer, setHasError, setErrorMessage,
+    setSuspecting, idPartida, idPlayer,
+    setHasError, setErrorMessage, setSuspectComplete,
   } = props;
   const [victima, setVictima] = useState('');
   const [monstruo, setMonstruo] = useState('');
+  const [suspected, setSuspected] = useState(false);
 
   useEffect(() => {
     async function suspect() {
       sendSuspect(idPartida, idPlayer, victima, monstruo)
         .then(() => {
           setSuspecting(false);
+          setSuspectComplete(true);
         })
         .catch((error) => {
           setSuspected(false);
@@ -57,9 +60,9 @@ function Sospechar(props) {
     }
   }, [suspected]);
 
-  useEffect(() =>{
+  useEffect(() => {
     setHasError(false);
-  },[]);
+  }, []);
 
   return (
     <div>

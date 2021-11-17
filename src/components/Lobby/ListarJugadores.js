@@ -47,11 +47,14 @@ function ListarJugadores(props) {
       if (playerJoined && isMounted) {
         getPlayers(idPartida, idPlayer)
           .then(async (response) => {
-            setRows(response?.players);
-            setPlayerJoined(false);
+            if(isMounted){
+              setRows(response?.players);
+              setPlayerJoined(false);
+            }
           })
           .catch((error) => {
             console.error('Oops something went wrong..', error);
+            isMounted = false;
           });
       }
     }

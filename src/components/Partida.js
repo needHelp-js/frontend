@@ -30,21 +30,24 @@ async function getGameInfo(idPartida, idPlayer) {
 function Partida(props){
   const { idPartida, idPlayer } = props.location.state;
   const [suspecting, setSuspecting] = useState(false);
-  const [suspected, setSuspected] = useState(false);
+  const [suspectComplete, setSuspectComplete] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [suspectMessage, setSuspectMessage] = useState('');
 
   useEffect(() =>{
     console.log('en partida ws singleton:', SocketSingleton.getInstance());
     SocketSingleton.getInstance().onmessage = (event) =>{
       const message = JSON.parse(event.data);
         if (message.type === 'SUSPICION_MADE_EVENT') {
+          const mensajeSospecha = 'Se sospecho por '.concat(message.payload.card1Name, ' y ', message.payload.card2Name);
+          setSuspectMessage(mensajeSospecha);
           console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
         }
     };
   },[]);
 
-  if(hasError){
+  if(hasError && !suspecting){
     return(
       <div>
         <h2>Bienvenido a la Partida</h2>
@@ -65,10 +68,9 @@ function Partida(props){
 
   if(suspecting){
     return(
-      <Sospechar 
-        suspected={suspected}
-        setSuspected={setSuspected}
+      <Sospechar
         setSuspecting={setSuspecting}
+        setSuspectComplete={setSuspectComplete}
         setHasError={setHasError}
         setErrorMessage={setErrorMessage}
         idPartida={idPartida}
@@ -77,7 +79,7 @@ function Partida(props){
     );
 
   }
-  if(suspected){
+  if(suspectComplete){
     return(
       <div>
         <h2>Bienvenido a la Partida</h2>
@@ -89,6 +91,9 @@ function Partida(props){
             >
               Sospechar
             </Button>
+            <p>
+              {suspectMessage}
+            </p>
           </div>
       </div>
     ); 
