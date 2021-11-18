@@ -5,16 +5,12 @@ import Lobby from './Lobby/Lobby';
 import Main from './Main';
 import CrearPartida from './CrearPartida/CrearPartida';
 import Partida from './Partida';
-import ElegirMonstruo from './ElegirMonstruo';
-import ElegirVictima from './ElegirVictima';
 import {
   URL_HOME,
   URL_LISTAR_PARTIDAS,
   URL_CREAR_PARTIDA,
   URL_LOBBY,
   URL_PARTIDA,
-  URL_VICTIMA,
-  URL_MONSTRUO,
 } from '../routes';
 
 const URL_SERVER = process.env.REACT_APP_URL_SERVER;
@@ -32,8 +28,6 @@ function Index() {
         </Route>
         <Route path={URL_LOBBY} component={Lobby} />
         <Route path={URL_PARTIDA} component={Partida} />
-        <Route path={URL_VICTIMA} component={ElegirVictima} />
-        <Route path={URL_MONSTRUO} component={ElegirMonstruo} />
       </Switch>
     </div>
   );

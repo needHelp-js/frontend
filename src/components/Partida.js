@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '@mui/material';
+import { Button, Box } from '@mui/material';
 import { SocketSingleton } from './connectionSocket';
 import './Partida.css';
 import Sospechar from './Sospechar';
+import Tablero from './Tablero';
 
 async function getGameInfo(idPartida, idPlayer) {
   const requestOptions = {
@@ -33,6 +34,11 @@ function Partida(props) {
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [suspectMessage, setSuspectMessage] = useState('');
+  const [order, setOrder] = useState(-1);
+  const [players, setPlayers] = useState([]);
+  const [starting, setStarting] = useState(false);
+  const [isTurn, setIsTurn] = useState(false);
+  const [currentTurn, setCurrentTurn] = useState(-1);
 
   useEffect(() => {
     console.log('en partida ws singleton:', SocketSingleton.getInstance());
@@ -44,12 +50,64 @@ function Partida(props) {
         console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
       }
     };
+    setStarting(true);
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function getGameDetails(){
+      getGameInfo(idPartida, idPlayer)
+      .then((response) => {
+        if(isMounted){
+          for(let i=0; i < response?.players.length ; i++){
+            if(idPlayer === response?.players[i].id){
+              setOrder(i);
+              break;
+            }
+            setPlayers(response?.players);
+            setCurrentTurn(response?.currentTurn)
+          }
+        }
+      }).then(() =>{
+        console.log('game info:',players, isTurn, order);
+        setStarting(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setErrorMessage(error);
+        setHasError(true);
+      });
+    }
+
+    if(starting){
+      getGameDetails();
+    }
+
+    /* if(order !== -1 && players !== []){
+      console.log('players es',players);
+      if(currentTurn === players[order].turnOrder){
+        setIsTurn(true);
+      }
+    } */
+
+    return () => {
+      isMounted = false
+    }
+
+  }, [starting, idPartida, idPlayer, players, order]);
 
   if (hasError && !suspecting) {
     return (
       <div>
         <h2>Bienvenido a la Partida</h2>
+        <Box sx={{
+            width: 640,
+            height: 640
+          }}>
+            <Tablero
+              players={players}
+            />
+        </Box>
         <div className="suspectButton">
           <Button
             variant="contained"
@@ -82,6 +140,14 @@ function Partida(props) {
       <div>
         <h2>Bienvenido a la Partida</h2>
         <div className="suspectButton">
+        <Box sx={{
+            width: 640,
+            height: 640
+        }}>
+          <Tablero
+            players={players}
+          />
+        </Box>
           <Button
             variant="contained"
             disabled
@@ -100,6 +166,14 @@ function Partida(props) {
   return (
     <div>
       <h2>Bienvenido a la Partida</h2>
+      <Box sx={{
+            width: 640,
+            height: 640
+      }}>
+        <Tablero
+          players={players}
+        />
+      </Box>
       <div className="suspectButton">
         <Button
           variant="contained"

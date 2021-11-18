@@ -9,14 +9,16 @@ import spriteMisterio from '../sprites/spriteMisterio.png';
 import spriteSalon from '../sprites/spriteSalon.png'; 
 import spriteBiblioteca from '../sprites/spriteBiblioteca.png';
 import spritePanteon from '../sprites/spritePanteon.png';
-import spriteLaboratorio from '../sprites/spriteLaboratorio.png';;
+import spriteLaboratorio from '../sprites/spriteLaboratorio.png';
+import { SocketSingleton } from './connectionSocket';
 
-const widthTablero = 1300;
-const heightTablero = 1300; 
-const centerY = 20;
-const centerX = 20;
+const widthTablero = 640;
+const heightTablero = 640; 
+const centerY = 10;
+const centerX = 10;
 const cantidadCasilleros = 20;
 const casilleroSize = widthTablero / cantidadCasilleros;
+const recintoSize = 191;
 
 const getPixelRatio = context => {
   var backingStore =
@@ -64,16 +66,16 @@ function dibujarCasilleroOcupado(ctx, color, nickName, i, j){
   
   ctx.stroke();
   ctx.fill();
-  ctx.font = '30px Helvetica';
+  ctx.font = '18px Helvetica';
   ctx.textBaseline = 'top';  
   ctx.fillStyle = 'black';
-  const textMarginX = 60;
-  const textMarginY = -60;
+  const textMarginX = 20;
+  const textMarginY = -20;
   const textX = centerX + j*casilleroSize + textMarginX;
   const textY =  centerY + i*casilleroSize - textMarginY;
   const width = ctx.measureText(nickName).width;
 
-  ctx.fillRect( textX, textY, width, 30);
+  ctx.fillRect( textX, textY, width, 20);
   ctx.fillStyle = color; 
   ctx.fillText(nickName, textX, textY);
 
@@ -83,7 +85,7 @@ function dibujarRecintoCochera(ctx){
   const img = new Image();
   img.src = spriteCochera;
   ctx.drawImage(img, centerX + 0*casilleroSize, 
-                centerY + 0*casilleroSize, 390, 390);
+                centerY + 0*casilleroSize, recintoSize, recintoSize);
 
 }
 
@@ -91,7 +93,7 @@ function dibujarRecintoVestibulo(ctx){
   const img = new Image();
   img.src = spriteVestibulo;
   ctx.drawImage(img, centerX + 0*casilleroSize, 
-                centerY + 7*casilleroSize, 390, 390);
+                centerY + 7*casilleroSize, recintoSize, recintoSize);
 
 }
 
@@ -100,7 +102,7 @@ function dibujarRecintoBodega(ctx){
   const img = new Image();
   img.src = spriteBodega;
   ctx.drawImage(img, centerX + 0*casilleroSize, 
-                centerY + 14*casilleroSize, 390, 390);
+                centerY + 14*casilleroSize, recintoSize, recintoSize);
 
 }
 
@@ -109,7 +111,7 @@ function dibujarRecintoAlcoba(ctx){
   const img = new Image();
   img.src = spriteAlcoba;
   ctx.drawImage(img, centerX + 7*casilleroSize, 
-                centerY + 0*casilleroSize, 390, 390);
+                centerY + 0*casilleroSize, recintoSize, recintoSize);
 
 }
 
@@ -117,7 +119,7 @@ function dibujarRecintoMisterio(ctx){
   const img = new Image();
   img.src = spriteMisterio;
   ctx.drawImage(img, centerX + 7*casilleroSize, 
-                centerY + 7*casilleroSize, 390, 390);
+                centerY + 7*casilleroSize, recintoSize, recintoSize);
 
 }
 
@@ -125,7 +127,7 @@ function dibujarRecintoSalon(ctx){
   const img = new Image();
   img.src = spriteSalon;
   ctx.drawImage(img, centerX + 7*casilleroSize, 
-                centerY + 14*casilleroSize, 390, 390);
+                centerY + 14*casilleroSize, recintoSize, recintoSize);
 
 }
 
@@ -133,7 +135,7 @@ function dibujarRecintoBiblioteca(ctx){
   const img = new Image();
   img.src = spriteBiblioteca;
   ctx.drawImage(img, centerX + 14*casilleroSize, 
-                centerY + 0*casilleroSize, 390, 390);
+                centerY + 0*casilleroSize, recintoSize, recintoSize);
 
 }
 
@@ -141,19 +143,19 @@ function dibujarRecintoPanteon(ctx){
   const img = new Image();
   img.src = spritePanteon;
   ctx.drawImage(img, centerX + 14*casilleroSize,
-                centerY + 7*casilleroSize, 390, 390);
+                centerY + 7*casilleroSize, recintoSize, recintoSize);
 
 }
-
 function dibujarRecintoLaboratorio(ctx){
   const img = new Image();
   img.src = spriteLaboratorio;
   ctx.drawImage(img, centerX + 14*casilleroSize, 
-                centerY + 14*casilleroSize, 390, 390);
+                centerY + 14*casilleroSize, recintoSize, recintoSize);
 
 }
 
 function Tablero(props) {
+  const { isTurn, players } = props;
   let ref = useRef();
   const [pos, setPos] = useState([6,0]);
 
@@ -197,9 +199,9 @@ function Tablero(props) {
         if ( [6, 13].includes(i) || [6, 13].includes(j)){
           dibujarCasilleroVacio(ctx, i, j);
           
-          let iMouse = Math.floor((2*mouse.y)/casilleroSize);
-          let jMouse = Math.floor((2*mouse.x)/casilleroSize);
-          if (mouse.isDown && iMouse < 20 && jMouse < 20){
+          let iMouse = Math.floor((mouse.y)/casilleroSize);
+          let jMouse = Math.floor((mouse.x)/casilleroSize);
+          if (mouse.isDown){
             if ([6,13].includes(iMouse) || [6, 13].includes(jMouse)){
               setPos([ iMouse, jMouse]);
             }
@@ -223,8 +225,8 @@ function Tablero(props) {
   return (
     <div>
     <canvas
-      ref={ref}
-      style={{width: widthTablero, height: heightTablero}}   
+      ref={ref} 
+      style={{width: widthTablero, height: heightTablero}}
 
      />
     </div>
