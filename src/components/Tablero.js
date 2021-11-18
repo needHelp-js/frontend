@@ -146,12 +146,34 @@ function dibujarRecintoPanteon(ctx){
                 centerY + 7*casilleroSize, recintoSize, recintoSize);
 
 }
+
+
 function dibujarRecintoLaboratorio(ctx){
   const img = new Image();
   img.src = spriteLaboratorio;
   ctx.drawImage(img, centerX + 14*casilleroSize, 
                 centerY + 14*casilleroSize, recintoSize, recintoSize);
 
+}
+
+const shuffleArray = array => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+}
+
+function dibujarPosicionesJugadores(ctx, colores, players){
+    for (let i = 0; i < players.length; i++){
+        const player = players[i];
+        const position = player.position;
+        const nickName = player.nickname;
+        const posI = position[0];
+        const posJ = position[1];
+        dibujarCasilleroOcupado(ctx, colores[i], nickName, posI, posJ);
+    }
 }
 
 function Tablero(props) {
@@ -162,7 +184,15 @@ function Tablero(props) {
   const mouse = useMouse(ref, {
     enterDelay: 100,
     leaveDelay: 100,
-  })
+  });
+  
+  const [colores, setColores] = useState(['green', 'white', 'blue', 
+                'red', 'yellow', 'pink']);
+  
+  useEffect(() => {
+        shuffleArray(colores);
+    }, []);
+
 
   useEffect(() => {
     let canvas = ref.current;
@@ -213,13 +243,7 @@ function Tablero(props) {
         } 
       }
     }
-    
-    dibujarCasilleroOcupado(ctx, 'green', 'GEROGE', 6, 0);
-    dibujarCasilleroOcupado(ctx, 'red', 'RINGO', 9, 6);
-    dibujarCasilleroOcupado(ctx, 'pink', 'PAUL', 9, 13);
-    dibujarCasilleroOcupado(ctx, 'blue', 'JOHN', 13, 2);
-    
-
+    dibujarPosicionesJugadores(ctx, colores, players);
   });
 
   return (
