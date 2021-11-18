@@ -1,36 +1,44 @@
 import './RespuestaDado.css';
 import Button from '@mui/material/Button';
 import React, {useEffect, useState, createRef} from 'react';
+import {SocketSingleton} from './connectionSocket'
+
+
 
 
 async function get(url){
 
-    try {
-        const response = await fetch(url, {
-            headers: {"Content-Type": "application/json"}
-        });
-
-        const json = await response.json();
-        if(!response.ok){
-            alert(json.Error);
-        }
-        return json;
-
-    } catch (error){
-        console.log(error);
-    }
-
+    const requestOptions = {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      };
+      const data = fetch(url, requestOptions)
+        .then(async (response) => {
+            if (!response.ok) {
+            const isJson = response.headers.get('content-type')?.includes('application/json');
+            const payload = isJson && await response.json();
+            const error = (payload) || response.status;
+            return Promise.reject(error);
+          }
+          return '';
+        })
+        .catch((error) => Promise.reject(error));
+      return data;
 }
 
-
-const DadoUrl = 'http://localhost:8000/games/5/dice/10';
 
 
 let diceRef = React.createRef();
 
 
-async function rollDice() {
-    await get(DadoUrl);
+async function rollDice(DadoUrl, setTirando) { 
+    get(DadoUrl)
+    .then(() => {
+        setTirando(false);
+    })
+    .catch((error) => {
+        console.error(error);
+    });
   
 }
   
@@ -39,28 +47,25 @@ async function rollDice() {
     die.classList.toggle("even-roll");
   }
 
-function RespuestaDado(){
+function RespuestaDado(props){
 
-    const socketURL = 'ws://localhost:8000/games/5/ws/10';
-    const [player, setPlayer] = useState(false);
-    const playerSocket = createRef();
-    
+    const {DadoUrl} = props;
+    const [tirando, setTirando] = useState(false);
+
     useEffect(() => {
-        playerSocket.current = new WebSocket(socketURL);
-        setPlayer(true);
-
-        playerSocket.current.onmessage = (event) => {
+        console.log('en dado',SocketSingleton.getInstance());
+        SocketSingleton.getInstance().onmessage = (event) => {
             const message = JSON.parse(event.data);
             console.log(message);
             if(message.type === 'DICE_ROLL_EVENT') {
-                console.log('ha tirado el dado', message?.payload.playerNickname);
+                console.log('ha tirado el dado', message?.payload);
                 toggleClasses(diceRef.current);
-                diceRef.current.setAttribute("data-roll", message.payload);
-                setPlayer(true);
+                diceRef.current.setAttribute("data-roll", message?.payload);
+                
             }
         };
  
-    }, [socketURL]);
+    }, [tirando]);
     
     return(
     
@@ -69,9 +74,10 @@ function RespuestaDado(){
        
         <Button
 
-        onClick = {rollDice}
-
-    
+        onClick={() => {
+            rollDice(DadoUrl, setTirando)
+            setTirando(true);
+        }}
 
         variant="contained"
 
@@ -80,40 +86,40 @@ function RespuestaDado(){
 
         </Button> 
         
-        <div class="dice">
-            <ol class="die-list even-roll" data-roll="1" id="die-1" ref={diceRef}>
-                <li class="die-item" data-side="1">
-                    <span class="dot"></span>
+        <div className="dice">
+            <ol className="die-list even-roll" data-roll="1" id="die-1" ref={diceRef}>
+                <li className="die-item" data-side="1">
+                    <span className="dot"></span>
                 </li>
-                <li class="die-item" data-side="2">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
+                <li className="die-item" data-side="2">
+                    <span className="dot"></span>
+                    <span className="dot"></span>
                 </li>
-                <li class="die-item" data-side="3">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
+                <li className="die-item" data-side="3">
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
                 </li>
-                <li class="die-item" data-side="4">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
+                <li className="die-item" data-side="4">
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
                 </li>
-                <li class="die-item" data-side="5">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
+                <li className="die-item" data-side="5">
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
                 </li>
-                <li class="die-item" data-side="6">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
+                <li className="die-item" data-side="6">
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
                 </li>
             </ol>
         </div>

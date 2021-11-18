@@ -41,7 +41,7 @@ function Partida(props){
   },[]);
 
 
-const url = 'http://localhost:8000/games'.concat(idPartida,'/dice/', idPlayer);
+const url = 'http://localhost:8000/games/'.concat(idPartida,'/dice/', idPlayer);
 
   return(
     <div>
