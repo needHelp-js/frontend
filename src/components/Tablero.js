@@ -53,6 +53,15 @@ function dibujarCasilleroDisponible(ctx, i, j){
                 casilleroSize, casilleroSize);
 }
 
+function dibujarCasillerosDisponibles(ctx, availablePositions){
+  for (let i = 0; i < availablePositions.length; i++){
+    const pos = availablePositions[i],
+    const posI = pos[0];
+    const posJ = pos[1];
+    dibjuarCasilleroDisponible(ctx, posI, posJ);
+  }
+}
+
 function dibujarCasilleroOcupado(ctx, color, nickName, i, j){
   const margin =  casilleroSize / 2;
 
@@ -176,7 +185,8 @@ function dibujarPosicionesJugadores(ctx, colores, players){
 }
 
 function Tablero(props) {
-  const { isTurn, players} = props;
+  const { isTurn, players, 
+          availablePositions, showAvailable} = props;
   let ref = useRef();
   const [pos, setPos] = useState([6,0]);
 
@@ -242,6 +252,10 @@ function Tablero(props) {
         } 
       }
     }
+    if (showAvailable){
+        dibujarCasillerosDisponibles(ctx, availablePositions);
+    }
+
     dibujarPosicionesJugadores(ctx, colores, players);
   });
 
