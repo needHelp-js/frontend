@@ -41,7 +41,7 @@ function mostrarJugadores(rows) {
 function ListarJugadores(props) {
   const [rows, setRows] = useState([]);
   const {
-    playerJoined, setPlayerJoined, idPartida, idPlayer,
+    playerJoined, setPlayerJoined, setNPlayers, idPartida, idPlayer,
   } = props;
 
   useEffect(() => {
@@ -50,10 +50,9 @@ function ListarJugadores(props) {
       if (playerJoined && isMounted) {
         getPlayers(idPartida, idPlayer)
           .then(async (response) => {
-            if (isMounted) {
-              setRows(response?.players);
-              setPlayerJoined(false);
-            }
+            setRows(response?.players);
+            setNPlayers(response?.players.length);
+            setPlayerJoined(false);
           })
           .catch((error) => {
             console.error('Oops something went wrong..', error);
