@@ -13,7 +13,6 @@ import {SocketSingleton} from '../components/connectionSocket'
 
 
 
-
 const MOCK_GET = [
   {'type' : 'DICE_ROLL_EVENT', 'payload' : 1},
   {'type' : 'DICE_ROLL_EVENT', 'payload' : 2},
@@ -26,8 +25,8 @@ const MOCK_GET = [
 
 const server = setupServer(
 
-  rest.get('/rollDice', (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(MOCK_GET))
+  rest.get(process.env.REACT_APP_URL_SERVER.concat('/1/dice/1'), (req, res, ctx) => {
+      return res(ctx.status(204))
   }),
 
   rest.get('/conectionFail', (req, res, ctx) => {
@@ -51,7 +50,6 @@ wsServer.on('connection', (socket) => {
   }));
 });
 
-SocketSingleton.init(wsServer); 
 
 const history = createMemoryHistory();
 const state = {
@@ -66,17 +64,17 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 
-const number = MOCK_GET.map(obj => obj['number']);
+const number = MOCK_GET.map(obj => obj['payload']);
 
 
 test('1. Caso de éxito: Es el turno del jugador', async () => {
 
+  SocketSingleton.init(new WebSocket(urlWebsocket)); 
 
+  console.log("HOLAAAAAAAA");
   render(
-      <Router history={history}>
-        <Index />
-      </Router>,
-    );
+      <RespuestaDado DadoUrl={process.env.REACT_APP_URL_SERVER.concat('/1/dice/1')}/>
+);
 
   await wsServer.connected;
 
@@ -92,18 +90,18 @@ test('1. Caso de éxito: Es el turno del jugador', async () => {
 });
 
 
-test('2. Caso de excepción: Interrupción de la conexión.', async () => {
+// test('2. Caso de excepción: Interrupción de la conexión.', async () => {
 
-    render(
-        <Router history={history}>
-          <Index />
-        </Router>,
-      );
+//     render(
+//         <Router history={history}>
+//           <Index />
+//         </Router>,
+//       );
 
-    await wsServer.connected;
+//     await wsServer.connected;
 
-    const actualizar = await screen.getByRole('button');
-    global.alert = jest.fn();
-    await userEvent.click(actualizar);
-    expect(global.alert.mock.calls.length).toBe(1);
-});
+//     const actualizar = await screen.getByRole('button');
+//     global.alert = jest.fn();
+//     await userEvent.click(actualizar);
+//     expect(global.alert.mock.calls.length).toBe(1);
+// });
