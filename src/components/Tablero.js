@@ -10,7 +10,6 @@ import spriteSalon from '../sprites/spriteSalon.png';
 import spriteBiblioteca from '../sprites/spriteBiblioteca.png';
 import spritePanteon from '../sprites/spritePanteon.png';
 import spriteLaboratorio from '../sprites/spriteLaboratorio.png';
-import { SocketSingleton } from './connectionSocket';
 
 const widthTablero = 640;
 const heightTablero = 640; 
@@ -49,9 +48,18 @@ function dibujarCasilleroClickeado(ctx, i, j){
 }
 
 function dibujarCasilleroDisponible(ctx, i, j){
-  ctx.fillStyle = 'lightgray';
+  ctx.fillStyle = 'lightgreen';
   ctx.fillRect(centerX + j*casilleroSize, centerY + i*casilleroSize, 
                 casilleroSize, casilleroSize);
+}
+
+function dibujarCasillerosDisponibles(ctx, availablePositions){
+  for (let i = 0; i < availablePositions.length; i++){
+    const pos = availablePositions[i];
+    const posI = pos[0];
+    const posJ = pos[1];
+    dibujarCasilleroDisponible(ctx, posI, posJ);
+  }
 }
 
 function dibujarCasilleroOcupado(ctx, color, nickName, i, j){
@@ -177,7 +185,8 @@ function dibujarPosicionesJugadores(ctx, colores, players){
 }
 
 function Tablero(props) {
-  const { isTurn, players } = props;
+  const { isTurn, players, 
+          availablePositions, showAvailable} = props;
   let ref = useRef();
   const [pos, setPos] = useState([6,0]);
 
@@ -224,6 +233,9 @@ function Tablero(props) {
     dibujarRecintoPanteon(ctx);
     dibujarRecintoLaboratorio(ctx);
 
+    if (showAvailable){
+      dibujarCasillerosDisponibles(ctx, availablePositions);
+    }
     for (let i = 0; i < cantidadCasilleros; i++){
       for (let j = 0; j < cantidadCasilleros; j++){
         if ( [6, 13].includes(i) || [6, 13].includes(j)){
@@ -239,10 +251,10 @@ function Tablero(props) {
           if (iMouse == i && jMouse == j){
             dibujarCasilleroClickeado(ctx, i, j);
           }
-          dibujarCasilleroOcupado(ctx, 'white', 'Yo', pos[0], pos[1]);
         } 
       }
     }
+
     dibujarPosicionesJugadores(ctx, colores, players);
   });
 
