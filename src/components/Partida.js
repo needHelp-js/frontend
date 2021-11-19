@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Box, Grid, Stack } from '@mui/material';
+import {
+  Button, Box, Grid, Stack,
+} from '@mui/material';
 import { SocketSingleton } from './connectionSocket';
 import './Partida.css';
 import Sospechar from './Sospechar';
@@ -28,13 +30,13 @@ async function getGameInfo(idPartida, idPlayer) {
   return data;
 }
 
-async function getPositions(idPartida, idPlayer, dado){
+async function getPositions(idPartida, idPlayer, dado) {
   const requestOptions = {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   };
   const endpoint = process.env.REACT_APP_URL_SERVER.concat(
-    '/', idPartida, '/availablePositions/', idPlayer, '?diceNumber=', dado
+    '/', idPartida, '/availablePositions/', idPlayer, '?diceNumber=', dado,
   );
   const data = fetch(endpoint, requestOptions)
     .then(async (response) => {
@@ -50,7 +52,6 @@ async function getPositions(idPartida, idPlayer, dado){
   return data;
 }
 
-
 function Partida(props) {
   const { idPartida, idPlayer } = props.location.state;
   const [suspecting, setSuspecting] = useState(false);
@@ -64,13 +65,13 @@ function Partida(props) {
   const [isTurn, setIsTurn] = useState(false);
   const [currentTurn, setCurrentTurn] = useState(-1);
   const [dado, setDado] = useState(0);
-  const [tirando, setTirando] = useState(false);
   const [tiroCompleto, setTiroCompleto] = useState(false);
   const [availablePositions, setAvailablePositions] = useState([]);
   const [showAvailable, setShowAvailable] = useState(false);
+  const [gettingTurn, setGettingTurn] = useState(false);
 
   const DadoUrl = process.env.REACT_APP_URL_SERVER.concat('/', idPartida, '/dice/', idPlayer);
-  
+
   useEffect(() => {
     console.log('en partida ws singleton:', SocketSingleton.getInstance());
     SocketSingleton.getInstance().onmessage = (event) => {
@@ -79,107 +80,114 @@ function Partida(props) {
         const mensajeSospecha = 'Se sospecho por '.concat(message.payload.card1Name, ' y ', message.payload.card2Name);
         setSuspectMessage(mensajeSospecha);
         console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
-      }else if (message.type === 'MOVE_PLAYER_EVENT'){
+      } else if (message.type === 'MOVE_PLAYER_EVENT') {
         setStarting(true);
-      }else if(message.type === 'DICE_ROLL_EVENT') {
-        console.log('ha tirado el dado', message?.payload);
-        setDado(message?.payload);
-        setTiroCompleto(true);
+      } else if (message.type === 'DICE_ROLL_EVENT') {
+        if (isTurn) {
+          console.log('ha tirado el dado', message?.payload);
+          setDado(message?.payload);
+          setTiroCompleto(true);
+        }
       }
     };
     setStarting(true);
-  }, []);
+  }, [isTurn]);
 
   useEffect(() => {
     let isMounted = true;
-    async function getGameDetails(){
+    async function getGameDetails() {
       getGameInfo(idPartida, idPlayer)
-      .then((response) => {
-        if(isMounted){
-          for(let i=0; i < response?.players.length ; i++){
-            if(idPlayer === response?.players[i].id){
-              setOrder(i);
-              break;
+        .then((response) => {
+          if (isMounted) {
+            for (let i = 0; i < response?.players.length; i++) {
+              if (idPlayer === response?.players[i].id) {
+                setOrder(i);
+                break;
+              }
             }
+            setPlayers(response?.players);
+            setCurrentTurn(response?.currentTurn);
           }
-          setPlayers(response?.players);
-          setCurrentTurn(response?.currentTurn)
-        }
-      }).then(() =>{
-        console.log('game info:',players, isTurn, order);
-        setStarting(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setErrorMessage(error);
-        setHasError(true);
-      });
+        }).then(() => {
+          console.log('game info:', players, isTurn, order);
+          setStarting(false);
+          setGettingTurn(true);
+        })
+        .catch((error) => {
+          console.error(error);
+          setErrorMessage(error);
+          setHasError(true);
+        });
     }
 
-    if(starting){
+    if (starting) {
       getGameDetails();
     }
 
-    /* if(order !== -1 && players !== []){
-      console.log('players es',players);
-      if(currentTurn === players[order].turnOrder){
-        setIsTurn(true);
-      }
-    } */
-
     return () => {
-      isMounted = false
-    }
-
+      isMounted = false;
+    };
   }, [starting, idPartida, idPlayer, players, order]);
 
-  useEffect(() =>{
-    async function getAvailablePositions(){
+  useEffect(() => {
+    if (gettingTurn) {
+      if (order !== -1 && players !== []) {
+        console.log('players es', players);
+        if (currentTurn === players[order].turnOrder) {
+          console.log('es mi turno', idPlayer);
+          setIsTurn(true);
+        }
+      }
+    }
+  }, [gettingTurn]);
+
+  useEffect(() => {
+    async function getAvailablePositions() {
       getPositions(idPartida, idPlayer, dado)
-      .then((response) => {
-        console.log('posiciones disponibles', response?.availablePositions);
-        setAvailablePositions(response?.availablePositions);
-        setShowAvailable(true);
-        setDado(0);
-      })
-      .catch((error) => {
-        setErrorMessage(error);
-        setHasError(true);
-        console.error(error);
-      });
+        .then((response) => {
+          console.log('posiciones disponibles', response?.availablePositions);
+          setAvailablePositions(response?.availablePositions);
+          setShowAvailable(true);
+          setDado(0);
+        })
+        .catch((error) => {
+          setErrorMessage(error);
+          setHasError(true);
+          console.error(error);
+        });
     }
 
-    if(dado !== 0){
-      getAvailablePositions()
+    if (dado !== 0) {
+      getAvailablePositions();
     }
+  }, [dado]);
 
-  },[dado]);
-
-/*   useEffect(() =>{
-    if(suspectComplete){
+  useEffect(() => {
+    if (suspectComplete) {
       setShowAvailable(false);
     }
-  },[suspectComplete]); */
+  }, [suspectComplete]);
 
-  if (hasError && !suspecting) {
+  if (hasError && !suspecting && isTurn) {
     return (
       <div>
         <h2>Bienvenido a la Partida</h2>
         <Grid container spacing={4}>
-        <Grid item> 
-          <Box sx={{
-                width: 640,
-                height: 640
-          }}>
-            <Tablero
-              players={players}
-              showAvailable={showAvailable}
-              availablePositions={availablePositions}
-            />
-          </Box>
-        </Grid>
-        <Grid item>
-          <Stack spacing={2} alignItems="center"> 
+          <Grid item>
+            <Box sx={{
+              width: 640,
+              height: 640,
+            }}
+            >
+              <Tablero
+                players={players}
+                showAvailable={showAvailable}
+                availablePositions={availablePositions}
+              />
+            </Box>
+          </Grid>
+          <Grid item>
+            <Stack spacing={2} alignItems="center">
               <Button
                 variant="contained"
                 onClick={() => setSuspecting(true)}
@@ -187,13 +195,7 @@ function Partida(props) {
                 Sospechar
               </Button>
               <div className="suspectButton">
-                <Button
-                  onClick={() => setTirando(true)}
-                  variant="contained"
-                >
-                  Tirar Dado
-                </Button> 
-                <RespuestaDado 
+                <RespuestaDado
                   DadoUrl={DadoUrl}
                   dado={dado}
                   tirando={tirando}
@@ -204,9 +206,9 @@ function Partida(props) {
               <p>
                 {errorMessage}
               </p>
-          </Stack>
+            </Stack>
+          </Grid>
         </Grid>
-      </Grid>
       </div>
     );
   }
@@ -223,76 +225,70 @@ function Partida(props) {
       />
     );
   }
-  if (suspectComplete) {
+  if (suspectComplete && isTurn) {
     return (
       <div>
         <h2>Bienvenido a la Partida</h2>
         <Grid container spacing={4}>
-        <Grid item> 
-          <Box sx={{
-                width: 640,
-                height: 640
-          }}>
-            <Tablero
-              players={players}
-              showAvailable={showAvailable}
-              availablePositions={availablePositions}
-            />
-          </Box>
-        </Grid>
-        <Grid item>
-          <Stack spacing={2} alignItems="center"> 
+          <Grid item>
+            <Box sx={{
+              width: 640,
+              height: 640,
+            }}
+            >
+              <Tablero
+                players={players}
+                showAvailable={showAvailable}
+                availablePositions={availablePositions}
+              />
+            </Box>
+          </Grid>
+          <Grid item>
+            <Stack spacing={2} alignItems="center">
               <Button
                 variant="contained"
                 disabled
-                onClick={() => setSuspecting(true)}
               >
                 Sospechar
               </Button>
-              <p>
-                {suspectMessage}
-              </p>
               <div className="suspectButton">
                 <Button
                   disabled
                   variant="contained"
                 >
                   Tirar Dado
-                </Button> 
-                <RespuestaDado 
-                  DadoUrl={DadoUrl}
-                  dado={dado}
-                  tirando={tirando}
-                  setTirando={setTirando}
-                  tiroCompleto={tiroCompleto}
-                />
+                </Button>
               </div>
-          </Stack>
+              <p>
+                {suspectMessage}
+              </p>
+            </Stack>
+          </Grid>
         </Grid>
-      </Grid>
       </div>
     );
   }
 
-  if(tiroCompleto){
+  if (tiroCompleto && isTurn) {
     return (
       <div>
         <h2>Bienvenido a la Partida</h2>
         <Grid container spacing={4}>
-        <Grid item> 
-          <Box sx={{
-                width: 640,
-                height: 640
-          }}>
-            <Tablero
-              players={players}
-              showAvailable={showAvailable}
-              availablePositions={availablePositions}
-            />
-          </Box>
-        </Grid>
-        <Grid item>
-          <Stack spacing={2} alignItems="center"> 
+          <Grid item>
+            <Box sx={{
+              width: 640,
+              height: 640,
+            }}
+            >
+              <Tablero
+                players={players}
+                showAvailable={showAvailable}
+                availablePositions={availablePositions}
+              />
+            </Box>
+          </Grid>
+          <Grid item>
+            <Stack spacing={2} alignItems="center">
               <Button
                 variant="contained"
                 onClick={() => setSuspecting(true)}
@@ -303,23 +299,54 @@ function Partida(props) {
                 {suspectMessage}
               </p>
               <div className="suspectButton">
-                <Button
-                  disabled
-                  variant="contained"
-                >
-                  Tirar Dado
-                </Button> 
-                <RespuestaDado 
+                <RespuestaDado
                   DadoUrl={DadoUrl}
                   dado={dado}
-                  tirando={tirando}
-                  setTirando={setTirando}
                   tiroCompleto={tiroCompleto}
+                  disabled
                 />
               </div>
-          </Stack>
+            </Stack>
+          </Grid>
         </Grid>
-      </Grid>
+      </div>
+    );
+  }
+  if (!isTurn) {
+    return (
+      <div>
+        <h2>Bienvenido a la Partida</h2>
+        <Grid container spacing={4}>
+          <Grid item>
+            <Box sx={{
+              width: 640,
+              height: 640,
+            }}
+            >
+              <Tablero
+                players={players}
+                showAvailable={showAvailable}
+                availablePositions={availablePositions}
+              />
+            </Box>
+          </Grid>
+          <Grid item>
+            <Stack spacing={2} alignItems="center">
+              <Button
+                variant="contained"
+                disabled
+              >
+                Sospechar
+              </Button>
+              <Button
+                disabled
+                variant="contained"
+              >
+                Tirar Dado
+              </Button>
+            </Stack>
+          </Grid>
+        </Grid>
       </div>
     );
   }
@@ -328,11 +355,12 @@ function Partida(props) {
     <div>
       <h2>Bienvenido a la Partida</h2>
       <Grid container spacing={4}>
-        <Grid item> 
+        <Grid item>
           <Box sx={{
-                width: 640,
-                height: 640
-          }}>
+            width: 640,
+            height: 640,
+          }}
+          >
             <Tablero
               players={players}
               showAvailable={showAvailable}
@@ -341,31 +369,20 @@ function Partida(props) {
           </Box>
         </Grid>
         <Grid item>
-          <Stack spacing={2} alignItems="center"> 
-              <Button
-                variant="contained"
-                onClick={() =>setSuspecting(true)}
-                >
-                Sospechar
-              </Button>
-              <Button
-                onClick={() => {
-                  setTirando(true);
-                  console.log('tira el dado player',idPlayer);
-                }}
-                variant="contained"
-              >
-                Tirar Dado
-              </Button> 
-              <div className="suspectButton">
-                <RespuestaDado 
-                  DadoUrl={DadoUrl}
-                  dado={dado}
-                  tirando={tirando}
-                  setTirando={setTirando}
-                  tiroCompleto={tiroCompleto}
-                />
-              </div>
+          <Stack spacing={2} alignItems="center">
+            <Button
+              variant="contained"
+              onClick={() => setSuspecting(true)}
+            >
+              Sospechar
+            </Button>
+            <div className="suspectButton">
+              <RespuestaDado
+                DadoUrl={DadoUrl}
+                dado={dado}
+                tiroCompleto={tiroCompleto}
+              />
+            </div>
           </Stack>
         </Grid>
       </Grid>
