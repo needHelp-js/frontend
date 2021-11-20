@@ -1,8 +1,9 @@
 import { Button } from '@mui/material';
-import React, { useEffect, createRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { URL_PARTIDA } from '../routes';
 import ListarJugadores from './ListarJugadores';
+import SocketSingleton from './connectionSocket';
 import './Lobby.css';
 
 async function requestStart(idPartida, idPlayer) {
@@ -32,17 +33,17 @@ function Lobby(props) {
   const [started, setStarted] = useState(false);
   const wsPrefix = process.env.REACT_APP_URL_WS;
   const socketURL = wsPrefix.concat('/', idPartida, '/ws/', idPlayer);
-  const playerSocket = createRef();
 
   useEffect(() => {
-    playerSocket.current = new WebSocket(socketURL);
+    SocketSingleton.init(new WebSocket(socketURL));
+    console.log('ws singleton es:', SocketSingleton.getInstance());
     setPlayerJoined(true);
     let isMounted = true;
 
-    playerSocket.current.onopen = () => {
+    SocketSingleton.getInstance().onopen = () => {
       console.log('socket created:', idPartida, idPlayer);
     };
-    playerSocket.current.onmessage = (event) => {
+    SocketSingleton.getInstance().onmessage = (event) => {
       const message = JSON.parse(event.data);
       if (message.type === 'PLAYER_JOINED_EVENT' && isMounted) {
         setPlayerJoined(true);
@@ -73,6 +74,10 @@ function Lobby(props) {
     return (
       <Redirect to={{
         pathname: URL_PARTIDA,
+        state: {
+          idPartida,
+          idPlayer,
+        },
       }}
       />
     );
