@@ -11,6 +11,24 @@ import spriteBiblioteca from '../sprites/spriteBiblioteca.png';
 import spritePanteon from '../sprites/spritePanteon.png';
 import spriteLaboratorio from '../sprites/spriteLaboratorio.png';
 
+async function patchAPI(url, payload) {
+  try {
+    const response = await fetch(url, {
+      body: payload,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const json = await response.json();
+    const status = await response.status;
+    return [json , status];
+
+  } catch (error) {
+    return [null, null];
+  }
+}
+
+
 const widthTablero = 640;
 const heightTablero = 640; 
 const centerY = 10;
@@ -55,10 +73,10 @@ function dibujarCasilleroDisponible(ctx, i, j){
 
 function dibujarCasillerosDisponibles(ctx, availablePositions){
   for (let i = 0; i < availablePositions.length; i++){
-    const pos = availablePositions[i],
+    const pos = availablePositions[i];
     const posI = pos[0];
     const posJ = pos[1];
-    dibjuarCasilleroDisponible(ctx, posI, posJ);
+    dibujarCasilleroDisponible(ctx, posI, posJ);
   }
 }
 
@@ -185,10 +203,12 @@ function dibujarPosicionesJugadores(ctx, colores, players){
 }
 
 function Tablero(props) {
-  const { isTurn, players, 
-          availablePositions, showAvailable} = props;
+  const { isTurn, players, dado, idPlayer, idPartida,
+          availablePositions, showAvailable, setShowAvailable} = props;
+
   let ref = useRef();
   const [pos, setPos] = useState([6,0]);
+  const [msg, setMsg] = useState("nada");
 
   const mouse = useMouse(ref, {
     enterDelay: 100,
@@ -203,7 +223,7 @@ function Tablero(props) {
     }, []);
 
 
-  useEffect(() => {
+  useEffect(async () => {
     let canvas = ref.current;
     let ctx = canvas.getContext('2d');
     let ratio = getPixelRatio(ctx);
@@ -240,15 +260,24 @@ function Tablero(props) {
           
           let iMouse = Math.floor((mouse.y)/casilleroSize);
           let jMouse = Math.floor((mouse.x)/casilleroSize);
-          if (mouse.isDown){
-            if ([6,13].includes(iMouse) || [6, 13].includes(jMouse)){
+          if (mouse.isDown && showAvailable){
+            if (avaliablePositions.includes(iMouse, jMouse)){
               setPos([ iMouse, jMouse]);
+              const [json, status] = await patchAPI(`/${idPartida}/move/${idPlayer}`, {
+                    "diceNumber" : dado,
+                    "position" : pos,
+                    "room" : ""});
+              
+              console.log(json, status);
+
+
+              setShowAvailable(false);
             }
           }
           if (iMouse == i && jMouse == j){
             dibujarCasilleroClickeado(ctx, i, j);
           }
-          dibujarCasilleroOcupado(ctx, 'white', 'Yo', pos[0], pos[1]);
+          //dibujarCasilleroOcupado(ctx, 'white', 'Yo', pos[0], pos[1]);
         } 
       }
     }
@@ -256,7 +285,7 @@ function Tablero(props) {
         dibujarCasillerosDisponibles(ctx, availablePositions);
     }
 
-    dibujarPosicionesJugadores(ctx, colores, players);
+    //dibujarPosicionesJugadores(ctx, colores, players);
   });
 
   return (
