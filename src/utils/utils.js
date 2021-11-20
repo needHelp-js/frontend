@@ -8,7 +8,7 @@ import {
  * @param {String} cardName Card name.
  * @returns image path
  */
-function getCardSource(cardName) {
+export function getCardSource(cardName) {
   let result;
 
   switch (cardName) {
@@ -34,7 +34,7 @@ function getCardSource(cardName) {
       result = 'dracula';
       break;
     case monstersNames.DR_JEKYLL_MR_HYDE:
-      result = 'jekyll_hyde';
+      result = 'Jekyll_hyde';
       break;
     case monstersNames.FANTASMA:
       result = 'fantasma';
@@ -82,5 +82,3 @@ function getCardSource(cardName) {
 
   return `${ASSETS_PATH}/Misterio_cartas/${result}.png`;
 }
-
-export default { getCardSource };
