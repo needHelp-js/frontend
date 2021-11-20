@@ -5,7 +5,6 @@ import {SocketSingleton} from './connectionSocket'
 
 
 
-
 async function get(url){
 
     const requestOptions = {
@@ -37,7 +36,7 @@ async function rollDice(DadoUrl, setTirando) {
         setTirando(false);
     })
     .catch((error) => {
-        console.error(error);
+        alert(error.Error);
     });
   
 }
@@ -130,4 +129,3 @@ function RespuestaDado(props){
 
 
 export default RespuestaDado;
-
