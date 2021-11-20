@@ -7,8 +7,8 @@ function Card(props) {
   const cardSrc = getCardSource(cardName);
 
   const size = {
-    width: width || '150',
-    height: height || '300',
+    width: width || 150,
+    height: height || 300,
   };
 
   return (
