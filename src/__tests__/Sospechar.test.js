@@ -91,7 +91,7 @@ describe('Sospechar', () =>{
     );
 
     await wsServer.connected;
-    act( async () =>{
+    await act( async () =>{
       await userEvent.click(await screen.findByRole('button'));
       await userEvent.click(screen.getByRole('img', {name: card1Name}));
       await userEvent.click(screen.getByRole('img', {name: card2Name}));

@@ -3,6 +3,7 @@ import { Button } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import ElegirVictima from './ElegirVictima';
 import ElegirMonstruo from './ElegirMonstruo';
+import '../Partida.css';
 
 async function sendSuspect(idPartida, idPlayer, victima, monstruo) {
   const requestOptions = {
@@ -33,7 +34,7 @@ async function sendSuspect(idPartida, idPlayer, victima, monstruo) {
 function Sospechar(props) {
   const {
     setSuspecting, idPartida, idPlayer,
-    setHasError, setErrorMessage, setSuspectComplete,
+    setHasError, setErrorMessage, setSuspectComplete, suspecting, disabled,
   } = props;
   const [victima, setVictima] = useState('');
   const [monstruo, setMonstruo] = useState('');
@@ -43,8 +44,8 @@ function Sospechar(props) {
     async function suspect() {
       sendSuspect(idPartida, idPlayer, victima, monstruo)
         .then(() => {
-          setSuspecting(false);
           setSuspectComplete(true);
+          setSuspecting(false);
         })
         .catch((error) => {
           setSuspected(false);
@@ -61,22 +62,48 @@ function Sospechar(props) {
   }, [suspected]);
 
   useEffect(() => {
-    setHasError(false);
-  }, []);
+    if (suspecting) {
+      setHasError(false);
+    }
+  }, [suspecting]);
 
-  return (
-    <div>
-      <Stack alignItems="center">
-        <ElegirVictima victima={victima} setVictima={setVictima} />
-        <ElegirMonstruo monstruo={monstruo} setMonstruo={setMonstruo} />
+  if (suspecting) {
+    return (
+      <div>
+        <Stack alignItems="center">
+          <ElegirVictima victima={victima} setVictima={setVictima} />
+          <ElegirMonstruo monstruo={monstruo} setMonstruo={setMonstruo} />
+          <Button
+            variant="contained"
+            onClick={() => setSuspected(true)}
+          >
+            Sospechar
+          </Button>
+        </Stack>
+      </div>
+    );
+  }
+  if (disabled) {
+    return (
+      <div className="suspectButton">
         <Button
           variant="contained"
-          onClick={() => setSuspected(true)}
+          disabled
         >
           Sospechar
         </Button>
-      </Stack>
+      </div>
+    );
+  }
 
+  return (
+    <div className="suspectButton">
+      <Button
+        variant="contained"
+        onClick={() => setSuspecting(true)}
+      >
+        Sospechar
+      </Button>
     </div>
   );
 }

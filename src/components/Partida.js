@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '@mui/material';
 import { SocketSingleton } from './connectionSocket';
 import './Partida.css';
 import Sospechar from './Sospechar/Sospechar';
@@ -29,6 +28,7 @@ async function getGameInfo(idPartida, idPlayer) {
 function Partida(props) {
   const { idPartida, idPlayer } = props.location.state;
   const [suspecting, setSuspecting] = useState(false);
+  const [suspectDisabled, setSuspectDisabled] = useState(false);
   const [suspectComplete, setSuspectComplete] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -46,18 +46,26 @@ function Partida(props) {
     };
   }, []);
 
+  useEffect(() => {
+    if (suspectComplete) {
+      setSuspectDisabled(true);
+    }
+  }, [suspectComplete]);
+
   if (hasError && !suspecting) {
     return (
       <div>
         <h2>Bienvenido a la Partida</h2>
-        <div className="suspectButton">
-          <Button
-            variant="contained"
-            onClick={() => setSuspecting(true)}
-          >
-            Sospechar
-          </Button>
-        </div>
+        <Sospechar
+          suspecting={suspecting}
+          setSuspecting={setSuspecting}
+          setSuspectComplete={setSuspectComplete}
+          setHasError={setHasError}
+          setErrorMessage={setErrorMessage}
+          idPartida={idPartida}
+          idPlayer={idPlayer}
+          disabled={suspectDisabled}
+        />
         <p>
           {errorMessage}
         </p>
@@ -65,34 +73,23 @@ function Partida(props) {
     );
   }
 
-  if (suspecting) {
-    return (
-      <Sospechar
-        setSuspecting={setSuspecting}
-        setSuspectComplete={setSuspectComplete}
-        setHasError={setHasError}
-        setErrorMessage={setErrorMessage}
-        idPartida={idPartida}
-        idPlayer={idPlayer}
-      />
-    );
-  }
   if (suspectComplete) {
     return (
       <div>
         <h2>Bienvenido a la Partida</h2>
-        <div className="suspectButton">
-          <Button
-            variant="contained"
-            disabled
-            onClick={() => setSuspecting(true)}
-          >
-            Sospechar
-          </Button>
-          <p>
-            {suspectMessage}
-          </p>
-        </div>
+        <Sospechar
+          suspecting={suspecting}
+          setSuspecting={setSuspecting}
+          setSuspectComplete={setSuspectComplete}
+          setHasError={setHasError}
+          setErrorMessage={setErrorMessage}
+          idPartida={idPartida}
+          idPlayer={idPlayer}
+          disabled={suspectDisabled}
+        />
+        <p>
+          {suspectMessage}
+        </p>
       </div>
     );
   }
@@ -100,14 +97,16 @@ function Partida(props) {
   return (
     <div>
       <h2>Bienvenido a la Partida</h2>
-      <div className="suspectButton">
-        <Button
-          variant="contained"
-          onClick={() => setSuspecting(true)}
-        >
-          Sospechar
-        </Button>
-      </div>
+      <Sospechar
+        suspecting={suspecting}
+        setSuspecting={setSuspecting}
+        setSuspectComplete={setSuspectComplete}
+        setHasError={setHasError}
+        setErrorMessage={setErrorMessage}
+        idPartida={idPartida}
+        idPlayer={idPlayer}
+        disabled={suspectDisabled}
+      />
     </div>
   );
 }
