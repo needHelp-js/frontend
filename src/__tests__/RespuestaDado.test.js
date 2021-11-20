@@ -4,7 +4,7 @@ import { setupServer } from 'msw/node';
 import React from 'react';
 import WS from 'jest-websocket-mock';
 import RespuestaDado from '../components/RespuestaDado';
-import { SocketSingleton } from '../components/connectionSocket';
+import SocketSingleton from '../components/connectionSocket';
 
 const server = setupServer(
 

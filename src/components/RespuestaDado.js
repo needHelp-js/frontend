@@ -1,7 +1,7 @@
 import './RespuestaDado.css';
 import Button from '@mui/material/Button';
 import React, { useEffect, useState } from 'react';
-import { SocketSingleton } from './connectionSocket';
+import SocketSingleton from './connectionSocket';
 
 async function get(url) {
   const requestOptions = {
@@ -45,7 +45,7 @@ function RespuestaDado(props) {
 
   useEffect(() => {
     console.log('en dado', SocketSingleton.getInstance());
-    SocketSingleton.getInstance().onmessage = (event) => {
+    SocketSingleton.getInstance().addEventListener('message',(event) => {
       const message = JSON.parse(event.data);
       console.log(message);
       if (message.type === 'DICE_ROLL_EVENT') {
@@ -53,7 +53,7 @@ function RespuestaDado(props) {
         toggleClasses(diceRef.current);
         diceRef.current.setAttribute('data-roll', message?.payload);
       }
-    };
+    });
   }, [tirando]);
 
   return (
