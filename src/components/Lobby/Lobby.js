@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { URL_PARTIDA } from '../../routes';
 import ListarJugadores from './ListarJugadores';
-import SocketSingleton from './connectionSocket';
+import SocketSingleton from '../connectionSocket';
 import './Lobby.css';
 
 async function requestStart(idPartida, idPlayer) {
@@ -29,7 +29,7 @@ async function requestStart(idPartida, idPlayer) {
 function Lobby(props) {
   const {
     idPartida, nombrePartida, idPlayer, isHost,
-  } = props.location.state;
+  } = props.location.state; // eslint-disable-line
   const [playerJoined, setPlayerJoined] = useState(false);
   const [starting, setStarting] = useState(false);
   const [started, setStarted] = useState(false);

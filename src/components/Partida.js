@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Button, Box, Grid, Stack,
 } from '@mui/material';
-import { SocketSingleton } from './connectionSocket';
+import SocketSingleton  from './connectionSocket';
 import './Partida.css';
 import Sospechar from './Sospechar';
 import Tablero from './Tablero';
@@ -53,7 +53,7 @@ async function getPositions(idPartida, idPlayer, dado) {
 }
 
 function Partida(props) {
-  const { idPartida, idPlayer } = props.location.state;
+  const { idPartida, idPlayer } = props.location.state; // eslint-disable-line
   const [suspecting, setSuspecting] = useState(false);
   const [suspectComplete, setSuspectComplete] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -274,7 +274,7 @@ function Partida(props) {
       </div>
     );
   }
-  if(moveComplete && isTurn){
+  if (moveComplete && isTurn) {
     return (
       <div>
         <h2>Bienvenido a la Partida</h2>
