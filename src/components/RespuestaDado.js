@@ -45,7 +45,7 @@ function RespuestaDado(props) {
 
   useEffect(() => {
     console.log('en dado', SocketSingleton.getInstance());
-    SocketSingleton.getInstance().addEventListener('message',(event) => {
+    SocketSingleton.getInstance().addEventListener('message', (event) => {
       const message = JSON.parse(event.data);
       console.log(message);
       if (message.type === 'DICE_ROLL_EVENT') {
