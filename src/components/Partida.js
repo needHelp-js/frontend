@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import { SocketSingleton } from './connectionSocket';
 import './Partida.css';
-import Sospechar from './Sospechar';
+import Sospechar from './Sospechar/Sospechar';
 
 async function getGameInfo(idPartida, idPlayer) {
   const requestOptions = {

@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import Stack from '@mui/material/Stack';
-import './Partida.css';
-import amaDeLlaves from '../Misterio_cartas/ama_de_llaves.png';
-import doncella from '../Misterio_cartas/doncella.png';
-import jardinero from '../Misterio_cartas/jardinero.png';
-import mayordomo from '../Misterio_cartas/mayordomo.png';
-import conde from '../Misterio_cartas/conde.png';
-import condesa from '../Misterio_cartas/condesa.png';
+import '../Partida.css';
+import amaDeLlaves from '../../Misterio_cartas/ama_de_llaves.png';
+import doncella from '../../Misterio_cartas/doncella.png';
+import jardinero from '../../Misterio_cartas/jardinero.png';
+import mayordomo from '../../Misterio_cartas/mayordomo.png';
+import conde from '../../Misterio_cartas/conde.png';
+import condesa from '../../Misterio_cartas/condesa.png';
 
 function Elegirvictima(props) {
   const { victima, setVictima } = props;
   const [newSelected, setNewSelected] = useState('');
 
   function handleClick(id) {
-    console.log('vamos a sospechar', id);
     setNewSelected(id);
     const img = document.getElementById(id);
     img.className = 'selectedCard';

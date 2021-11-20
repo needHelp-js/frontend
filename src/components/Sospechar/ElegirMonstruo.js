@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import Stack from '@mui/material/Stack';
-import dracula from '../Misterio_cartas/dracula.png';
-import fantasma from '../Misterio_cartas/fantasma.png';
-import frankenstein from '../Misterio_cartas/frankenstein.png';
-import hombreLobo from '../Misterio_cartas/hombre_lobo.png';
-import jekyllHyde from '../Misterio_cartas/Jekyll_hyde.png';
-import momia from '../Misterio_cartas/momia.png';
-import './Partida.css';
+import dracula from '../../Misterio_cartas/dracula.png';
+import fantasma from '../../Misterio_cartas/fantasma.png';
+import frankenstein from '../../Misterio_cartas/frankenstein.png';
+import hombreLobo from '../../Misterio_cartas/hombre_lobo.png';
+import jekyllHyde from '../../Misterio_cartas/Jekyll_hyde.png';
+import momia from '../../Misterio_cartas/momia.png';
+import '../Partida.css';
 
 function ElegirMonstruo(props) {
   const { monstruo, setMonstruo } = props;
   const [newSelected, setNewSelected] = useState('');
 
   function handleClick(id) {
-    console.log('vamos a sospechar', id);
     setNewSelected(id);
     const img = document.getElementById(id);
     img.className = 'selectedCard';
