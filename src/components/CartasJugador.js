@@ -8,11 +8,15 @@ const Container = styled.div`
 `;
 
 function CartasJugador(props) {
+    const {cards} = props;
+
+    const cardElems = cards.map((elem, idx) => (
+      <Card key={idx} cardName={elem} />
+    ));
+
     return (
         <Container>
-            <Card cardName={props.monsterCard} />
-            <Card cardName={props.victimCard} />
-            <Card cardName={props.roomCard} />
+            {cardElems}
         </Container>
     )
 }
