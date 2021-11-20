@@ -5,7 +5,6 @@ import Lobby from './Lobby';
 import Main from './Main';
 import CrearPartida from './CrearPartida';
 import Partida from './Partida';
-import MockCard from './MockCard';
 import {
   URL_HOME,
   URL_LISTAR_PARTIDAS,
@@ -29,7 +28,6 @@ function Index(){
           </Route>
           <Route path={URL_LOBBY} component={Lobby} />
           <Route path={URL_PARTIDA} component={Partida} />
-          <Route path={"/card-component"} component={MockCard} />
         </Switch>
       </div>
   );
