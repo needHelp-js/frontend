@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { URL_PARTIDA } from '../routes';
 import ListarJugadores from './ListarJugadores';
 import SocketSingleton from './connectionSocket';
+import { fetchRequest, fetchHandlerError } from '../utils/fetchHandler';
 import './Lobby.css';
 
 async function requestStart(idPartida, idPlayer) {
@@ -13,15 +14,7 @@ async function requestStart(idPartida, idPlayer) {
   };
   const endpointPrefix = process.env.REACT_APP_URL_SERVER;
   const endpoint = endpointPrefix.concat('/', idPartida, '/begin/', idPlayer);
-  const data = fetch(endpoint, requestOptions)
-    .then(async (response) => {
-      if (!response.ok) {
-        const error = response.status;
-        return Promise.reject(error);
-      }
-    })
-    .catch((error) => Promise.reject(error));
-  return data;
+  return fetchRequest(endpoint, requestOptions);
 }
 
 function Lobby(props) {
@@ -61,9 +54,21 @@ function Lobby(props) {
   useEffect(() => {
     async function startGame() {
       requestStart(idPartida, idPlayer)
-        .catch((error) => {
-          console.error('no se pudo iniciar la partida', error);
-        });
+        .then( (response) =>{
+          switch (response.type){
+            case fetchHandlerError.SUCCESS:
+              break;
+            case fetchHandlerError.REQUEST_ERROR:
+              setErrorMessage(response?.payload);
+              setHasError(true);
+              setStarting(false);
+              break;
+            case fetchHandlerError.INTERNAL_ERROR:
+              setErrorMessage(response?.payload);
+              setHasError(true);
+              setStarting(false);
+              break;
+          }});
     }
     if (starting) {
       startGame();
