@@ -1,16 +1,24 @@
+import React from 'react';
 import { getCardSource } from '../utils/utils';
 
 function Card(props) {
-  const cardSrc = getCardSource(props.cardName);
+  const { cardName, width, height } = props;
 
-  var size = {
-    width: props.width ? props.width : '150',
-    height: props.height ? props.height : '300',
+  const cardSrc = getCardSource(cardName);
+
+  const size = {
+    width: width || '150',
+    height: height || '300',
   };
 
   return (
     <div>
-      <img src={cardSrc} alt={props.cardName} {...size} />
+      <img
+        src={cardSrc}
+        alt={cardName}
+        width={size.width}
+        height={size.height}
+      />
     </div>
   );
 }

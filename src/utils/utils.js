@@ -1,4 +1,6 @@
-import { victimsNames, monstersNames, roomsNames, ASSETS_PATH } from "./constants";
+import {
+  victimsNames, monstersNames, roomsNames, ASSETS_PATH,
+} from './constants';
 
 /**
  * Returns the card image path from a card name.
@@ -11,64 +13,64 @@ function getCardSource(cardName) {
 
   switch (cardName) {
     case victimsNames.AMA_DE_LLAVES:
-      result = "ama_de_llaves";
+      result = 'ama_de_llaves';
       break;
     case victimsNames.CONDE:
-      result = "conde";
+      result = 'conde';
       break;
     case victimsNames.CONDESA:
-      result = "condesa";
+      result = 'condesa';
       break;
     case victimsNames.DONCELLA:
-      result = "doncella";
+      result = 'doncella';
       break;
     case victimsNames.JARDINERO:
-      result = "jardinero";
+      result = 'jardinero';
       break;
     case victimsNames.MAYORDOMO:
-      result = "mayordomo";
+      result = 'mayordomo';
       break;
     case monstersNames.DRACULA:
-      result = "dracula";
+      result = 'dracula';
       break;
     case monstersNames.DR_JEKYLL_MR_HYDE:
-      result = "jekyll_hyde";
+      result = 'jekyll_hyde';
       break;
     case monstersNames.FANTASMA:
-      result = "fantasma";
+      result = 'fantasma';
       break;
     case monstersNames.FRANKENSTEIN:
-      result = "frankenstein";
+      result = 'frankenstein';
       break;
     case monstersNames.HOMBRE_LOBO:
-      result = "hombre_lobo";
+      result = 'hombre_lobo';
       break;
     case monstersNames.MOMIA:
-      result = "momia";
+      result = 'momia';
       break;
     case roomsNames.ALCOBA:
-      result = "alcoba";
+      result = 'alcoba';
       break;
     case roomsNames.BIBLIOTECA:
-      result = "biblioteca";
+      result = 'biblioteca';
       break;
     case roomsNames.BODEGA:
-      result = "bodega";
+      result = 'bodega';
       break;
     case roomsNames.COCHERA:
-      result = "cochera";
+      result = 'cochera';
       break;
     case roomsNames.LABORATORIO:
-      result = "laboratorio";
+      result = 'laboratorio';
       break;
     case roomsNames.PANTEON:
-      result = "panteon";
+      result = 'panteon';
       break;
     case roomsNames.SALON:
-      result = "salon";
+      result = 'salon';
       break;
     case roomsNames.VESTIBULO:
-      result = "vestibulo";
+      result = 'vestibulo';
       break;
     default:
       result = null;
@@ -78,7 +80,7 @@ function getCardSource(cardName) {
     return null;
   }
 
-  return ASSETS_PATH + "/Misterio_cartas/" + result + ".png";
+  return `${ASSETS_PATH}/Misterio_cartas/${result}.png`;
 }
 
-export { getCardSource };
+export default { getCardSource };
