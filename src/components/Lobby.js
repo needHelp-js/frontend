@@ -1,9 +1,9 @@
 import { Button } from '@mui/material';
-import React, { useEffect, createRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { URL_PARTIDA } from '../routes';
 import ListarJugadores from './ListarJugadores';
-import {SocketSingleton} from './connectionSocket'
+import SocketSingleton from './connectionSocket';
 import './Lobby.css';
 
 async function requestStart(idPartida, idPlayer) {
@@ -37,7 +37,7 @@ function Lobby(props) {
 
   useEffect(() => {
     SocketSingleton.init(new WebSocket(socketURL));
-    console.log('ws singleton es:',SocketSingleton.getInstance());
+    console.log('ws singleton es:', SocketSingleton.getInstance());
     setPlayerJoined(true);
     let isMounted = true;
 
@@ -75,10 +75,10 @@ function Lobby(props) {
     return (
       <Redirect to={{
         pathname: URL_PARTIDA,
-        state:{
-          idPartida: idPartida,
-          idPlayer: idPlayer,
-        }
+        state: {
+          idPartida,
+          idPlayer,
+        },
       }}
       />
     );
