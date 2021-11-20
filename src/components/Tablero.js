@@ -11,6 +11,31 @@ import spriteBiblioteca from '../sprites/spriteBiblioteca.png';
 import spritePanteon from '../sprites/spritePanteon.png';
 import spriteLaboratorio from '../sprites/spriteLaboratorio.png';
 
+function arrayEquals(a, b) {
+  return Array.isArray(a) &&
+      Array.isArray(b) &&
+      a.length === b.length &&
+      a.every((val, index) => val === b[index]);
+}
+
+async function patchAPI(url, payload) {
+  try {
+    const response = await fetch(url, {
+      body: payload,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const json = await response.json();
+    const status = await response.status;
+    return [json , status];
+
+  } catch (error) {
+    return [null, null];
+  }
+}
+
+
 const widthTablero = 640;
 const heightTablero = 640; 
 const centerY = 10;
@@ -185,24 +210,43 @@ function dibujarPosicionesJugadores(ctx, colores, players){
 }
 
 function Tablero(props) {
-  const { isTurn, players, 
-          availablePositions, showAvailable} = props;
-  let ref = useRef();
-  const [pos, setPos] = useState([6,0]);
+  const { players, dado, idPlayer, idPartida,
+    availablePositions, showAvailable, setShowAvailable} = props;
 
-  const mouse = useMouse(ref, {
-    enterDelay: 100,
-    leaveDelay: 100,
-  });
-  
-  const [colores, setColores] = useState(['green', 'white', 'blue', 
-                'red', 'yellow', 'pink']);
+    
+    let ref = useRef();
+    const [pos, setPos] = useState([6,0]);
+    const [msg, setMsg] = useState("nada");
+    
+    const mouse = useMouse(ref, {
+      enterDelay: 100,
+      leaveDelay: 100,
+    });
+    
+    const [colores, setColores] = useState(['green', 'white', 'blue', 
+    'red', 'yellow', 'pink']);
   
   useEffect(() => {
         shuffleArray(colores);
     }, []);
 
-
+    useEffect(async () => {
+      let iMouse = Math.floor((mouse.y)/casilleroSize);
+      let jMouse = Math.floor((mouse.x)/casilleroSize);
+      if (mouse.isDown && showAvailable){
+        if (availablePositions.some((arr) => arrayEquals(arr, [iMouse, jMouse])) && dado !== 0){
+          const [json, status] = await patchAPI(`${process.env.REACT_APP_URL_SERVER}/${idPartida}/move/${idPlayer}`, 
+          JSON.stringify({
+            "diceNumber" : dado,
+            "position" : [iMouse, jMouse],
+            "room" : ""}));
+            
+          console.log(json, status);            
+          setPos([ iMouse, jMouse]);
+        }
+      }
+    },[mouse.isDown, dado])
+    
   useEffect(() => {
     let canvas = ref.current;
     let ctx = canvas.getContext('2d');
@@ -243,11 +287,7 @@ function Tablero(props) {
           
           let iMouse = Math.floor((mouse.y)/casilleroSize);
           let jMouse = Math.floor((mouse.x)/casilleroSize);
-          if (mouse.isDown){
-            if ([6,13].includes(iMouse) || [6, 13].includes(jMouse)){
-              setPos([ iMouse, jMouse]);
-            }
-          }
+          
           if (iMouse == i && jMouse == j){
             dibujarCasilleroClickeado(ctx, i, j);
           }

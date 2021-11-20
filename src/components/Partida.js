@@ -66,6 +66,7 @@ function Partida(props) {
   const [currentTurn, setCurrentTurn] = useState(-1);
   const [dado, setDado] = useState(0);
   const [tiroCompleto, setTiroCompleto] = useState(false);
+  const [moveComplete, setMoveComplete] = useState(false);
   const [availablePositions, setAvailablePositions] = useState([]);
   const [showAvailable, setShowAvailable] = useState(false);
   const [gettingTurn, setGettingTurn] = useState(false);
@@ -81,6 +82,9 @@ function Partida(props) {
         setSuspectMessage(mensajeSospecha);
         console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
       } else if (message.type === 'MOVE_PLAYER_EVENT') {
+        setDado(0);
+        setShowAvailable(false);
+        setMoveComplete(true);
         setStarting(true);
       } else if (message.type === 'DICE_ROLL_EVENT') {
         if (isTurn) {
@@ -132,9 +136,7 @@ function Partida(props) {
   useEffect(() => {
     if (gettingTurn) {
       if (order !== -1 && players !== []) {
-        console.log('players es', players);
         if (currentTurn === players[order].turnOrder) {
-          console.log('es mi turno', idPlayer);
           setIsTurn(true);
         }
       }
@@ -145,10 +147,8 @@ function Partida(props) {
     async function getAvailablePositions() {
       getPositions(idPartida, idPlayer, dado)
         .then((response) => {
-          console.log('posiciones disponibles', response?.availablePositions);
           setAvailablePositions(response?.availablePositions);
           setShowAvailable(true);
-          setDado(0);
         })
         .catch((error) => {
           setErrorMessage(error);
@@ -160,7 +160,7 @@ function Partida(props) {
     if (dado !== 0) {
       getAvailablePositions();
     }
-  }, [dado]);
+  }, [dado, moveComplete]);
 
   useEffect(() => {
     if (suspectComplete) {
@@ -182,6 +182,10 @@ function Partida(props) {
               <Tablero
                 players={players}
                 showAvailable={showAvailable}
+                setShowAvailable={setShowAvailable}
+                dado={dado}
+                idPartida={idPartida}
+                idPlayer={idPlayer}
                 availablePositions={availablePositions}
               />
             </Box>
@@ -198,8 +202,6 @@ function Partida(props) {
                 <RespuestaDado
                   DadoUrl={DadoUrl}
                   dado={dado}
-                  tirando={tirando}
-                  setTirando={setTirando}
                   tiroCompleto={tiroCompleto}
                 />
               </div>
@@ -239,6 +241,10 @@ function Partida(props) {
               <Tablero
                 players={players}
                 showAvailable={showAvailable}
+                setShowAvailable={setShowAvailable}
+                dado={dado}
+                idPartida={idPartida}
+                idPlayer={idPlayer}
                 availablePositions={availablePositions}
               />
             </Box>
@@ -268,6 +274,53 @@ function Partida(props) {
       </div>
     );
   }
+  if(moveComplete && isTurn){
+    return (
+      <div>
+        <h2>Bienvenido a la Partida</h2>
+        <Grid container spacing={4}>
+          <Grid item>
+            <Box sx={{
+              width: 640,
+              height: 640,
+            }}
+            >
+              <Tablero
+                players={players}
+                showAvailable={false}
+                setShowAvailable={setShowAvailable}
+                dado={dado}
+                idPartida={idPartida}
+                idPlayer={idPlayer}
+                availablePositions={availablePositions}
+              />
+            </Box>
+          </Grid>
+          <Grid item>
+            <Stack spacing={2} alignItems="center">
+              <Button
+                variant="contained"
+                onClick={() => setSuspecting(true)}
+              >
+                Sospechar
+              </Button>
+              <p>
+                {suspectMessage}
+              </p>
+              <div className="suspectButton">
+                <RespuestaDado
+                  DadoUrl={DadoUrl}
+                  dado={dado}
+                  tiroCompleto={tiroCompleto}
+                  disabled
+                />
+              </div>
+            </Stack>
+          </Grid>
+        </Grid>
+      </div>
+    );
+  }
 
   if (tiroCompleto && isTurn) {
     return (
@@ -283,6 +336,10 @@ function Partida(props) {
               <Tablero
                 players={players}
                 showAvailable={showAvailable}
+                setShowAvailable={setShowAvailable}
+                dado={dado}
+                idPartida={idPartida}
+                idPlayer={idPlayer}
                 availablePositions={availablePositions}
               />
             </Box>
@@ -326,6 +383,10 @@ function Partida(props) {
               <Tablero
                 players={players}
                 showAvailable={showAvailable}
+                setShowAvailable={setShowAvailable}
+                dado={dado}
+                idPartida={idPartida}
+                idPlayer={idPlayer}
                 availablePositions={availablePositions}
               />
             </Box>
@@ -364,6 +425,10 @@ function Partida(props) {
             <Tablero
               players={players}
               showAvailable={showAvailable}
+              setShowAvailable={setShowAvailable}
+              dado={dado}
+              idPartida={idPartida}
+              idPlayer={idPlayer}
               availablePositions={availablePositions}
             />
           </Box>
