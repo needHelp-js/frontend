@@ -1,6 +1,9 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
 import WS from 'jest-websocket-mock';
-import SocketSingleton from '../components/connectionSocket';
-import SingletonAlreadyInitialized from '../components/errorSocket';
+import {SocketSingleton, SingletonAlreadyInitialized} from '../../src/components/connectionSocket';
+
+
 
 describe('Test del socket', () => {
   it('Crea una instancia correctamente', () => {

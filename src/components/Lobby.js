@@ -24,6 +24,7 @@ async function requestStart(idPartida, idPlayer) {
   return data;
 }
 
+
 function Lobby(props) {
   const {
     idPartida, nombrePartida, idPlayer, isHost,
