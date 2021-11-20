@@ -31,6 +31,7 @@ function Lobby(props) {
   const [playerJoined, setPlayerJoined] = useState(false);
   const [starting, setStarting] = useState(false);
   const [started, setStarted] = useState(false);
+  const [playerCards, setPlayerCards] = useState([]);
   const wsPrefix = process.env.REACT_APP_URL_WS;
   const socketURL = wsPrefix.concat('/', idPartida, '/ws/', idPlayer);
 
@@ -50,7 +51,7 @@ function Lobby(props) {
       } else if (message.type === 'BEGIN_GAME_EVENT' && isMounted) {
         setStarted(true);
         isMounted = false;
-      }
+      } 
     };
 
     return () => {
@@ -76,7 +77,7 @@ function Lobby(props) {
         pathname: URL_PARTIDA,
         state: {
           idPartida,
-          idPlayer,
+          idPlayer
         },
       }}
       />
