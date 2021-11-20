@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { URL_PARTIDA } from '../../routes';
 import ListarJugadores from './ListarJugadores';
-import { SocketSingleton } from '../connectionSocket';
+import SocketSingleton from './connectionSocket';
 import './Lobby.css';
 
 async function requestStart(idPartida, idPlayer) {
