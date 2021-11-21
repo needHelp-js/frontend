@@ -6,7 +6,7 @@ import RespuestaDado from './RespuestaDado';
 
 function Partida(props) {
   const { location } = props;
-  const { idPartida, idPlayer } = location;
+  const { idPartida, idPlayer } = location.state;
   const [playerCards, setPlayerCards] = useState([]);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ function Partida(props) {
     };
   }, [playerCards]);
 
-  const url = process.env.REACT_APP_URL_SERVER.concat(idPartida, '/dice/', idPlayer);
+  const url = process.env.REACT_APP_URL_SERVER.concat('/', idPartida, '/dice/', idPlayer);
 
   return (
     <div>
