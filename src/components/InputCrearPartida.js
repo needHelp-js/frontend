@@ -1,9 +1,9 @@
 import React from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import { TextField } from '@mui/material';
 import ElegirNombrePartida from './ElegirNombrePartida';
 import ElegirNickname from './ElegirNickname';
-import { TextField } from '@mui/material';
 
 function InputCrearPartida(props) {
   const {

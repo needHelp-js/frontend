@@ -21,7 +21,7 @@ async function sendGameData(endpoint, nickname, nombrePartida, password) {
     body: JSON.stringify({
       gameName: nombrePartida,
       hostNickname: nickname,
-      password: password
+      password,
     }),
   };
 
@@ -58,7 +58,7 @@ const CrearPartida = (props) => {
       } else {
         sendGameData(endpoint, nickname, nombrePartida, password)
           .then(async (response) => {
-            switch (response.type){
+            switch (response.type) {
               case fetchHandlerError.SUCCESS:
                 if (isMounted) {
                   setIdPartida(response?.payload.idPartida);
@@ -85,8 +85,10 @@ const CrearPartida = (props) => {
                 setPassword('');
                 isMounted = false;
                 break;
+              default:
+                break;
             }
-          })
+          });
       }
     }
     if (submited) {
@@ -95,7 +97,7 @@ const CrearPartida = (props) => {
     return () => {
       isMounted = false;
     };
-  }, [submited, endpoint]);
+  }, [submited, endpoint, nickname, nombrePartida, password]);
 
   if (creada) {
     return (

@@ -14,12 +14,12 @@ const server = setupServer(
   rest.post(endpointCreate, (req, res, ctx) => {
     sessionStorage.setItem('post-recibido', true);
     return res(
-      ctx.status(200)
+      ctx.status(200),
     );
   }),
   rest.post(endpointCreateFail, (req, res, ctx) => res(
     ctx.status(400),
-    ctx.json({Error: 'Partida UnNombreParaLaPartida ya existe'}),
+    ctx.json({ Error: 'Partida UnNombreParaLaPartida ya existe' }),
   )),
 
 );
@@ -74,36 +74,36 @@ describe('CrearPartida', () => {
 
   it('Hace el POST al backend', async () => {
     render(<CrearPartida endpoint={endpointCreate} />);
-    await act(async () =>{
+    await act(async () => {
       userEvent.type(screen.getByLabelText(/Nombre de la Partida/), nombrePartida);
       userEvent.type(screen.getByLabelText(/Nickname/), nickname);
       userEvent.click(screen.getByRole('button'));
-    })
+    });
     const recibido = sessionStorage.getItem('post-recibido');
     expect(recibido).toBe('true');
   });
 
   it('Respuesta al intentar crear una partida que ya existe', async () => {
     render(<CrearPartida endpoint={endpointCreateFail} />);
-    await act(async () =>{
+    await act(async () => {
       userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
       userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
       userEvent.click(screen.getByRole('button'));
-    })
+    });
     expect(await screen.findByText(/ya existe/)).toBeInTheDocument();
   });
 
   it('Valida formularios antes de enviarlos', async () => {
     render(<CrearPartida endpoint={endpointCreate} />);
-    await act(async () =>{
+    await act(async () => {
       userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
       userEvent.click(screen.getByRole('button'));
-    })
+    });
     expect(await screen.findByText(/nombre de la partida debe tener/)).toBeInTheDocument();
-    await act(async () =>{
+    await act(async () => {
       userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
       userEvent.click(screen.getByRole('button'));
-    })
+    });
     expect(await screen.findByText(/nickname debe tener/)).toBeInTheDocument();
   });
 
@@ -117,7 +117,7 @@ describe('CrearPartida', () => {
     expect(passwordElem).toBeInTheDocument();
 
     const spy = jest.spyOn(fetchHandler, 'fetchRequest');
-    
+
     userEvent.type(screen.getByLabelText(/Nombre de la Partida/), nombrePartida);
     userEvent.type(screen.getByLabelText(/Nickname/), nickname);
     userEvent.type(screen.getByLabelText(/Clave/), '1234');
@@ -129,7 +129,7 @@ describe('CrearPartida', () => {
       body: JSON.stringify({
         gameName: nombrePartida,
         hostNickname: nickname,
-        password: '1234'
+        password: '1234',
       }),
     };
     expect(spy).toBeCalledWith(endpointCreate, requestOptions);
