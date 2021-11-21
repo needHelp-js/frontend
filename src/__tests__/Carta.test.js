@@ -1,13 +1,13 @@
-import React from "react";
-import { victimsNames } from "../utils/constants";
-import Carta from "../components/Carta";
-import { getCardSource } from "../utils/utils";
-import { act } from "react-dom/test-utils";
-import { render, unmountComponentAtNode } from "react-dom";
+import React from 'react';
+import { act } from 'react-dom/test-utils';
+import { render, unmountComponentAtNode } from 'react-dom';
+import { victimsNames } from '../utils/constants';
+import Carta from '../components/Carta';
+import { getCardSource } from '../utils/utils';
 
 let container = null;
 beforeEach(() => {
-  container = document.createElement("div");
+  container = document.createElement('div');
   document.body.appendChild(container);
 });
 
@@ -17,8 +17,8 @@ afterEach(() => {
   container = null;
 });
 
-describe("Carta", () => {
-  it("renderiza correctamente las cartas", () => {
+describe('Carta', () => {
+  it('renderiza correctamente las cartas', () => {
     act(() => {
       render(<Carta cardName={victimsNames.CONDE} />, container);
     });
@@ -33,7 +33,7 @@ describe("Carta", () => {
     expect(imageElement.height).toBe(300);
   });
 
-  it("verifica que las propiedades de tamaño se asignen correctamente", () => {
+  it('verifica que las propiedades de tamaño se asignen correctamente', () => {
     const fixedSize = 500;
     act(() => {
       render(
@@ -42,7 +42,7 @@ describe("Carta", () => {
           width={fixedSize}
           height={fixedSize}
         />,
-        container
+        container,
       );
     });
 

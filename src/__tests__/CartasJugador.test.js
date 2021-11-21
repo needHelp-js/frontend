@@ -1,13 +1,13 @@
-import React from "react";
-import { victimsNames } from "../utils/constants";
-import { getCardSource } from "../utils/utils";
-import { act } from "react-dom/test-utils";
-import { render, unmountComponentAtNode } from "react-dom";
-import CartasJugador from "../components/CartasJugador";
+import React from 'react';
+import { act } from 'react-dom/test-utils';
+import { render, unmountComponentAtNode } from 'react-dom';
+import { victimsNames } from '../utils/constants';
+import { getCardSource } from '../utils/utils';
+import CartasJugador from '../components/CartasJugador';
 
 let container = null;
 beforeEach(() => {
-  container = document.createElement("div");
+  container = document.createElement('div');
   document.body.appendChild(container);
 });
 
@@ -17,8 +17,8 @@ afterEach(() => {
   container = null;
 });
 
-describe("CartasJugador", () => {
-  it("renderiza correctamente las cartas del jugador", () => {
+describe('CartasJugador', () => {
+  it('renderiza correctamente las cartas del jugador', () => {
     const cards = [
       victimsNames.CONDE,
       victimsNames.AMA_DE_LLAVES,
@@ -29,18 +29,15 @@ describe("CartasJugador", () => {
       render(<CartasJugador cards={cards} />, container);
     });
 
-
     const cardElems = container.firstChild.children;
 
-    let idx = 0;
-    for (const cardElem of cardElems) {
-        let imageElem = cardElem.firstChild;
-        let elem = cards[idx];
-        let imgSrc = getCardSource(elem);
+    for (let i = 0; i < cardElems.length; i += 1) {
+      const imageElem = cardElems[i].firstChild;
+      const elem = cards[i];
+      const imgSrc = getCardSource(elem);
 
-        expect(imageElem.alt).toBe(elem);
-        expect(imageElem.src).toMatch(new RegExp(`${imgSrc}$`));
-        idx++;
+      expect(imageElem.alt).toBe(elem);
+      expect(imageElem.src).toMatch(new RegExp(`${imgSrc}$`));
     }
   });
 });

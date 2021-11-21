@@ -1,5 +1,6 @@
-import Card from './Carta';
+import React from 'react';
 import styled from '@emotion/styled';
+import Card from './Carta';
 
 const Container = styled.div`
     display: flex;
@@ -8,17 +9,17 @@ const Container = styled.div`
 `;
 
 function CartasJugador(props) {
-    const {cards} = props;
+  const { cards } = props;
 
-    const cardElems = cards.map((elem, idx) => (
-      <Card key={idx} cardName={elem} />
-    ));
+  const cardElems = cards.map((elem) => (
+    <Card key={elem} cardName={elem} />
+  ));
 
-    return (
-        <Container>
-            {cardElems}
-        </Container>
-    )
+  return (
+    <Container>
+      {cardElems}
+    </Container>
+  );
 }
 
-export default CartasJugador
+export default CartasJugador;
