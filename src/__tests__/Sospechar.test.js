@@ -8,7 +8,7 @@ import { setupServer } from 'msw/node';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import Index from '../components/Index';
-import { SocketSingleton } from '../components/connectionSocket';
+import SocketSingleton  from '../components/connectionSocket';
 
 const idPartida = 1;
 const idPlayer = 1;
@@ -36,13 +36,12 @@ const suspicionPayload = {
 const urlWebsocket = process.env.REACT_APP_URL_WS.concat('/',idPartida, '/ws/', idPlayer);
 const wsServer = new WS(urlWebsocket);
 
-const urlServer = process.env.REACT_APP_URL_SERVER;
+const urlServer = `${process.env.REACT_APP_URL_SERVER}/${idPartida}/suspect/${idPlayer}`
 const server = setupServer(
-  rest.post(urlServer.concat('/', idPartida, '/suspect/', idPlayer), (req, res, ctx) => () => {
+  rest.post(urlServer, (req, res, ctx) => {
     wsServer.send(JSON.stringify(suspicionPayload));
-    sessionStorage.setItem('postRecibido', true);
     return res(
-      ctx.status(204),
+      ctx.status(200)
     ) 
   })
 );
@@ -62,7 +61,7 @@ describe('Sospechar', () =>{
     );
 
     await wsServer.connected;
-    userEvent.click(await screen.findByRole('button'));
+    userEvent.click(await screen.findByRole('button', {name: /Sospechar/}));
     expect(screen.getByRole('img', {name: /Doncella/})).toBeInTheDocument();
     expect(screen.getByRole('img', {name: /Ama de llaves/})).toBeInTheDocument();
     expect(screen.getByRole('img', {name: /Jardinero/})).toBeInTheDocument();
@@ -92,12 +91,13 @@ describe('Sospechar', () =>{
 
     await wsServer.connected;
     await act( async () =>{
-      await userEvent.click(await screen.findByRole('button'));
-      await userEvent.click(screen.getByRole('img', {name: card1Name}));
-      await userEvent.click(screen.getByRole('img', {name: card2Name}));
-      await userEvent.click(await screen.findByRole('button', {name: /Sospechar/}));
+      userEvent.click(await screen.findByRole('button', {name: /Sospechar/}));
+      userEvent.click(screen.getByRole('img', {name: card1Name}));
+      userEvent.click(screen.getByRole('img', {name: card2Name}));
+      const boton = screen.getByText(/Sospechar/);
+      userEvent.click(await screen.findByRole('button', {name: /Sospechar/}));
     })
-    screen.debug();
+
     expect(await screen.findByText(/Se sospecho por/)).toBeInTheDocument();
     SocketSingleton.destroy();
   });

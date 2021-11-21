@@ -4,6 +4,7 @@ import './Partida.css';
 import Sospechar from './Sospechar/Sospechar';
 import RespuestaDado from './RespuestaDado';
 import {fetchRequest, fetchHandlerError} from '../utils/fetchHandler'
+import { Stack } from '@mui/material';
 
 async function getGameInfo(idPartida, idPlayer) {
   const requestOptions = {
@@ -30,7 +31,6 @@ function Partida(props) {
 
 
   useEffect(() => {
-    console.log('en partida ws singleton:', SocketSingleton.getInstance());
     SocketSingleton.getInstance().onmessage = (event) => {
       const message = JSON.parse(event.data);
       if (message.type === 'SUSPICION_MADE_EVENT') {
@@ -51,6 +51,76 @@ function Partida(props) {
     return (
       <div>
         <h2>Bienvenido a la Partida</h2>
+        <Stack
+          alignItems="center"
+          spacing={2}
+        > 
+          <Sospechar
+            suspecting={suspecting}
+            setSuspecting={setSuspecting}
+            setSuspectComplete={setSuspectComplete}
+            setHasError={setHasError}
+            setErrorMessage={setErrorMessage}
+            idPartida={idPartida}
+            idPlayer={idPlayer}
+            disabled={suspectDisabled}
+          />
+          <RespuestaDado DadoUrl={urlDado} />
+          <p>
+            {errorMessage}
+          </p>
+        </Stack>
+      </div>
+    );
+  }
+
+  if(suspecting){
+    return(
+      <Sospechar
+        suspecting={suspecting}
+        setSuspecting={setSuspecting}
+        setSuspectComplete={setSuspectComplete}
+        setHasError={setHasError}
+        setErrorMessage={setErrorMessage}
+        idPartida={idPartida}
+        idPlayer={idPlayer}
+      />
+    );
+  }
+
+  if (suspectComplete) {
+    return (
+      <div>
+        <h2>Bienvenido a la Partida</h2>
+        <Stack
+          alignItems="center"
+          spacing={2}
+        > 
+          <Sospechar
+            suspecting={suspecting}
+            setSuspecting={setSuspecting}
+            setSuspectComplete={setSuspectComplete}
+            setHasError={setHasError}
+            setErrorMessage={setErrorMessage}
+            idPartida={idPartida}
+            idPlayer={idPlayer}
+            disabled={suspectDisabled}
+          />
+          <p>
+            {suspectMessage}
+          </p>
+        </Stack>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h2>Bienvenido a la Partida</h2>
+      <Stack
+        alignItems="center"
+        spacing={2}
+      > 
         <Sospechar
           suspecting={suspecting}
           setSuspecting={setSuspecting}
@@ -62,48 +132,7 @@ function Partida(props) {
           disabled={suspectDisabled}
         />
         <RespuestaDado DadoUrl={urlDado} />
-        <p>
-          {errorMessage}
-        </p>
-      </div>
-    );
-  }
-
-  if (suspectComplete) {
-    return (
-      <div>
-        <h2>Bienvenido a la Partida</h2>
-        <Sospechar
-          suspecting={suspecting}
-          setSuspecting={setSuspecting}
-          setSuspectComplete={setSuspectComplete}
-          setHasError={setHasError}
-          setErrorMessage={setErrorMessage}
-          idPartida={idPartida}
-          idPlayer={idPlayer}
-          disabled={suspectDisabled}
-        />
-        <p>
-          {suspectMessage}
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <h2>Bienvenido a la Partida</h2>
-      <Sospechar
-        suspecting={suspecting}
-        setSuspecting={setSuspecting}
-        setSuspectComplete={setSuspectComplete}
-        setHasError={setHasError}
-        setErrorMessage={setErrorMessage}
-        idPartida={idPartida}
-        idPlayer={idPlayer}
-        disabled={suspectDisabled}
-      />
-      <RespuestaDado DadoUrl={urlDado} />
+      </Stack>
     </div>
   );
 }
