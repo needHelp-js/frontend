@@ -563,7 +563,6 @@ function Tablero(props) {
     availableRooms
   } = props;
   
-  const availableRooms = [];//[COCHERA, LABORATORIO, ALCOBA];
   const ref = useRef();
   const [pos, setPos] = useState([6, 0]);
 
