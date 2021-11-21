@@ -14,63 +14,60 @@ import PropTypes from 'prop-types';
 import TextField from '@mui/material/TextField';
 import { Redirect } from "react-router-dom";
 import {URL_LOBBY} from '../routes.js';
-import { fetchRequest, fetchHandlerError } from '../utils/fetchHandler';
 
 async function getAPI(url) {
-  const requestOptions = {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  };
-  return fetchRequest(url,requestOptions );
+  try {
+    const response = await fetch(url, {  
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    return null; 
+  }
 }
 
 async function patchAPI(url, payload) {
-  const requestOptions = {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  };
-  return fetchRequest(url, requestOptions);
+  try {
+    const response = await fetch(url, {
+      body: JSON.stringify(payload),
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const json = await response.json();
+    const status = await response.status;
+    return [json , status];
+
+  } catch (error) {
+    return [null, null]; 
+  }
 }
 
 function BotonUnirse(props){
-  const {disabled, idPartida, nickName, nombrePartida} = props;
+  const {disabled, idPartida, nickName, nombrePartida, password} = props;
   const [idJugador, setIdJugador] = useState(0);
   const [clicked, setClicked] = useState(false);
   const [redirect, setRedirect] = useState(false);
   
   useEffect(() => {
-    let isMounted = true;
     async function fetchData() {
       if (clicked){
-        if(isMounted){
-          const response = await patchAPI(`${process.env.REACT_APP_URL_SERVER}/${idPartida}/join`, 
-              {'playerNickname': nickName});
-          switch (response.type){
-            case fetchHandlerError.SUCCESS:
-              if(isMounted){
-                setIdJugador(response?.payload.playerId);
-                setRedirect(true);
-              }
-              break;
-            case fetchHandlerError.REQUEST_ERROR:
-              alert(response.payload);
-              isMounted = false;
-              break;
-            case fetchHandlerError.INTERNAL_ERROR:
-              alert(response.payload);
-              isMounted = false;
-              break;
-            }
-            if(isMounted) setClicked(false);
+        const [json, status] = await patchAPI(`${process.env.REACT_APP_URL_SERVER}/${idPartida}/join`, 
+            {'playerNickname': nickName, 'password': password});
+
+        if (status == 200){
+            setIdJugador(json.playerId);
+            setRedirect(true);
         }
+        if (status == 403){
+            alert(json.Error);
+        }
+        setClicked(false);
       }
     }
     fetchData();
-
-    return( () => {
-      isMounted = false;
-    })
   }, [clicked, idPartida]);
   
   if (redirect){
@@ -109,10 +106,11 @@ BotonUnirse.propTypes = {
   disabled : PropTypes.bool, 
   idPartida : PropTypes.number, 
   nickName : PropTypes.string, 
-  nombrePartida : PropTypes.string
+  nombrePartida : PropTypes.string,
+  password : PropTypes.string
 };
 
-function mostrarFilas(disabled, nickName, rows) {
+function mostrarFilas(disabled, nickName, password, rows) {
   if (rows) {
     if (rows.length > 0) {
       return (
@@ -133,6 +131,7 @@ function mostrarFilas(disabled, nickName, rows) {
                   <BotonUnirse
                     disabled={disabled}
                     nickName={nickName}
+                    password={password}
                     idPartida={row.id}
                     nombrePartida={row.name}
                   />
@@ -167,22 +166,14 @@ function TablaPartidas(props) {
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
     async function fetchData() {
       if (refresh) {
         const data = await getAPI(props.url);
-        if(isMounted){
-          setRows(data?.payload);
-          setRefresh(false);
-        }
+        setRows(data);
+        setRefresh(false);
       }
     }
     fetchData();
-
-    return( () => {
-      isMounted = false;
-    })
-
   }, [refresh, props.url]);
 
   return (
@@ -212,7 +203,7 @@ function TablaPartidas(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {mostrarFilas(props.disabled, props.nickName, rows)}
+          {mostrarFilas(props.disabled, props.nickName, props.password, rows)}
         </TableBody>
       </Table>
     </TableContainer>
@@ -229,6 +220,7 @@ const isAlphaNumeric = str => /^[a-z0-9]+$/gi.test(str);
 
 function ListarPartidas(props) {
   const [nickName, setNickName] = useState('jugador');
+  const [password, setPassword] = useState("");
   const [badNickName, setBadNickName] = useState(false);
 
   useEffect(() => {
@@ -248,10 +240,18 @@ function ListarPartidas(props) {
           error={badNickName}
           onChange={(event) => setNickName(event.target.value)}
         />
+        <TextField
+          style={{margin:10}}
+          id="password"
+          label="Contraseña"
+          defaultValue=""
+          onChange={(event) => setPassword(event.target.value)}
+        />
       <TablaPartidas 
           disabled={badNickName} 
           url={props.url} 
           nickName={nickName}
+          password = {password}
       />
     </div>
   );
