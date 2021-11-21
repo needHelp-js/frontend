@@ -8,6 +8,7 @@ import { setupServer } from 'msw/node';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import Index from '../components/Index';
+import SocketSingleton from '../components/connectionSocket';
 
 let idPartida = 1;
 let idPlayer = 1;
@@ -77,6 +78,7 @@ describe('Lobby', () => {
 
     expect(screen.getByText(nombrePartida)).toBeInTheDocument();
     expect(await screen.findByText(nicknamePlayer)).toBeInTheDocument();
+    SocketSingleton.destroy();
   });
 
   it('Actualiza lista de jugadores', async () => {
@@ -102,6 +104,7 @@ describe('Lobby', () => {
     });
     expect(await screen.findByText(nicknamePlayer)).toBeInTheDocument();
     expect(await screen.findByText(nicknamePlayer2)).toBeInTheDocument();
+    SocketSingleton.destroy();
   });
 
   it('Inicia la partida correctamente', async () => {

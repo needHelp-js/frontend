@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
@@ -7,15 +7,18 @@ import ElegirNickname from '../components/ElegirNickname';
 import ElegirNombrePartida from '../components/ElegirNombrePartida';
 import CrearPartida from '../components/CrearPartida';
 
+const endpointCreate = `${process.env.REACT_APP_URL_SERVER}/createGame`;
+const endpointCreateFail = `${process.env.REACT_APP_URL_SERVER}/createGameFail`;
 const server = setupServer(
-  rest.post('/createGame', (req, res, ctx) => {
+  rest.post(endpointCreate, (req, res, ctx) => {
     sessionStorage.setItem('post-recibido', true);
     return res(
       ctx.status(200),
     );
   }),
-  rest.post('/createGameFail', (req, res, ctx) => res(
-    ctx.status('Partida UnNombreParaLaPartida ya existe'),
+  rest.post(endpointCreateFail, (req, res, ctx) => res(
+    ctx.status(400),
+    ctx.json({Error: 'Partida UnNombreParaLaPartida ya existe'}),
   )),
 
 );
@@ -70,29 +73,37 @@ describe('CrearPartida', () => {
   });
 
   it('Hace el POST al backend', async () => {
-    render(<CrearPartida endpoint="/createGame" />);
-    await userEvent.type(screen.getByLabelText(/Nombre de la Partida/), nombrePartida);
-    await userEvent.type(screen.getByLabelText(/Nickname/), nickname);
-    await userEvent.click(screen.getByRole('button'));
+    render(<CrearPartida endpoint={endpointCreate} />);
+    await act(async () =>{
+      userEvent.type(screen.getByLabelText(/Nombre de la Partida/), nombrePartida);
+      userEvent.type(screen.getByLabelText(/Nickname/), nickname);
+      userEvent.click(screen.getByRole('button'));
+    })
     const recibido = sessionStorage.getItem('post-recibido');
     expect(recibido).toBe('true');
   });
 
   it('Respuesta al intentar crear una partida que ya existe', async () => {
-    render(<CrearPartida endpoint="/createGameFail" />);
-    await userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
-    await userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
-    await userEvent.click(screen.getByRole('button'));
+    render(<CrearPartida endpoint={endpointCreateFail} />);
+    await act(async () =>{
+      userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
+      userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
+      userEvent.click(screen.getByRole('button'));
+    })
     expect(await screen.findByText(/ya existe/)).toBeInTheDocument();
   });
 
   it('Valida formularios antes de enviarlos', async () => {
-    render(<CrearPartida endpoint="/createGame" />);
-    await userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
-    await userEvent.click(screen.getByRole('button'));
+    render(<CrearPartida endpoint={endpointCreate} />);
+    await act(async () =>{
+      userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
+      userEvent.click(screen.getByRole('button'));
+    })
     expect(await screen.findByText(/nombre de la partida debe tener/)).toBeInTheDocument();
-    await userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
-    await userEvent.click(screen.getByRole('button'));
+    await act(async () =>{
+      userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
+      userEvent.click(screen.getByRole('button'));
+    })
     expect(await screen.findByText(/nickname debe tener/)).toBeInTheDocument();
   });
 });

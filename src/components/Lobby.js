@@ -1,8 +1,10 @@
 import { Button } from '@mui/material';
-import React, { useEffect, createRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { URL_PARTIDA } from '../routes';
 import ListarJugadores from './ListarJugadores';
+import SocketSingleton from './connectionSocket';
+import { fetchRequest, fetchHandlerError } from '../utils/fetchHandler';
 import './Lobby.css';
 
 async function requestStart(idPartida, idPlayer) {
@@ -12,18 +14,9 @@ async function requestStart(idPartida, idPlayer) {
   };
   const endpointPrefix = process.env.REACT_APP_URL_SERVER;
   const endpoint = endpointPrefix.concat('/', idPartida, '/begin/', idPlayer);
-  const data = fetch(endpoint, requestOptions)
-    .then(async (response) => {
-      if (!response.ok) {
-        const isJson = response.headers.get('content-type')?.includes('application/json');
-        const payload = isJson && await response.json();
-        const error = (payload.Error) || response.status;
-        return Promise.reject(error);
-      }
-    })
-    .catch((error) => Promise.reject(error));
-  return data;
+  return fetchRequest(endpoint, requestOptions);
 }
+
 
 function Lobby(props) {
   const {
@@ -37,17 +30,17 @@ function Lobby(props) {
   const [errorMessage, setErrorMessage] = useState('');
   const wsPrefix = process.env.REACT_APP_URL_WS;
   const socketURL = wsPrefix.concat('/', idPartida, '/ws/', idPlayer);
-  const playerSocket = createRef();
 
   useEffect(() => {
-    playerSocket.current = new WebSocket(socketURL);
+    SocketSingleton.init(new WebSocket(socketURL));
+    console.log('ws singleton es:', SocketSingleton.getInstance());
     setPlayerJoined(true);
     let isMounted = true;
 
-    playerSocket.current.onopen = () => {
+    SocketSingleton.getInstance().onopen = () => {
       console.log('socket created:', idPartida, idPlayer);
     };
-    playerSocket.current.onmessage = (event) => {
+    SocketSingleton.getInstance().onmessage = (event) => {
       const message = JSON.parse(event.data);
       if (message.type === 'PLAYER_JOINED_EVENT' && isMounted) {
         setPlayerJoined(true);
@@ -65,12 +58,19 @@ function Lobby(props) {
   useEffect(() => {
     async function startGame() {
       requestStart(idPartida, idPlayer)
-        .catch((error) => {
-          setErrorMessage(error);
-          setHasError(true);
-          setStarting(false);
-          console.error('no se pudo iniciar la partida', errorMessage);
-        });
+        .then( (response) =>{
+          switch (response.type){
+            case fetchHandlerError.SUCCESS:
+              break;
+            case fetchHandlerError.REQUEST_ERROR:
+              console.error(response?.payload);
+              setStarting(false);
+              break;
+            case fetchHandlerError.INTERNAL_ERROR:
+              console.error(response?.payload);
+              setStarting(false);
+              break;
+          }});
     }
     if (starting) {
       startGame();
@@ -81,6 +81,10 @@ function Lobby(props) {
     return (
       <Redirect to={{
         pathname: URL_PARTIDA,
+        state: {
+          idPartida,
+          idPlayer,
+        },
       }}
       />
     );
