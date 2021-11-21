@@ -6,6 +6,7 @@ import { setupServer } from 'msw/node';
 import ElegirNickname from '../components/ElegirNickname';
 import ElegirNombrePartida from '../components/ElegirNombrePartida';
 import CrearPartida from '../components/CrearPartida';
+import * as fetchHandler from '../utils/fetchHandler';
 
 const endpointCreate = `${process.env.REACT_APP_URL_SERVER}/createGame`;
 const endpointCreateFail = `${process.env.REACT_APP_URL_SERVER}/createGameFail`;
@@ -13,7 +14,7 @@ const server = setupServer(
   rest.post(endpointCreate, (req, res, ctx) => {
     sessionStorage.setItem('post-recibido', true);
     return res(
-      ctx.status(200),
+      ctx.status(200)
     );
   }),
   rest.post(endpointCreateFail, (req, res, ctx) => res(
@@ -25,9 +26,8 @@ const server = setupServer(
 
 const nombrePartida = 'UnNombreParaLaPartida';
 const nickname = 'UnNombreParaElJugador';
-
 beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
+beforeEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('ElegirNombrePartida', () => {
@@ -105,5 +105,33 @@ describe('CrearPartida', () => {
       userEvent.click(screen.getByRole('button'));
     })
     expect(await screen.findByText(/nickname debe tener/)).toBeInTheDocument();
+  });
+
+  it('Crea partida con contraseña', async () => {
+    await act(async () => {
+      render(<CrearPartida endpoint={endpointCreate} />);
+    });
+
+    const passwordElem = document.querySelector('#password');
+
+    expect(passwordElem).toBeInTheDocument();
+
+    const spy = jest.spyOn(fetchHandler, 'fetchRequest');
+    
+    userEvent.type(screen.getByLabelText(/Nombre de la Partida/), nombrePartida);
+    userEvent.type(screen.getByLabelText(/Nickname/), nickname);
+    userEvent.type(screen.getByLabelText(/Clave/), '1234');
+    userEvent.click(screen.getByRole('button'));
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gameName: nombrePartida,
+        hostNickname: nickname,
+        password: '1234'
+      }),
+    };
+    expect(spy).toBeCalledWith(endpointCreate, requestOptions);
   });
 });
