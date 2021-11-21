@@ -1,9 +1,9 @@
-import React from "react";
 import MostrarJugadores from "./MostrarJugadores";
 import React, { useEffect, useState } from "react";
 import SocketSingleton from './connectionSocket';
 import './Partida.css';
 import RespuestaDado from './RespuestaDado';
+import { fetchRequest, fetchHandlerError } from "../utils/fetchHandler";
 
 
 
@@ -12,24 +12,13 @@ async function getGameInfo(idPartida, idPlayer) {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   };
-  const endpoint = process.env.REACT_APP_URL_SERVER.concat(
-    '/', idPartida, '?gameId=', idPartida, '&playerId=', idPlayer);
-  const data = fetch(endpoint, requestOptions)
-    .then(async (response) => {
-      const isJson = response.headers.get('content-type')?.includes('application/json');
-      const payload = isJson && await response.json();
-      if (!response.ok) {
-        const error = (payload && payload.Error) || response.status;
-        return Promise.reject(error);
-      }
-      return payload;
-    })
-    .catch((error) => Promise.reject(error));
-  return data;
+  const endpoint = process.env.REACT_APP_URL_SERVER.concat('/', idPartida);
+  return fetchRequest(endpoint, requestOptions, { playerId: idPlayer});
 }
 
 function Partida(props){
   const { idPartida, idPlayer } = props.location.state;
+  const [playerList, setPlayerList] = useState([]);
 
   useEffect(() =>{
     console.log('en partida ws singleton:', SocketSingleton.getInstance());
@@ -39,6 +28,18 @@ function Partida(props){
           console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
         }
     };
+    let isMounted = true;
+    getGameInfo(idPartida, idPlayer).then(async (response) => {
+      if (response.type === fetchHandlerError.SUCCESS){
+        if(isMounted){
+          setPlayerList(response?.payload.players);
+        }
+      }
+    })
+    return() => {
+      isMounted = false;
+    }
+    
   },[]);
 
 
@@ -48,15 +49,9 @@ const url = 'http://localhost:8000/games/'.concat(idPartida,'/dice/', idPlayer);
     <div>
       <h2>Bienvenido a la Partida</h2>
       <RespuestaDado DadoUrl={url}/>
-      <h2>
-                {nombrePartida}
-            </h2>
-            <h4>Jugadores en la partida:</h4>
-            <MostrarJugadores
-                playerJoined={playerJoined}
-                setPlayerJoined={setPlayerJoined}
-                idPartida={idPartida}
-            />
+      <h4>Jugadores en la partida:</h4>
+      <MostrarJugadores playerList={playerList}
+      />
     </div>
   )
 

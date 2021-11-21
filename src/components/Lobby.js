@@ -84,6 +84,7 @@ function Lobby(props) {
         state: {
           idPartida,
           idPlayer,
+          nPlayers,
         },
       }}
       />
