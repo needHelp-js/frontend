@@ -14,13 +14,14 @@ function handleValidate(nickname, nombrePartida) {
   return [true, ''];
 }
 
-async function sendGameData(endpoint, nickname, nombrePartida) {
+async function sendGameData(endpoint, nickname, nombrePartida, password) {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       gameName: nombrePartida,
       hostNickname: nickname,
+      password: password
     }),
   };
 
@@ -37,6 +38,7 @@ const CrearPartida = (props) => {
   const [creada, setCreada] = useState(false);
   const [idPartida, setIdPartida] = useState(0);
   const [idHost, setIdHost] = useState(0);
+  const [password, setPassword] = useState('');
   const { endpoint } = props;
 
   useEffect(() => {
@@ -54,7 +56,7 @@ const CrearPartida = (props) => {
         setNombrePartida('');
         isMounted = false;
       } else {
-        sendGameData(endpoint, nickname, nombrePartida)
+        sendGameData(endpoint, nickname, nombrePartida, password)
           .then(async (response) => {
             switch (response.type){
               case fetchHandlerError.SUCCESS:
@@ -71,6 +73,7 @@ const CrearPartida = (props) => {
                 setSubmited(false);
                 setNombrePartida('');
                 setNickname('');
+                setPassword('');
                 isMounted = false;
                 break;
               case fetchHandlerError.INTERNAL_ERROR:
@@ -79,6 +82,7 @@ const CrearPartida = (props) => {
                 setSubmited(false);
                 setNombrePartida('');
                 setNickname('');
+                setPassword('');
                 isMounted = false;
                 break;
             }
@@ -116,9 +120,11 @@ const CrearPartida = (props) => {
         <InputCrearPartida
           nombrePartida={nombrePartida}
           nickname={nickname}
+          password={password}
           setNombrePartida={setNombrePartida}
           setNickname={setNickname}
           setSubmited={setSubmited}
+          setPassword={setPassword}
         />
         <p className="errorMessage">
           {errorMessage}
@@ -135,8 +141,10 @@ const CrearPartida = (props) => {
       <InputCrearPartida
         nombrePartida={nombrePartida}
         nickname={nickname}
+        password={password}
         setNombrePartida={setNombrePartida}
         setNickname={setNickname}
+        setPassword={setPassword}
         setSubmited={setSubmited}
       />
     </div>
