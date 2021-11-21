@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import CartasJugador from "./CartasJugador";
 import SocketSingleton from './connectionSocket';
 
-function Partida(props){
+function Partida(){
     const [playerCards, setPlayerCards] = useState([]);
     useEffect(() => {
         let isMounted = true;
