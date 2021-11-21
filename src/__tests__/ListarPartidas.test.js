@@ -95,11 +95,11 @@ it('4. Caso de exito: nickname cambia cuando se escribe', async () => {
       render(<ListarPartidas url={urlPartidas}/>);
       const button = screen.getByText('Actualizar');
       await userEvent.click(button);
-      const fieldNickName = screen.getByRole('textbox');
+      const fieldNickName = screen.getByRole('textbox', {name: 'nickname'});
       userEvent.type(fieldNickName, 'usuarioValido');
     });
 
-    expect(screen.getByRole('textbox')).toHaveValue('usuarioValido');
+    expect(screen.getByRole('textbox', {name: 'nickname'})).toHaveValue('usuarioValido');
     let buttons = await screen.findAllByTestId("unirse");
  
     for(let i = 0; i < 3; i++){
@@ -113,7 +113,7 @@ it('5. Caso de exito: nickname invalido', async () => {
       render(<ListarPartidas url={urlPartidas}/>);
       const button = screen.getByText('Actualizar');
       await userEvent.click(button);
-      const fieldNickName = screen.getByRole('textbox');
+      const fieldNickName = screen.getByRole('textbox', {name: 'nickname'});
       userEvent.type(fieldNickName, 'usuarioN0!Valido');
     });
 
@@ -130,7 +130,7 @@ it('6. Caso de exito: nickname valido y une a partida que devuelve 200', async (
       render(<ListarPartidas url={urlPartidas}/>);
       const button = screen.getByText('Actualizar');
       await userEvent.click(button);
-      const fieldNickName = screen.getByRole('textbox');
+      const fieldNickName = screen.getByRole('textbox', {name: 'nickname'});
       userEvent.type(fieldNickName, 'usuarioValido');
       let buttons =  await screen.findAllByTestId("unirse");
       await userEvent.click(buttons[0]);
@@ -145,7 +145,7 @@ it('7. Caso de excepción: nickname valido y une a partida que devuelve 403', as
       render(<ListarPartidas url={urlPartidas}/>);
       const button = screen.getByText('Actualizar');
       await userEvent.click(button);
-      const fieldNickName = screen.getByRole('textbox');
+      const fieldNickName = screen.getByRole('textbox', {name: 'nickname'});
       userEvent.type(fieldNickName, 'usuarioValido');
       let buttons =  await screen.findAllByTestId("unirse");
       await userEvent.click(buttons[1]);

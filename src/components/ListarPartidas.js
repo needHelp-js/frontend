@@ -237,6 +237,7 @@ function ListarPartidas(props) {
     <div style={{margin:50}}>
       <TextField
           style={{margin:10}}
+          inputProps={{ 'aria-label': 'nickname' }}
           id="nickname"
           label="Nickname"
           defaultValue=""
