@@ -50,7 +50,7 @@ function Lobby(props) {
       } else if (message.type === 'BEGIN_GAME_EVENT' && isMounted) {
         setStarted(true);
         isMounted = false;
-      }
+      } 
     };
 
     return () => {
@@ -86,7 +86,7 @@ function Lobby(props) {
         pathname: URL_PARTIDA,
         state: {
           idPartida,
-          idPlayer,
+          idPlayer
         },
       }}
       />
