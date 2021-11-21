@@ -122,6 +122,9 @@ function mostrarFilas(disabled, nickName, password, rows) {
             <TableCell component="th" scope="row">
               {row.name ? row.name
                 : undefined}
+            <tableCell align="right">
+              {row.hasPassword ? " (con contraseña)" : " (sin contraseña)"}
+            </tableCell>
             </TableCell>
             <TableCell align="right">
               {row.playerCount ? row.playerCount
