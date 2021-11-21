@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from '@mui/material';
-import {SocketSingleton} from './connectionSocket';
+import SocketSingleton from './connectionSocket';
 import './Partida.css';
 import RespuestaDado from './RespuestaDado';
 

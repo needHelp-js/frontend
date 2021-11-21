@@ -127,6 +127,7 @@ describe('Lobby', () => {
     const comienzo = sessionStorage.getItem('empezoPartida');
     expect(comienzo).toBe('true');
     sessionStorage.setItem('empezoPartida', false)
+    SocketSingleton.destroy();
   });
 
   it('No permite iniciar la partida si no hay suficientes jugadores', async () => {
@@ -163,5 +164,6 @@ describe('Lobby', () => {
     await userEvent.click(screen.getByRole('button'));
     const comienzo = sessionStorage.getItem('empezoPartida');
     expect(comienzo).not.toBe('true');
+    SocketSingleton.destroy();
   });
 });

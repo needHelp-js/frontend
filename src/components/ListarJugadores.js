@@ -48,11 +48,12 @@ function ListarJugadores(props) {
             if (response.type === fetchHandlerError.SUCCESS){
               if(isMounted){
                 setRows(response?.payload.players);
+                setNPlayers(response?.payload.players.length);
                 setPlayerJoined(false);
               }
             }
           })
-    }
+      }
     }
     updatePlayers();
     return () => {
