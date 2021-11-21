@@ -43,17 +43,11 @@ function ListarJugadores(props) {
       if (playerJoined && isMounted) {
         getPlayers(idPartida, idPlayer)
           .then(async (response) => {
-            switch (response.type){
-              case fetchHandlerError.SUCCESS:
-                if(isMounted){
-                  setRows(response?.payload.players);
-                  setPlayerJoined(false);
-                }
-                break;
-              case fetchHandlerError.REQUEST_ERROR:
-                break;
-              case fetchHandlerError.INTERNAL_ERROR:
-                break;
+            if (response.type === fetchHandlerError.SUCCESS){
+              if(isMounted){
+                setRows(response?.payload.players);
+                setPlayerJoined(false);
+              }
             }
           })
     }
