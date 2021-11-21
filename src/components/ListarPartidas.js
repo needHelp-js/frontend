@@ -14,35 +14,23 @@ import PropTypes from 'prop-types';
 import TextField from '@mui/material/TextField';
 import { Redirect } from "react-router-dom";
 import {URL_LOBBY} from '../routes.js';
+import { fetchRequest, fetchHandlerError } from '../utils/fetchHandler';
 
 async function getAPI(url) {
-  try {
-    const response = await fetch(url, {  
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-    const json = await response.json();
-    return json;
-  } catch (error) {
-    return null; 
-  }
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  };
+  return fetchRequest(url,requestOptions );
 }
 
 async function patchAPI(url, payload) {
-  try {
-    const response = await fetch(url, {
-      body: JSON.stringify(payload),
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-    const json = await response.json();
-    const status = await response.status;
-    return [json , status];
-
-  } catch (error) {
-    return [null, null]; 
-  }
+  const requestOptions = {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  };
+  return fetchRequest(url, requestOptions);
 }
 
 function BotonUnirse(props){
@@ -52,22 +40,37 @@ function BotonUnirse(props){
   const [redirect, setRedirect] = useState(false);
   
   useEffect(() => {
+    let isMounted = true;
     async function fetchData() {
       if (clicked){
-        const [json, status] = await patchAPI(`${process.env.REACT_APP_URL_SERVER}/${idPartida}/join`, 
-            {'playerNickname': nickName});
-
-        if (status == 200){
-            setIdJugador(json.playerId);
-            setRedirect(true);
+        if(isMounted){
+          const response = await patchAPI(`${process.env.REACT_APP_URL_SERVER}/${idPartida}/join`, 
+              {'playerNickname': nickName});
+          switch (response.type){
+            case fetchHandlerError.SUCCESS:
+              if(isMounted){
+                setIdJugador(response?.payload.playerId);
+                setRedirect(true);
+              }
+              break;
+            case fetchHandlerError.REQUEST_ERROR:
+              alert(response.payload);
+              isMounted = false;
+              break;
+            case fetchHandlerError.INTERNAL_ERROR:
+              alert(response.payload);
+              isMounted = false;
+              break;
+            }
+            if(isMounted) setClicked(false);
         }
-        if (status == 403){
-            alert(json.Error);
-        }
-        setClicked(false);
       }
     }
     fetchData();
+
+    return( () => {
+      isMounted = false;
+    })
   }, [clicked, idPartida]);
   
   if (redirect){
@@ -164,14 +167,22 @@ function TablaPartidas(props) {
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     async function fetchData() {
       if (refresh) {
         const data = await getAPI(props.url);
-        setRows(data);
-        setRefresh(false);
+        if(isMounted){
+          setRows(data?.payload);
+          setRefresh(false);
+        }
       }
     }
     fetchData();
+
+    return( () => {
+      isMounted = false;
+    })
+
   }, [refresh, props.url]);
 
   return (
