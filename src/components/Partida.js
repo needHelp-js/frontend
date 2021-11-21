@@ -1,28 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { SocketSingleton } from './connectionSocket';
+import SocketSingleton  from './connectionSocket';
 import './Partida.css';
 import Sospechar from './Sospechar/Sospechar';
+import RespuestaDado from './RespuestaDado';
+import {fetchRequest, fetchHandlerError} from '../utils/fetchHandler'
 
 async function getGameInfo(idPartida, idPlayer) {
   const requestOptions = {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   };
-  const endpoint = process.env.REACT_APP_URL_SERVER.concat(
-    '/', idPartida, '?gameId=', idPartida, '&playerId=', idPlayer,
-  );
-  const data = fetch(endpoint, requestOptions)
-    .then(async (response) => {
-      const isJson = response.headers.get('content-type')?.includes('application/json');
-      const payload = isJson && await response.json();
-      if (!response.ok) {
-        const error = (payload && payload.Error) || response.status;
-        return Promise.reject(error);
-      }
-      return payload;
-    })
-    .catch((error) => Promise.reject(error));
-  return data;
+  const endpoint = `${process.env.REACT_APP_URL_SERVER}'/'${idPartida}`;
+  const params = {
+    gameId: idPartida,
+    playerId: idPlayer,
+  }
+  fetchRequest(endpoint, requestOptions, params);
 }
 
 function Partida(props) {
@@ -33,6 +26,8 @@ function Partida(props) {
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [suspectMessage, setSuspectMessage] = useState('');
+  const urlDado = `${process.env.REACT_APP_URL_SERVER}/${idPartida}/dice/${idPlayer}`;
+
 
   useEffect(() => {
     console.log('en partida ws singleton:', SocketSingleton.getInstance());
@@ -66,6 +61,7 @@ function Partida(props) {
           idPlayer={idPlayer}
           disabled={suspectDisabled}
         />
+        <RespuestaDado DadoUrl={urlDado} />
         <p>
           {errorMessage}
         </p>
@@ -107,8 +103,10 @@ function Partida(props) {
         idPlayer={idPlayer}
         disabled={suspectDisabled}
       />
+      <RespuestaDado DadoUrl={urlDado} />
     </div>
   );
 }
 
 export default Partida;
+
