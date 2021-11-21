@@ -1,30 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import { Stack } from '@mui/material';
+import CartasJugador from './CartasJugador';
 import SocketSingleton from './connectionSocket';
 import './Partida.css';
 import Sospechar from './Sospechar/Sospechar';
 import RespuestaDado from './RespuestaDado';
 
 function Partida(props) {
-  const { idPartida, idPlayer } = props.location.state;
+  const { location } = props;
+  const { idPartida, idPlayer } = location.state;
   const [suspecting, setSuspecting] = useState(false);
   const [suspectDisabled, setSuspectDisabled] = useState(false);
   const [suspectComplete, setSuspectComplete] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [suspectMessage, setSuspectMessage] = useState('');
+  const [playerCards, setPlayerCards] = useState([]);
   const urlDado = `${process.env.REACT_APP_URL_SERVER}/${idPartida}/dice/${idPlayer}`;
 
   useEffect(() => {
-    SocketSingleton.getInstance().onmessage = (event) => {
+    let isMounted = true;
+    SocketSingleton.getInstance().addEventListener('message', (event) => {
       const message = JSON.parse(event.data);
       if (message.type === 'SUSPICION_MADE_EVENT') {
-        const mensajeSospecha = 'Se sospecho por '.concat(message.payload.card1Name, ' y ', message.payload.card2Name);
-        setSuspectMessage(mensajeSospecha);
         console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
+      } else if (message.type === 'DEAL_CARDS_EVENT' && isMounted) {
+        setPlayerCards(message.payload);
+        console.log(message);
       }
+    });
+    return () => {
+      isMounted = false;
     };
-  }, []);
+  }, [playerCards]);
 
   useEffect(() => {
     if (suspectComplete) {
@@ -99,6 +107,10 @@ function Partida(props) {
     );
   }
 
+
+
+
+
   return (
     <div>
       <h2>Bienvenido a la Partida</h2>
@@ -117,7 +129,9 @@ function Partida(props) {
           disabled={suspectDisabled}
         />
         <RespuestaDado DadoUrl={urlDado} />
+        <CartasJugador cards={playerCards} />
       </Stack>
+
     </div>
   );
 }
