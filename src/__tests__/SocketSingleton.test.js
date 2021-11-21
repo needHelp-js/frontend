@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import WS from 'jest-websocket-mock';
-import {SocketSingleton, SingletonAlreadyInitialized} from '../../src/components/connectionSocket';
+import SocketSingleton from '../../src/components/connectionSocket';
+import SingletonAlreadyInitialized from '../../src/components/errorSocket'
 
 
 

@@ -127,5 +127,43 @@ describe('Lobby', () => {
     const comienzo = sessionStorage.getItem('empezoPartida');
     expect(comienzo).toBe('true');
     sessionStorage.setItem('empezoPartida', false)
+    SocketSingleton.destroy();
+  });
+
+  it('No permite iniciar la partida si no hay suficientes jugadores', async () => {
+    idPartida = 3;
+    idPlayer = 3;
+    const history2 = createMemoryHistory();
+    const state2 = {
+      idPartida,
+      idPlayer,
+      nombrePartida,
+      isHost: true,
+    };
+    history2.push('/lobby', state2);
+
+    server.use(
+      rest.patch(urlServer.concat('/', idPartida, '/begin/', idPlayer), (req, res, ctx) => res(
+          ctx.status(403), 
+          ctx.json({Error: 'No hay suficientes jugadores para empezar la partida'})
+        )
+      ),
+      rest.get(urlServer.concat('/', idPartida), (req, res, ctx) => res(
+        ctx.status(200),
+        ctx.json(players2),
+        )),
+      );
+
+    render(
+      <Router history={history2}>
+        <Index />
+      </Router>,
+    );
+
+    await wsServer.connected;
+    await userEvent.click(screen.getByRole('button'));
+    const comienzo = sessionStorage.getItem('empezoPartida');
+    expect(comienzo).not.toBe('true');
+    SocketSingleton.destroy();
   });
 });

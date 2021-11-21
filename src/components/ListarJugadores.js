@@ -35,7 +35,9 @@ function mostrarJugadores(rows) {
 
 function ListarJugadores(props) {
   const [rows, setRows] = useState([]);
-  const { playerJoined, setPlayerJoined, idPartida, idPlayer } = props;
+  const {
+    playerJoined, setPlayerJoined, setNPlayers, idPartida, idPlayer,
+  } = props;
 
   useEffect(() => {
     let isMounted = true;
@@ -46,16 +48,17 @@ function ListarJugadores(props) {
             if (response.type === fetchHandlerError.SUCCESS){
               if(isMounted){
                 setRows(response?.payload.players);
+                setNPlayers(response?.payload.players.length);
                 setPlayerJoined(false);
               }
             }
           })
-    }
+      }
     }
     updatePlayers();
     return () => {
       isMounted = false;
-    }
+    };
   }, [playerJoined, idPartida, setPlayerJoined]);
 
   return (
