@@ -15,9 +15,7 @@ async function sendSuspect(idPartida, idPlayer, victima, monstruo) {
       card2Name: monstruo,
     }),
   };
-
-  //const endpoint = process.env.REACT_APP_URL_SERVER.concat('/', idPartida, '/suspect/', idPlayer);
-  const endpoint = `${process.env.REACT_APP_URL_SERVER}/${idPartida}/suspect/${idPlayer}`
+  const endpoint = `${process.env.REACT_APP_URL_SERVER}/${idPartida}/suspect/${idPlayer}`;
 
   return fetchRequest(endpoint, requestOptions);
 }
@@ -35,10 +33,10 @@ function Sospechar(props) {
     async function suspect() {
       sendSuspect(idPartida, idPlayer, victima, monstruo)
         .then((response) => {
-          switch (response.type){
+          switch (response.type) {
             case fetchHandlerError.SUCCESS:
               setSuspectComplete(true);
-              setSuspecting(false);    
+              setSuspecting(false);
               break;
             case fetchHandlerError.REQUEST_ERROR:
               setSuspected(false);
@@ -51,6 +49,8 @@ function Sospechar(props) {
               setSuspecting(false);
               setErrorMessage(response.payload);
               setHasError(true);
+              break;
+            default:
               break;
           }
         });

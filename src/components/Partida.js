@@ -1,23 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import SocketSingleton  from './connectionSocket';
+import { Stack } from '@mui/material';
+import SocketSingleton from './connectionSocket';
 import './Partida.css';
 import Sospechar from './Sospechar/Sospechar';
 import RespuestaDado from './RespuestaDado';
-import {fetchRequest, fetchHandlerError} from '../utils/fetchHandler'
-import { Stack } from '@mui/material';
-
-async function getGameInfo(idPartida, idPlayer) {
-  const requestOptions = {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  };
-  const endpoint = `${process.env.REACT_APP_URL_SERVER}'/'${idPartida}`;
-  const params = {
-    gameId: idPartida,
-    playerId: idPlayer,
-  }
-  fetchRequest(endpoint, requestOptions, params);
-}
 
 function Partida(props) {
   const { idPartida, idPlayer } = props.location.state;
@@ -28,7 +14,6 @@ function Partida(props) {
   const [errorMessage, setErrorMessage] = useState('');
   const [suspectMessage, setSuspectMessage] = useState('');
   const urlDado = `${process.env.REACT_APP_URL_SERVER}/${idPartida}/dice/${idPlayer}`;
-
 
   useEffect(() => {
     SocketSingleton.getInstance().onmessage = (event) => {
@@ -54,7 +39,7 @@ function Partida(props) {
         <Stack
           alignItems="center"
           spacing={2}
-        > 
+        >
           <Sospechar
             suspecting={suspecting}
             setSuspecting={setSuspecting}
@@ -74,8 +59,8 @@ function Partida(props) {
     );
   }
 
-  if(suspecting){
-    return(
+  if (suspecting) {
+    return (
       <Sospechar
         suspecting={suspecting}
         setSuspecting={setSuspecting}
@@ -95,7 +80,7 @@ function Partida(props) {
         <Stack
           alignItems="center"
           spacing={2}
-        > 
+        >
           <Sospechar
             suspecting={suspecting}
             setSuspecting={setSuspecting}
@@ -120,7 +105,7 @@ function Partida(props) {
       <Stack
         alignItems="center"
         spacing={2}
-      > 
+      >
         <Sospechar
           suspecting={suspecting}
           setSuspecting={setSuspecting}
@@ -138,4 +123,3 @@ function Partida(props) {
 }
 
 export default Partida;
-
