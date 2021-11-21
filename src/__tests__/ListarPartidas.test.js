@@ -8,6 +8,13 @@ import {useEffect } from 'react';
 import userEvent from '@testing-library/user-event';
 import { act } from "react-dom/test-utils";
 
+
+const urlPartidas = `${process.env.REACT_APP_URL_SERVER}/partidas`
+const urlApagado = `${process.env.REACT_APP_URL_SERVER}/apagado`
+const urlVacia = `${process.env.REACT_APP_URL_SERVER}/vacia`
+const urlJoin1 = `${process.env.REACT_APP_URL_SERVER}/1/join`
+const urlJoin2 = `${process.env.REACT_APP_URL_SERVER}/2/join`
+
 const MOCK_GET = [
         {'name': 'los pibis', 'playerCount': 3, 'id': 1}, 
         {'name': 'boquita', 'playerCount': 5, 'id': 2}, 
@@ -15,22 +22,22 @@ const MOCK_GET = [
 ];
 
 const server = setupServer(
-        rest.get('/partidas', (req, res, ctx) => {
+        rest.get(urlPartidas, (req, res, ctx) => {
             return res(ctx.status(200), ctx.json(MOCK_GET))
         }), 
 
-        rest.get('/vacia', (req, res, ctx) => {
+        rest.get(urlVacia, (req, res, ctx) => {
             return res(ctx.json([]))
         }),
-        rest.get('/apagado', (req, res, ctx) => {
+        rest.get(urlApagado, (req, res, ctx) => {
             return res(ctx.status(500))
         }),
 
-        rest.patch('http://localhost/undefined/1/join', (req, res, ctx) => {
+        rest.patch(urlJoin1, (req, res, ctx) => {
             return res(ctx.status(200), ctx.json({'playerId': 1}))
         }),
 
-        rest.patch('http://localhost/undefined/2/join', (req, res, ctx) => {
+        rest.patch(urlJoin2, (req, res, ctx) => {
             return res(ctx.status(403), ctx.json({'Error': 'algún error'}))
         })
 )
@@ -50,7 +57,7 @@ const names = MOCK_GET.map(obj => obj['name']);
 const playersCount = MOCK_GET.map(obj => obj['playerCount']);
 
 test('1. Caso de exito: hay conexión y al menos una partida', async () => {
-    render(<ListarPartidas url='/partidas' />);
+    render(<ListarPartidas url={urlPartidas} />);
     const button = await screen.getByRole('button');
     await userEvent.click(button); 
         
@@ -65,14 +72,14 @@ test('1. Caso de exito: hay conexión y al menos una partida', async () => {
 
 
 test('2. Caso de excepción: no hay conexión.', async () => {
-    render(<ListarPartidas url='/apagado' />);
+    render(<ListarPartidas url={urlApagado} />);
     const actualizar = await screen.getByRole('button'); 
     await userEvent.click(actualizar);
     const mgs = await screen.findByText('Sin conexión, actualice la lista.');
 });
 
 test('3. Caso de excepción: hay conexión pero no hay partidas.', async () => {
-    render(<ListarPartidas url='vacia'/>);
+    render(<ListarPartidas url={urlVacia}/>);
     const button = await screen.getByRole('button');
     await userEvent.click(button);
     const msg = await screen.findByText('No hay partidas.');
@@ -85,7 +92,7 @@ test('3. Caso de excepción: hay conexión pero no hay partidas.', async () => {
 // Tests unirse a partida.
 it('4. Caso de exito: nickname cambia cuando se escribe', async () => {
    await act(async () => {
-      render(<ListarPartidas url='/partidas'/>);
+      render(<ListarPartidas url={urlPartidas}/>);
       const button = screen.getByText('Actualizar');
       await userEvent.click(button);
       const fieldNickName = screen.getByRole('textbox');
@@ -103,7 +110,7 @@ it('4. Caso de exito: nickname cambia cuando se escribe', async () => {
 
 it('5. Caso de exito: nickname invalido', async () => {
    await act(async () => {
-      render(<ListarPartidas url='/partidas'/>);
+      render(<ListarPartidas url={urlPartidas}/>);
       const button = screen.getByText('Actualizar');
       await userEvent.click(button);
       const fieldNickName = screen.getByRole('textbox');
@@ -120,7 +127,7 @@ it('5. Caso de exito: nickname invalido', async () => {
 
 it('6. Caso de exito: nickname valido y une a partida que devuelve 200', async () => {
    await act(async () => {
-      render(<ListarPartidas url='/partidas'/>);
+      render(<ListarPartidas url={urlPartidas}/>);
       const button = screen.getByText('Actualizar');
       await userEvent.click(button);
       const fieldNickName = screen.getByRole('textbox');
@@ -135,7 +142,7 @@ it('6. Caso de exito: nickname valido y une a partida que devuelve 200', async (
 
 it('7. Caso de excepción: nickname valido y une a partida que devuelve 403', async () => {
    await act(async () => {
-      render(<ListarPartidas url='/partidas'/>);
+      render(<ListarPartidas url={urlPartidas}/>);
       const button = screen.getByText('Actualizar');
       await userEvent.click(button);
       const fieldNickName = screen.getByRole('textbox');

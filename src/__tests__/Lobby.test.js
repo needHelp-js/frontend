@@ -8,10 +8,11 @@ import { setupServer } from 'msw/node';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import Index from '../components/Index';
+import SocketSingleton from '../components/connectionSocket';
 
-const idPartida = 1;
-const idPlayer = 1;
-const idPlayer2 = 2;
+let idPartida = 1;
+let idPlayer = 1;
+let idPlayer2 = 2;
 const nombrePartida = 'nombreDeLaPartida';
 const nicknamePlayer = 'nicknameDelJugador';
 const nicknamePlayer2 = 'nicknameDelJugador2';
@@ -21,7 +22,6 @@ const state = {
   idPartida,
   idPlayer,
   nombrePartida,
-  nicknamePlayer,
   isHost: true,
 };
 history.push('/lobby', state);
@@ -78,6 +78,7 @@ describe('Lobby', () => {
 
     expect(screen.getByText(nombrePartida)).toBeInTheDocument();
     expect(await screen.findByText(nicknamePlayer)).toBeInTheDocument();
+    SocketSingleton.destroy();
   });
 
   it('Actualiza lista de jugadores', async () => {
@@ -103,9 +104,17 @@ describe('Lobby', () => {
     });
     expect(await screen.findByText(nicknamePlayer)).toBeInTheDocument();
     expect(await screen.findByText(nicknamePlayer2)).toBeInTheDocument();
+    SocketSingleton.destroy();
   });
 
   it('Inicia la partida correctamente', async () => {
+    server.use(
+      rest.get(urlServer.concat('/', idPartida), (req, res, ctx) => res(
+        ctx.status(200),
+        ctx.json(players2),
+        )),
+    );
+    
     render(
       <Router history={history}>
         <Index />
@@ -117,5 +126,6 @@ describe('Lobby', () => {
     await userEvent.click(screen.getByRole('button'));
     const comienzo = sessionStorage.getItem('empezoPartida');
     expect(comienzo).toBe('true');
+    sessionStorage.setItem('empezoPartida', false)
   });
 });
