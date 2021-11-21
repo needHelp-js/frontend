@@ -52,22 +52,28 @@ function BotonUnirse(props){
   const [redirect, setRedirect] = useState(false);
   
   useEffect(() => {
+    let isMounted = true;
     async function fetchData() {
       if (clicked){
         const [json, status] = await patchAPI(`${process.env.REACT_APP_URL_SERVER}/${idPartida}/join`, 
             {'playerNickname': nickName, 'password': password});
 
-        if (status == 200){
+        if (status == 200 && isMounted){
             setIdJugador(json.playerId);
             setRedirect(true);
         }
         if (status == 403){
             alert(json.Error);
         }
-        setClicked(false);
+        if (isMounted) {
+            setClicked(false);
+        } 
       }
     }
     fetchData();
+    return () => {
+      isMounted = false;
+    }
   }, [clicked, idPartida]);
   
   if (redirect){
@@ -122,9 +128,9 @@ function mostrarFilas(disabled, nickName, password, rows) {
             <TableCell component="th" scope="row">
               {row.name ? row.name
                 : undefined}
-            <tableCell align="right">
+            </TableCell>
+            <TableCell align="right">
               {row.hasPassword ? " (con contraseña)" : " (sin contraseña)"}
-            </tableCell>
             </TableCell>
             <TableCell align="right">
               {row.playerCount ? row.playerCount
@@ -169,14 +175,20 @@ function TablaPartidas(props) {
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     async function fetchData() {
       if (refresh) {
         const data = await getAPI(props.url);
-        setRows(data);
-        setRefresh(false);
+        if (isMounted) {
+          setRows(data);
+          setRefresh(false);
+        }
       }
     }
     fetchData();
+    return () => {
+      isMounted = false;
+    }
   }, [refresh, props.url]);
 
   return (
