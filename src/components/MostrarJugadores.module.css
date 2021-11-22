@@ -1,0 +1,28 @@
+.table {
+  width: 15%;
+  border: 1px solid #000;
+  margin: 0 auto;
+  border-collapse: collapse;
+ 
+}
+.row {
+  width: 25%;
+  text-align: left;
+  vertical-align: top;
+  border: 1px solid #000;
+  border-collapse: collapse;
+  padding: 0.3em;
+  caption-side: bottom;
+  text-align:center;
+}
+.caption {
+  padding: 0.3em;
+  color: #fff;
+  background: #000;
+}
+.row-data {
+  background: #4B0082;
+  color: #fff;
+  
+
+}

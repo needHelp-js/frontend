@@ -49,7 +49,6 @@ const url = 'http://localhost:8000/games/'.concat(idPartida,'/dice/', idPlayer);
     <div>
       <h2>Bienvenido a la Partida</h2>
       <RespuestaDado DadoUrl={url}/>
-      <h4>Jugadores en la partida:</h4>
       <MostrarJugadores playerList={playerList}
       />
     </div>

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import List from '@mui/material/List';
+import * as React from 'react';
 import { ListItem, ListItemText } from '@mui/material';
+import style from './MostrarJugadores.module.css'
+
 
 function ordenarJugadores(rows) {
   const myData = rows
@@ -8,8 +9,8 @@ function ordenarJugadores(rows) {
     .map((player) => (
       
         <ListItem key={player.myData}>
+          <ListItemText primary={player.turnOrder} />
           <ListItemText primary={player.nickname} />
-          <ListItemText primary={player.turnOrder}/>
         </ListItem>
       
     ));
@@ -22,11 +23,27 @@ function MostrarJugadores(props) {
   } = props;
 
   return (
-    <List>
-      {ordenarJugadores(playerList)}
-    </List>
+    playerList.length > 0 && (
+    <div>
+		<table className={style.table}>
+    <thead>
+						<tr className={style.row}>
+							<th className={style['row-data']}>Jugadores</th>
+						</tr>
+		</thead>
+        <tbody>
+            {ordenarJugadores(playerList)}
+        </tbody>
+      </table>
+	</div>
+      
+    )
   );
-}
+
+
+   
+
+}     
 
 export default MostrarJugadores;
 
