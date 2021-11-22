@@ -15,11 +15,11 @@ import spriteEntradaIzqMarron from '../sprites/spriteEntradaIzqMarron.jpg';
 import spriteEntradaDerMarron from '../sprites/spriteEntradaDerMarron.jpg';
 import spriteEntradaArribaMarron from '../sprites/spriteEntradaArribaMarron.jpg';
 import spriteEntradaAbajoMarron from '../sprites/spriteEntradaAbajoMarron.jpg';
-import spriteTrampa from '../sprites/spriteTrampa.jpg';
 import spriteCobra from '../sprites/spriteCobra.jpg';
 import spriteSpider from '../sprites/spriteSpider.jpg';
 import spriteMurcielago from '../sprites/spriteMurcielago.jpg';
 import spriteEscorpion from '../sprites/spriteEscorpion.jpg';
+
 
 function arrayEquals(a, b) {
   return Array.isArray(a)
@@ -182,11 +182,6 @@ function dibujarEntradas(ctx){
 }
 
 function dibujarCasillerosEspeciales(ctx){
-  dibujarCasillero(ctx, spriteTrampa, 6, 6);
-  dibujarCasillero(ctx, spriteTrampa, 6, 13);
-  dibujarCasillero(ctx, spriteTrampa, 13, 6);
-  dibujarCasillero(ctx, spriteTrampa, 13, 13);
-
   dibujarCasillero(ctx, spriteMurcielago, 4, 6); 
   dibujarCasillero(ctx, spriteMurcielago, 14, 6);         
 
@@ -470,8 +465,12 @@ function dibujarPosicionesJugadores(ctx, colores, players) {
     const player = players[i];
     const { position } = player;
     const nickName = player.nickname;
-    const posI = position[0];
-    const posJ = position[1];
+    let posI = -1;
+    let posJ = -1; 
+    if(position !== null){
+      posI = position[0];  
+      posJ = position[1];
+    }
 
     if (posI == -1 && posJ == -1){
       const [iRoom , jRoom] = recintoToPos(player.room);
@@ -559,7 +558,7 @@ function mouseToRecinto(iMouse, jMouse){
 function Tablero(props) {
   const {
     players, dado, idPlayer, idPartida,
-    availablePositions, showAvailable, setShowAvailable,
+    availablePositions, showAvailable,
     availableRooms
   } = props;
   
@@ -600,13 +599,14 @@ function Tablero(props) {
 
     // quiere entrar en recinto.
     if (availableRooms.includes(mouseToRecinto(iMouse, jMouse)) && dado !== 0) {
+      console.log('movemos a un recinto');
         const [json, status] = await patchAPI(`${process.env.REACT_APP_URL_SERVER}/${idPartida}/move/${idPlayer}`,
           JSON.stringify({
             diceNumber: dado,
             position: [-1, -1],
             room: mouseToRecinto(iMouse, jMouse),
           }));
-
+          console.log('entrams a un recinto');
         console.log(json, status);
         setPos([iMouse, jMouse]);
     }
