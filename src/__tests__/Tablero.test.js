@@ -1,17 +1,16 @@
-import 'whatwg-fetch';
-import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import ListarPartidas from '../components/ListarPartidas';
-import {rest} from 'msw';
 import Tablero from '../components/Tablero';
-import 'jest-canvas-mock';
+import { configure, shallow, mount } from "enzyme";
+import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
+import React from "react";
+import "jest-canvas-mock";
 
+configure({ adapter: new Adapter() });
 
+describe("Tablero", () => {
+  it("should render my component", () => {
+    const component = shallow(<Tablero />);
+    expect(component.getElements()).toMatchSnapshot();
+  });
 
-test('1. Caso de exito: hay conexión y al menos una partida',() => {
-    render(<Tablero />);
 });
 
-
-
- 
