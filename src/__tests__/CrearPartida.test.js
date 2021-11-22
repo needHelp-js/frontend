@@ -3,9 +3,9 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import ElegirNickname from '../components/ElegirNickname';
-import ElegirNombrePartida from '../components/ElegirNombrePartida';
-import CrearPartida from '../components/CrearPartida';
+import ElegirNickname from '../components/CrearPartida/ElegirNickname';
+import ElegirNombrePartida from '../components/CrearPartida/ElegirNombrePartida';
+import CrearPartida from '../components/CrearPartida/CrearPartida';
 import * as fetchHandler from '../utils/fetchHandler';
 
 const endpointCreate = `${process.env.REACT_APP_URL_SERVER}/createGame`;
