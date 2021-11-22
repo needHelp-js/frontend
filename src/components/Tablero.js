@@ -147,7 +147,7 @@ function dibujarRecintoCochera(ctx, availableRooms, mouse) {
     ctx.fill();
   }
 
-  if (availableRooms.includes(COCHERA)){
+  if (availableRooms?.includes(COCHERA)){
     ctx.beginPath();
     ctx.fillStyle = "rgba(0, 100, 0, 0.5)";
     ctx.rect(posX, posY, recintoSize, recintoSize);
@@ -216,7 +216,7 @@ function dibujarRecintoVestibulo(ctx, availableRooms, mouse) {
     ctx.fill();
   }
 
-  if (availableRooms.includes(VESTIBULO)){
+  if (availableRooms?.includes(VESTIBULO)){
     ctx.beginPath();
     ctx.fillStyle = "rgba(0, 100, 0, 0.5)";
     ctx.rect(posX, posY, recintoSize, recintoSize);
@@ -246,7 +246,7 @@ function dibujarRecintoBodega(ctx, availableRooms, mouse) {
     ctx.fill();
   }
 
-  if (availableRooms.includes(BODEGA)){
+  if (availableRooms?.includes(BODEGA)){
     ctx.beginPath();
     ctx.fillStyle = "rgba(0, 100, 0, 0.5)";
     ctx.rect(posX, posY, recintoSize, recintoSize);
@@ -275,7 +275,7 @@ function dibujarRecintoAlcoba(ctx, availableRooms, mouse) {
     ctx.fill();
   }
 
-  if (availableRooms.includes(ALCOBA)){
+  if (availableRooms?.includes(ALCOBA)){
     ctx.beginPath();
     ctx.fillStyle = "rgba(0, 100, 0, 0.5)";
     ctx.rect(posX, posY, recintoSize, recintoSize);
@@ -313,7 +313,7 @@ function dibujarRecintoSalon(ctx, availableRooms, mouse) {
     ctx.fill();
   }
 
-  if (availableRooms.includes(SALON)){
+  if (availableRooms?.includes(SALON)){
     ctx.beginPath();
     ctx.fillStyle = "rgba(0, 100, 0, 0.5)";
     ctx.rect(posX, posY, recintoSize, recintoSize);
@@ -343,7 +343,7 @@ function dibujarRecintoBiblioteca(ctx, availableRooms, mouse) {
     ctx.fill();
   }
 
-  if (availableRooms.includes(BIBLIOTECA)){
+  if (availableRooms?.includes(BIBLIOTECA)){
     ctx.beginPath();
     ctx.fillStyle = "rgba(0, 100, 0, 0.5)";
     ctx.rect(posX, posY, recintoSize, recintoSize);
@@ -372,7 +372,7 @@ function dibujarRecintoPanteon(ctx, availableRooms, mouse) {
     ctx.fill();
   }
 
-  if (availableRooms.includes(PANTEON)){
+  if (availableRooms?.includes(PANTEON)){
     ctx.beginPath();
     ctx.fillStyle = "rgba(0, 100, 0, 0.5)";
     ctx.rect(posX, posY, recintoSize, recintoSize);
@@ -401,7 +401,7 @@ function dibujarRecintoLaboratorio(ctx, availableRooms, mouse) {
     ctx.fill();
   }
 
-  if (availableRooms.includes(LABORATORIO)){
+  if (availableRooms?.includes(LABORATORIO)){
     ctx.beginPath();
     ctx.fillStyle = "rgba(0, 100, 0, 0.5)";
     ctx.rect(posX, posY, recintoSize, recintoSize);
@@ -598,7 +598,7 @@ function Tablero(props) {
     }
 
     // quiere entrar en recinto.
-    if (availableRooms.includes(mouseToRecinto(iMouse, jMouse)) && dado !== 0) {
+    if (availableRooms?.includes(mouseToRecinto(iMouse, jMouse)) && dado !== 0) {
       console.log('movemos a un recinto');
         const [json, status] = await patchAPI(`${process.env.REACT_APP_URL_SERVER}/${idPartida}/move/${idPlayer}`,
           JSON.stringify({
