@@ -1,30 +1,33 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import ElegirNickname from '../components/CrearPartida/ElegirNickname';
 import ElegirNombrePartida from '../components/CrearPartida/ElegirNombrePartida';
 import CrearPartida from '../components/CrearPartida/CrearPartida';
+import * as fetchHandler from '../utils/fetchHandler';
 
+const endpointCreate = `${process.env.REACT_APP_URL_SERVER}/createGame`;
+const endpointCreateFail = `${process.env.REACT_APP_URL_SERVER}/createGameFail`;
 const server = setupServer(
-  rest.post('/createGame', (req, res, ctx) => {
+  rest.post(endpointCreate, (req, res, ctx) => {
     sessionStorage.setItem('post-recibido', true);
     return res(
       ctx.status(200),
     );
   }),
-  rest.post('/createGameFail', (req, res, ctx) => res(
-    ctx.status('Partida UnNombreParaLaPartida ya existe'),
+  rest.post(endpointCreateFail, (req, res, ctx) => res(
+    ctx.status(400),
+    ctx.json({ Error: 'Partida UnNombreParaLaPartida ya existe' }),
   )),
 
 );
 
 const nombrePartida = 'UnNombreParaLaPartida';
 const nickname = 'UnNombreParaElJugador';
-
 beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
+beforeEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('ElegirNombrePartida', () => {
@@ -70,29 +73,65 @@ describe('CrearPartida', () => {
   });
 
   it('Hace el POST al backend', async () => {
-    render(<CrearPartida endpoint="/createGame" />);
-    await userEvent.type(screen.getByLabelText(/Nombre de la Partida/), nombrePartida);
-    await userEvent.type(screen.getByLabelText(/Nickname/), nickname);
-    await userEvent.click(screen.getByRole('button'));
+    render(<CrearPartida endpoint={endpointCreate} />);
+    await act(async () => {
+      userEvent.type(screen.getByLabelText(/Nombre de la Partida/), nombrePartida);
+      userEvent.type(screen.getByLabelText(/Nickname/), nickname);
+      userEvent.click(screen.getByRole('button'));
+    });
     const recibido = sessionStorage.getItem('post-recibido');
     expect(recibido).toBe('true');
   });
 
   it('Respuesta al intentar crear una partida que ya existe', async () => {
-    render(<CrearPartida endpoint="/createGameFail" />);
-    await userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
-    await userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
-    await userEvent.click(screen.getByRole('button'));
+    render(<CrearPartida endpoint={endpointCreateFail} />);
+    await act(async () => {
+      userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
+      userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
+      userEvent.click(screen.getByRole('button'));
+    });
     expect(await screen.findByText(/ya existe/)).toBeInTheDocument();
   });
 
   it('Valida formularios antes de enviarlos', async () => {
-    render(<CrearPartida endpoint="/createGame" />);
-    await userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
-    await userEvent.click(screen.getByRole('button'));
+    render(<CrearPartida endpoint={endpointCreate} />);
+    await act(async () => {
+      userEvent.type(screen.getByLabelText(/Nickname/), 'UnNombreParaElJugador');
+      userEvent.click(screen.getByRole('button'));
+    });
     expect(await screen.findByText(/nombre de la partida debe tener/)).toBeInTheDocument();
-    await userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
-    await userEvent.click(screen.getByRole('button'));
+    await act(async () => {
+      userEvent.type(screen.getByLabelText(/Nombre de la Partida/), 'UnNombreParaLaPartida');
+      userEvent.click(screen.getByRole('button'));
+    });
     expect(await screen.findByText(/nickname debe tener/)).toBeInTheDocument();
+  });
+
+  it('Crea partida con contraseña', async () => {
+    await act(async () => {
+      render(<CrearPartida endpoint={endpointCreate} />);
+    });
+
+    const passwordElem = document.querySelector('#password');
+
+    expect(passwordElem).toBeInTheDocument();
+
+    const spy = jest.spyOn(fetchHandler, 'fetchRequest');
+
+    userEvent.type(screen.getByLabelText(/Nombre de la Partida/), nombrePartida);
+    userEvent.type(screen.getByLabelText(/Nickname/), nickname);
+    userEvent.type(screen.getByLabelText(/Clave/), '1234');
+    userEvent.click(screen.getByRole('button'));
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gameName: nombrePartida,
+        hostNickname: nickname,
+        password: '1234',
+      }),
+    };
+    expect(spy).toBeCalledWith(endpointCreate, requestOptions);
   });
 });

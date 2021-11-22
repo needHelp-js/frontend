@@ -1,6 +1,7 @@
 import './RespuestaDado.css';
 import Button from '@mui/material/Button';
-import React, { useEffect, useState, createRef } from 'react';
+import React, { useEffect, useState } from 'react';
+import SocketSingleton from './connectionSocket';
 
 async function get(url) {
   const requestOptions = {
@@ -21,7 +22,17 @@ async function get(url) {
   return data;
 }
 
-const diceRef = createRef();
+const diceRef = React.createRef();
+
+async function rollDice(DadoUrl, setTirando) {
+  get(DadoUrl)
+    .then(() => {
+      setTirando(false);
+    })
+    .catch((error) => {
+      alert(error.Error);
+    });
+}
 
 function toggleClasses(die) {
   die.classList.toggle('odd-roll');
@@ -29,90 +40,31 @@ function toggleClasses(die) {
 }
 
 function RespuestaDado(props) {
-  const { DadoUrl, dado, tiroCompleto, disabled } = props;
+  const { DadoUrl } = props;
   const [tirando, setTirando] = useState(false);
 
   useEffect(() => {
-    async function rollDice(DadoUrl) {
-      get(DadoUrl)
-        .then(() => {
-          setTirando(false);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-
-    if (tirando) {
-      rollDice(DadoUrl);
-    }
+    console.log('en dado', SocketSingleton.getInstance());
+    SocketSingleton.getInstance().addEventListener('message', (event) => {
+      const message = JSON.parse(event.data);
+      console.log(message);
+      if (message.type === 'DICE_ROLL_EVENT') {
+        console.log('ha tirado el dado', message?.payload);
+        toggleClasses(diceRef.current);
+        diceRef.current.setAttribute('data-roll', message?.payload);
+      }
+    });
   }, [tirando]);
-
-  useEffect(() => {
-    if (tiroCompleto) {
-      toggleClasses(diceRef.current);
-      diceRef.current.setAttribute('data-roll', dado);
-    }
-  }, [tiroCompleto]);
-
-  if(disabled){
-    return (
-
-      <div>
-        <Button
-          disabled
-          variant="contained"
-        >
-          Tirar Dado
-        </Button>
-        <div className="dice">
-          <ol className="die-list even-roll" data-roll="1" id="die-1" ref={diceRef}>
-            <li className="die-item" data-side="1">
-              <span className="dot" />
-            </li>
-            <li className="die-item" data-side="2">
-              <span className="dot" />
-              <span className="dot" />
-            </li>
-            <li className="die-item" data-side="3">
-              <span className="dot" />
-              <span className="dot" />
-              <span className="dot" />
-            </li>
-            <li className="die-item" data-side="4">
-              <span className="dot" />
-              <span className="dot" />
-              <span className="dot" />
-              <span className="dot" />
-            </li>
-            <li className="die-item" data-side="5">
-              <span className="dot" />
-              <span className="dot" />
-              <span className="dot" />
-              <span className="dot" />
-              <span className="dot" />
-            </li>
-            <li className="die-item" data-side="6">
-              <span className="dot" />
-              <span className="dot" />
-              <span className="dot" />
-              <span className="dot" />
-              <span className="dot" />
-              <span className="dot" />
-            </li>
-          </ol>
-        </div>
-      </div>
-  
-    );
-
-  }
 
   return (
 
     <div>
+
       <Button
-        onClick={() => setTirando(true)}
+        onClick={() => {
+          rollDice(DadoUrl, setTirando);
+          setTirando(true);
+        }}
         variant="contained"
       >
         Tirar Dado

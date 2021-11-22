@@ -8,7 +8,7 @@ import { setupServer } from 'msw/node';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import Index from '../components/Index';
-import { SocketSingleton } from '../components/connectionSocket';
+import SocketSingleton  from '../components/connectionSocket';
 
 const idPartida = 1;
 const idPlayer = 1;
