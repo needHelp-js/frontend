@@ -40,15 +40,14 @@ describe('TerminarTurno', () => {
 
         const spy = jest.spyOn(fetchHandler, 'fetchRequest');
 
-        await act(async () => {
-            userEvent.click(screen.getByRole('button'));
-        });
+        userEvent.click(screen.getByRole('button'));
 
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-          };
-          expect(spy).toBeCalledWith(endpointTerminarTurno, requestOptions);
+        };
+        
+        expect(spy).toBeCalledWith(endpointTerminarTurno, requestOptions);
     });
 
     it('Fail. No es el turno del jugador', async () => {
