@@ -38,21 +38,6 @@ function RespuestaSospecha(props){
     img.className = 'selectedCard';
   }
 
-/*   useEffect(() =>{
-    let isMounted = true;
-
-    SocketSingleton.getInstance().addEventListener('message', (event) => {
-      const message = JSON.parse(event.data);
-      if(message.type === 'YOU_ARE_SUSPICIOUS_EVENT' && isMounted){
-
-      }
-    })
-
-    return () => {
-      isMounted = false;
-    };
-
-  }, []) */
 
   useEffect(() => {
     if (respuesta !== newSelected && respuesta === '') {
