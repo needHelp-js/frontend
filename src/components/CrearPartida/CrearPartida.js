@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { URL_LOBBY } from '../routes';
+import { URL_LOBBY } from '../../routes';
 import InputCrearPartida from './InputCrearPartida';
-import './Main.css';
-import { fetchRequest, fetchHandlerError } from '../utils/fetchHandler';
+import '../Main.css';
+import { fetchRequest, fetchHandlerError } from '../../utils/fetchHandler';
 
 function handleValidate(nickname, nombrePartida) {
   if (nickname.length < 1) {

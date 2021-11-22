@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import List from '@mui/material/List';
 import { ListItem, ListItemText } from '@mui/material';
-import { fetchRequest, fetchHandlerError } from '../utils/fetchHandler';
+import { fetchRequest, fetchHandlerError } from '../../utils/fetchHandler';
 
 async function getPlayers(idPartida, idPlayer) {
   const requestOptions = {

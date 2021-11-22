@@ -16,9 +16,9 @@ const urlJoin1 = `${process.env.REACT_APP_URL_SERVER}/1/join`
 const urlJoin2 = `${process.env.REACT_APP_URL_SERVER}/2/join`
 
 const MOCK_GET = [
-        {'name': 'los pibis', 'playerCount': 3, 'id': 1}, 
-        {'name': 'boquita', 'playerCount': 5, 'id': 2}, 
-        {'name': 'piolas', 'playerCount': 2, 'id': 3}
+        {'name': 'los pibis', 'playerCount': 3, 'id': 1, 'hasPassword': true},
+        {'name': 'boquita', 'playerCount': 5, 'id': 2, 'hasPassword': false}, 
+        {'name': 'piolas', 'playerCount': 2, 'id': 3, 'hasPassword': true}
 ];
 
 const server = setupServer(
@@ -54,6 +54,7 @@ const titles = ['Nombre de la partida',
 ]; 
 
 const names = MOCK_GET.map(obj => obj['name']);
+const password = MOCK_GET.map(obj => obj['hasPassword'])
 const playersCount = MOCK_GET.map(obj => obj['playerCount']);
 
 test('1. Caso de exito: hay conexión y al menos una partida', async () => {
@@ -63,7 +64,14 @@ test('1. Caso de exito: hay conexión y al menos una partida', async () => {
         
 
     for (var i = 0; i < names.length; i++){
-        const name = await screen.findByText(names[i]);
+        let aux = names[i];
+        if (password[i]) {
+            aux = aux.concat(" (con contraseña)");    
+        }
+        else {
+            aux = aux.concat(" (sin contraseña)");
+        }
+        const name = await screen.findByText(aux);
         const count = await screen.findByText(playersCount[i]);
         expect(name).toBeInTheDocument();
         expect(count).toBeInTheDocument();
@@ -78,6 +86,7 @@ test('2. Caso de excepción: no hay conexión.', async () => {
     const mgs = await screen.findByText('Sin conexión, actualice la lista.');
 });
 
+
 test('3. Caso de excepción: hay conexión pero no hay partidas.', async () => {
     render(<ListarPartidas url={urlVacia}/>);
     const button = await screen.getByRole('button');
@@ -88,18 +97,17 @@ test('3. Caso de excepción: hay conexión pero no hay partidas.', async () => {
 });
 
 
-
 // Tests unirse a partida.
 it('4. Caso de exito: nickname cambia cuando se escribe', async () => {
    await act(async () => {
       render(<ListarPartidas url={urlPartidas}/>);
       const button = screen.getByText('Actualizar');
       await userEvent.click(button);
-      const fieldNickName = screen.getByRole('textbox');
+      const fieldNickName = screen.getByRole('textbox', {name: 'nickname'});
       userEvent.type(fieldNickName, 'usuarioValido');
     });
 
-    expect(screen.getByRole('textbox')).toHaveValue('usuarioValido');
+    expect(screen.getByRole('textbox', {name: 'nickname'})).toHaveValue('usuarioValido');
     let buttons = await screen.findAllByTestId("unirse");
  
     for(let i = 0; i < 3; i++){
@@ -108,12 +116,32 @@ it('4. Caso de exito: nickname cambia cuando se escribe', async () => {
     }
 });
 
-it('5. Caso de exito: nickname invalido', async () => {
+
+it('5. Caso de exito: password cambia cuando se escribe', async () => {
+    await act(async () => {
+       render(<ListarPartidas url={urlPartidas}/>);
+       const button = screen.getByText('Actualizar');
+       await userEvent.click(button);
+       const fieldPassword = screen.getByRole('textbox', {name: 'password'});
+       userEvent.type(fieldPassword, 'password');
+     });
+ 
+     expect(screen.getByRole('textbox', {name: 'password'})).toHaveValue('password');
+     let buttons = await screen.findAllByTestId("unirse");
+  
+     for(let i = 0; i < 3; i++){
+       let button = buttons.pop();
+       expect(button).not.ToBeDisabled;
+     }
+ });
+
+
+it('6. Caso de exito: nickname invalido', async () => {
    await act(async () => {
       render(<ListarPartidas url={urlPartidas}/>);
       const button = screen.getByText('Actualizar');
       await userEvent.click(button);
-      const fieldNickName = screen.getByRole('textbox');
+      const fieldNickName = screen.getByRole('textbox', {name: 'nickname'});
       userEvent.type(fieldNickName, 'usuarioN0!Valido');
     });
 
@@ -125,12 +153,13 @@ it('5. Caso de exito: nickname invalido', async () => {
     }
 });
 
-it('6. Caso de exito: nickname valido y une a partida que devuelve 200', async () => {
+
+it('7. Caso de exito: nickname valido y une a partida que devuelve 200', async () => {
    await act(async () => {
       render(<ListarPartidas url={urlPartidas}/>);
       const button = screen.getByText('Actualizar');
       await userEvent.click(button);
-      const fieldNickName = screen.getByRole('textbox');
+      const fieldNickName = screen.getByRole('textbox', {name: 'nickname'});
       userEvent.type(fieldNickName, 'usuarioValido');
       let buttons =  await screen.findAllByTestId("unirse");
       await userEvent.click(buttons[0]);
@@ -139,13 +168,12 @@ it('6. Caso de exito: nickname valido y une a partida que devuelve 200', async (
 });
 
 
-
-it('7. Caso de excepción: nickname valido y une a partida que devuelve 403', async () => {
+it('8. Caso de excepción: nickname valido y une a partida que devuelve 403', async () => {
    await act(async () => {
       render(<ListarPartidas url={urlPartidas}/>);
       const button = screen.getByText('Actualizar');
       await userEvent.click(button);
-      const fieldNickName = screen.getByRole('textbox');
+      const fieldNickName = screen.getByRole('textbox', {name: 'nickname'});
       userEvent.type(fieldNickName, 'usuarioValido');
       let buttons =  await screen.findAllByTestId("unirse");
       await userEvent.click(buttons[1]);
