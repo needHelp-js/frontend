@@ -19,7 +19,7 @@ import spriteCobra from '../sprites/spriteCobra.jpg';
 import spriteSpider from '../sprites/spriteSpider.jpg';
 import spriteMurcielago from '../sprites/spriteMurcielago.jpg';
 import spriteEscorpion from '../sprites/spriteEscorpion.jpg';
-
+import PropTypes from 'prop-types';
 
 function arrayEquals(a, b) {
   return Array.isArray(a)
@@ -654,5 +654,15 @@ function Tablero(props) {
     </div>
   );
 }
+
+Tablero.propTypes = {
+        players : ProTypes.object, 
+        dado : PropTypes.number, 
+        idPlayer : PropTypes.number, 
+        idPartida : PropTypes.number,
+        availablePositions : PropTypes.array, 
+        showAvailable : PropTypes.bool,
+        availableRooms : PropTypes.array
+};
 
 export default Tablero;
