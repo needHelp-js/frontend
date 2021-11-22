@@ -33,6 +33,10 @@ const suspicionPayload = {
   },
 };
 
+const errorNingunRecinto = {
+  Error: `El jugador${idPlayer} no esta en ningun recinto`
+}
+
 const urlWebsocket = `${process.env.REACT_APP_URL_WS}/${idPartida}/ws/${idPlayer}`;
 const wsServer = new WS(urlWebsocket);
 
@@ -98,7 +102,38 @@ describe('Sospechar', () => {
     });
     const recibido = localStorage.getItem("postRecibido")
     expect(recibido).toBe("true");
-    //expect(await screen.findByText(/Se sospecho por/)).toBeInTheDocument();
+    SocketSingleton.destroy();
+  });
+  it('Maneja caso de error', async () => {
+    server.use(
+      rest.post(urlServer, (req, res, ctx) => {
+        localStorage.setItem('postFallidoRecibido',true);
+        wsServer.send(JSON.stringify(errorNingunRecinto));
+        return res(
+          ctx.status(403),
+        );
+      }),
+    );
+
+    SocketSingleton.init(new WebSocket(urlWebsocket));
+
+    history.push('/partida', state);
+    render(
+      <Router history={history}>
+        <Index />
+      </Router>,
+    );
+    await wsServer.connected;
+    await act(async () => {
+      userEvent.click(await screen.findByRole('button', { name: /Sospechar/ }));
+      userEvent.click(screen.getByRole('img', { name: card1Name }));
+      userEvent.click(screen.getByRole('img', { name: card2Name }));
+      userEvent.click(await screen.findByRole('button', { name: /Sospechar/ }));
+    });
+    const recibido = localStorage.getItem("postFallidoRecibido")
+    expect(recibido).toBe("true");
+    // Nos aseguramos que nos devuelva a la pantalla de la partida
+    expect(await screen.findByText(/Bienvenido a la Partida/)).toBeInTheDocument();
     SocketSingleton.destroy();
   });
 });

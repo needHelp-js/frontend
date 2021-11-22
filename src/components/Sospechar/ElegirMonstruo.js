@@ -26,12 +26,12 @@ function ElegirMonstruo(props) {
   const monstersCards = [];
   for (const key in monstersNames) {
     if (!monstersNames.hasOwnProperty(key)) continue;
-    const id = monstersNames[key];
+    const id = key;
     monstersCards.push(
       <Card
         id={id}
         key={id}
-        cardName={id}
+        cardName={monstersNames[key]}
         onClick={() => handleClick(id)}
       />,
     );

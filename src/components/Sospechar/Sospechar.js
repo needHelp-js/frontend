@@ -3,6 +3,7 @@ import { Button } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import ElegirVictima from './ElegirVictima';
 import ElegirMonstruo from './ElegirMonstruo';
+import { victimsNames, monstersNames } from '../../utils/constants';
 import '../Partida.css';
 import { fetchRequest, fetchHandlerError } from '../../utils/fetchHandler';
 
@@ -30,35 +31,48 @@ function Sospechar(props) {
   const [suspected, setSuspected] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     async function suspect() {
-      sendSuspect(idPartida, idPlayer, victima, monstruo)
-        .then((response) => {
-          switch (response.type) {
-            case fetchHandlerError.SUCCESS:
-              setSuspectComplete(true);
-              setSuspecting(false);
-              break;
-            case fetchHandlerError.REQUEST_ERROR:
-              setSuspected(false);
-              setSuspecting(false);
-              setErrorMessage(response.payload);
-              setHasError(true);
-              break;
-            case fetchHandlerError.INTERNAL_ERROR:
-              setSuspected(false);
-              setSuspecting(false);
-              setErrorMessage(response.payload);
-              setHasError(true);
-              break;
-            default:
-              break;
-          }
-        });
+      if (isMounted) {
+        sendSuspect(idPartida, idPlayer, victimsNames[victima], monstersNames[monstruo])
+          .then((response) => {
+            switch (response.type) {
+              case fetchHandlerError.SUCCESS:
+                if (isMounted) {
+                  setSuspectComplete(true);
+                  setSuspecting(false);
+                }
+                break;
+              case fetchHandlerError.REQUEST_ERROR:
+                if (isMounted) {
+                  setSuspected(false);
+                  setSuspecting(false);
+                  setErrorMessage(response.payload);
+                  setHasError(true);
+                }
+                break;
+              case fetchHandlerError.INTERNAL_ERROR:
+                if (isMounted) {
+                  setSuspected(false);
+                  setSuspecting(false);
+                  setErrorMessage(response.payload);
+                  setHasError(true);
+                }
+                break;
+              default:
+                break;
+            }
+          });
+      }
     }
 
     if (suspected) {
       suspect();
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [suspected, idPartida, idPlayer, monstruo, victima, setSuspecting,
     setErrorMessage, setHasError, setSuspectComplete]);
 
@@ -79,6 +93,17 @@ function Sospechar(props) {
             onClick={() => setSuspected(true)}
           >
             Sospechar
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setSuspecting(false);
+              setVictima('');
+              setMonstruo('');
+            }}
+            style={{ marginTop: '5px' }}
+          >
+            Volver
           </Button>
         </Stack>
       </div>

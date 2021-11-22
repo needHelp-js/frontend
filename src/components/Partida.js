@@ -23,7 +23,8 @@ function Partida(props) {
     SocketSingleton.getInstance().addEventListener('message', (event) => {
       const message = JSON.parse(event.data);
       if (message.type === 'SUSPICION_MADE_EVENT') {
-        console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
+        const mensaje = `Se sospecho por ${message.payload.card1Name} y ${message.payload.card2Name}`;
+        setSuspectMessage(mensaje);
       } else if (message.type === 'DEAL_CARDS_EVENT' && isMounted) {
         setPlayerCards(message.payload);
         console.log(message);
@@ -106,10 +107,6 @@ function Partida(props) {
       </div>
     );
   }
-
-
-
-
 
   return (
     <div>

@@ -26,12 +26,12 @@ function Elegirvictima(props) {
   const victimsCards = [];
   for (const key in victimsNames) {
     if (!victimsNames.hasOwnProperty(key)) continue;
-    const id = victimsNames[key];
+    const id = key;
     victimsCards.push(
       <Card
         id={id}
         key={id}
-        cardName={id}
+        cardName={victimsNames[key]}
         onClick={() => handleClick(id)}
       />,
     );
