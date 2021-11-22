@@ -17,7 +17,10 @@ function Partida(props) {
   const [respondiendo, setRespondiendo] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [suspectMessage, setSuspectMessage] = useState('');
+  const [status, setStatus] = useState('');
   const [idPlayerAsking, setIdPlayerAsking] = useState(false);
+  const [mostrandoRespuesta, setMostrandoRespuesta] = useState(false);
+  const [responseCard, setResponseCard] = useState([]);
   const [suspectedCards, setSuspectedCards] = useState([]);
   const [playerCards, setPlayerCards] = useState([]);
 
@@ -29,15 +32,29 @@ function Partida(props) {
       const message = JSON.parse(event.data);
       if (message.type === 'SUSPICION_MADE_EVENT') {
         console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
+        const mensajeEvento = `El jugador ${message.payload.playerId} sospecho por ${message.payload.card1Name}, ${message.payload.card2Name} y ${message.payload.roomName} `
+        console.log(message, mensajeEvento);
+        setStatus(mensajeEvento);
+        setHasError(false);
       } else if (message.type === 'DEAL_CARDS_EVENT' && isMounted) {
         setPlayerCards(message.payload);
         console.log(message);
       } else if (message.type === 'YOU_ARE_SUSPICIOUS_EVENT' && isMounted) {
-        console.log('vamos a responder');
         setHasError(false);
         setSuspectedCards(message.payload.cards);
         setIdPlayerAsking(message.payload.playerId);
         setRespondiendo(true);
+      } else if(message.type === 'SUSPICION_RESPONSE_EVENT'){
+        setHasError(false);
+        setResponseCard(message.payload.cardName);
+        setMostrandoRespuesta(true);
+      } else if(message.type === 'PLAYER_REPLIED_EVENT'){
+        const mensajeEvento = `El jugador ${message.payload.playerId} respondio a la sospecha`
+        setStatus(mensajeEvento);
+        setHasError(false);
+      } else if(message.type === 'SUSPICION_FAILED_EVENT'){
+        setStatus(message.payload.Error);
+        setHasError(false);
       }
     });
     return () => {
@@ -70,10 +87,13 @@ function Partida(props) {
             disabled={suspectDisabled}
           />
           <RespuestaDado DadoUrl={urlDado} />
+          <CartasJugador cards={playerCards} />
           <p>
             {errorMessage}
           </p>
-          <CartasJugador cards={playerCards} />
+          <p>
+            {status}
+          </p>
         </Stack>
       </div>
     );
@@ -93,7 +113,7 @@ function Partida(props) {
     );
   }
 
-  if (suspectComplete) {
+  if (suspectComplete && !mostrandoRespuesta) {
     return (
       <div>
         <h2>Bienvenido a la Partida</h2>
@@ -111,22 +131,29 @@ function Partida(props) {
             idPlayer={idPlayer}
             disabled={suspectDisabled}
           />
+          <CartasJugador cards={playerCards} />
           <p>
             {suspectMessage}
           </p>
-          <CartasJugador cards={playerCards} />
+          <p>
+            {status}
+          </p>
         </Stack>
       </div>
     );
   }
-  if(respondiendo){
+
+  if(respondiendo || mostrandoRespuesta){
     return(
       <RespuestaSospecha 
         idPartida={idPartida}
         idPlayer={idPlayer}
         suspectedCards={suspectedCards}
         idPlayerAsking={idPlayerAsking}
+        cartaRespuesta={responseCard}
         setRespondiendo={setRespondiendo}
+        mostrandoRespuesta={mostrandoRespuesta}
+        setMostrandoRespuesta={setMostrandoRespuesta}
       />
     );
   }
@@ -151,6 +178,9 @@ function Partida(props) {
         />
         <RespuestaDado DadoUrl={urlDado} />
         <CartasJugador cards={playerCards} />
+        <p>
+          {status}
+        </p>
       </Stack>
 
     </div>

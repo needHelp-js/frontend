@@ -26,7 +26,8 @@ async function sendAnswerData(idPartida, idPlayer, idPlayerAsking, card){
 
 
 function RespuestaSospecha(props){
-  const { idPartida, idPlayer, idPlayerAsking, suspectedCards, setRespondiendo} = props;
+  const { idPartida, idPlayer, idPlayerAsking, suspectedCards,
+    setRespondiendo, mostrandoRespuesta, setMostrandoRespuesta, cartaRespuesta} = props;
 
   const [respuesta, setRespuesta] = useState('');
   const [newSelected, setNewSelected] = useState('');
@@ -37,7 +38,6 @@ function RespuestaSospecha(props){
     const img = document.getElementById(id);
     img.className = 'selectedCard';
   }
-
 
   useEffect(() => {
     if (respuesta !== newSelected && respuesta === '') {
@@ -73,8 +73,43 @@ function RespuestaSospecha(props){
     if(respondido) sendAnswer();
 
   },[respondido]);
+
+  useEffect(() =>{
+    if(!mostrandoRespuesta) console.log('dejamos de mostrar respuesta');
+    
+  },[mostrandoRespuesta])
   
+  if(mostrandoRespuesta){
+    console.log('mostramos')
+    return(
+      <div>
+        <h2>
+          Una Respuesta !
+        </h2>
+        <p>
+          Han respondido a su sospecha con:
+        </p>
+        <div className="centeredButton">
+          <Card 
+            id={cartaRespuesta}
+            key={cartaRespuesta}
+            cardName={cartaRespuesta}
+            onClick={() => {}}
+          />
+          <Button
+            variant="contained"
+            onClick={() => setMostrandoRespuesta(false)}
+          >
+            OK
+          </Button>
+        </div>
+      </div>
+    );
+  }
   
+
+
+
   const suspectedElems = suspectedCards.map((elem) => (
     <Card 
       id={elem}
