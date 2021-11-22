@@ -1,33 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
-import ListarPartidas from './components/ListarPartidas';
-import Lobby from './components/Lobby';
-import Main from './components/Main';
-import CrearPartida from './components/CrearPartida';
+import { BrowserRouter } from 'react-router-dom';
+import Index from './components/Index';
 import './index.css';
-import {
-        URL_LOCAL, 
-        URL_HOME, 
-        URL_LISTAR_PARTIDAS, 
-        URL_CREAR_PARTIDA, 
-        URL_LOBBY
-       } from './routes.js';
+
+require('dotenv').config();
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-    <div>
-    <Switch>
-      <Route exact path={URL_HOME} component={Main}/>
-      <Route path={URL_LISTAR_PARTIDAS}>
-        <ListarPartidas url={URL_LOCAL + '/partidas'}/>
-      </Route>
-      <Route path={URL_CREAR_PARTIDA} component={CrearPartida} />
-      <Route path={URL_LOBBY} component={Lobby}/>
-    </Switch>
-    </div>
+      <Index />
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root'),
