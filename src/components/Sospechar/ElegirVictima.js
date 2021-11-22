@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Stack from '@mui/material/Stack';
-import Card from '../Carta'
+import Card from '../Carta';
 import { victimsNames } from '../../utils/constants';
 import '../Partida.css';
 
@@ -9,7 +9,6 @@ function Elegirvictima(props) {
   const [newSelected, setNewSelected] = useState('');
 
   function handleClick(id) {
-    console.log('click en', id)
     setNewSelected(id);
     const img = document.getElementById(id);
     img.className = 'selectedCard';
@@ -22,21 +21,21 @@ function Elegirvictima(props) {
       document.getElementById(victima).className = 'optionCard';
       setVictima(newSelected);
     }
-  }, [newSelected]);
+  }, [newSelected, victima, setVictima]);
 
-  let victimsCards = [];
-  for(var key in victimsNames){
+  const victimsCards = [];
+  for (const key in victimsNames) {
     if (!victimsNames.hasOwnProperty(key)) continue;
-    const id = victimsNames[key]; 
-      victimsCards.push( 
-        <Card
-          id={id}
-          key={id}
-          cardName={id}
-          onClick={() => handleClick(id)}
-        />
-      );
-  } 
+    const id = victimsNames[key];
+    victimsCards.push(
+      <Card
+        id={id}
+        key={id}
+        cardName={id}
+        onClick={() => handleClick(id)}
+      />,
+    );
+  }
 
   return (
     <Stack direction="row" alignItems="center" spacing={2}>

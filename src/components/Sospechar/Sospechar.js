@@ -59,13 +59,14 @@ function Sospechar(props) {
     if (suspected) {
       suspect();
     }
-  }, [suspected]);
+  }, [suspected, idPartida, idPlayer, monstruo, victima, setSuspecting,
+    setErrorMessage, setHasError, setSuspectComplete]);
 
   useEffect(() => {
     if (suspecting) {
       setHasError(false);
     }
-  }, [suspecting]);
+  }, [suspecting, setHasError]);
 
   if (suspecting) {
     return (

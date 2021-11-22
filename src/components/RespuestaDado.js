@@ -47,7 +47,6 @@ function RespuestaDado(props) {
   useEffect(() => {
     SocketSingleton.getInstance().addEventListener('message', (event) => {
       const message = JSON.parse(event.data);
-      console.log(message);
       if (message.type === 'DICE_ROLL_EVENT') {
         console.log('ha tirado el dado', message?.payload);
         toggleClasses(diceRef.current);
