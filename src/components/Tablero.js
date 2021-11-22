@@ -656,7 +656,7 @@ function Tablero(props) {
 }
 
 Tablero.propTypes = {
-        players : ProTypes.object, 
+        players : PropTypes.object, 
         dado : PropTypes.number, 
         idPlayer : PropTypes.number, 
         idPartida : PropTypes.number,
