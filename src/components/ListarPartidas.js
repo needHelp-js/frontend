@@ -68,7 +68,7 @@ function BotonUnirse(props){
         if (isMounted) {
             setClicked(false);
         } 
-      }
+      }
     }
     fetchData();
     return () => {
@@ -128,9 +128,7 @@ function mostrarFilas(disabled, nickName, password, rows) {
             <TableCell component="th" scope="row">
               {row.name ? row.name
                 : undefined}
-            </TableCell>
-            <TableCell align="right">
-              {row.hasPassword ? " (con contraseña)" : " (sin contraseña)"}
+                {row.hasPassword ? " (con contraseña)" : " (sin contraseña)"}
             </TableCell>
             <TableCell align="right">
               {row.playerCount ? row.playerCount
@@ -258,6 +256,7 @@ function ListarPartidas(props) {
         />
         <TextField
           style={{margin:10}}
+          inputProps={{ 'aria-label': 'password' }}
           id="password"
           label="Contraseña"
           defaultValue=""
