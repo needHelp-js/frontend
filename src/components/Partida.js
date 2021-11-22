@@ -3,6 +3,7 @@ import { Button } from '@mui/material';
 import SocketSingleton from './connectionSocket';
 import './Partida.css';
 import RespuestaDado from './RespuestaDado';
+import TerminarTurno from './TerminarTurno'
 
 
 
@@ -42,11 +43,13 @@ function Partida(props){
 
 
 const url = 'http://localhost:8000/games/'.concat(idPartida,'/dice/', idPlayer);
+const terminarTurnoUrl = 'http://localhost:8000/games/'.concat(idPartida,'/endTurn/', idPlayer);
 
   return(
     <div>
       <h2>Bienvenido a la Partida</h2>
       <RespuestaDado DadoUrl={url}/>
+      <TerminarTurno endpoint={terminarTurnoUrl}/>
     </div>
   )
 
