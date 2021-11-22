@@ -12,8 +12,8 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import ErrorIcon from '@mui/icons-material/Error';
 import PropTypes from 'prop-types';
 import TextField from '@mui/material/TextField';
-import { Redirect } from "react-router-dom";
-import {URL_LOBBY} from '../routes.js';
+import { Redirect } from 'react-router-dom';
+import { URL_LOBBY } from '../routes';
 import { fetchRequest, fetchHandlerError } from '../utils/fetchHandler';
 
 async function getAPI(url) {
@@ -21,34 +21,36 @@ async function getAPI(url) {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   };
-  return fetchRequest(url,requestOptions );
+  return fetchRequest(url, requestOptions);
 }
 
 async function patchAPI(url, payload) {
   const requestOptions = {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   };
   return fetchRequest(url, requestOptions);
 }
 
-function BotonUnirse(props){
-  const {disabled, idPartida, nickName, nombrePartida, password} = props;
+function BotonUnirse(props) {
+  const {
+    disabled, idPartida, nickName, nombrePartida, password,
+  } = props;
   const [idJugador, setIdJugador] = useState(0);
   const [clicked, setClicked] = useState(false);
   const [redirect, setRedirect] = useState(false);
-  
+
   useEffect(() => {
     let isMounted = true;
     async function fetchData() {
-      if (clicked){
-        if(isMounted){
-          const response = await patchAPI(`${process.env.REACT_APP_URL_SERVER}/${idPartida}/join`, 
-              {'playerNickname': nickName, 'password': password});
-          switch (response.type){
+      if (clicked) {
+        if (isMounted) {
+          const response = await patchAPI(`${process.env.REACT_APP_URL_SERVER}/${idPartida}/join`,
+            { playerNickname: nickName, password });
+          switch (response.type) {
             case fetchHandlerError.SUCCESS:
-              if(isMounted){
+              if (isMounted) {
                 setIdJugador(response?.payload.playerId);
                 setRedirect(true);
               }
@@ -59,56 +61,57 @@ function BotonUnirse(props){
             case fetchHandlerError.INTERNAL_ERROR:
               alert(response.payload);
               break;
-            }
-            if(isMounted) setClicked(false);
+            default:
+              break;
+          }
+          if (isMounted) setClicked(false);
         }
       }
     }
     fetchData();
 
-    return( () => {
+    return (() => {
       isMounted = false;
-    })
-  }, [clicked, idPartida]);
-  
-  if (redirect){
-    return(
-       <Redirect 
-          to={{
-          pathname: URL_LOBBY, 
-          state:{
-            idPartida: idPartida, 
-            nombrePartida: nombrePartida,
-            idPlayer: idJugador
-         }
-        }} 
+    });
+  }, [clicked, idPartida, nickName, password]);
+
+  if (redirect) {
+    return (
+      <Redirect
+        to={{
+          pathname: URL_LOBBY,
+          state: {
+            idPartida,
+            nombrePartida,
+            idPlayer: idJugador,
+          },
+        }}
       />
-    ); 
+    );
   }
 
-  return(  
+  return (
     <div>
-     <Button
-       data-testid="unirse"
-       disabled = {disabled}
-       color={disabled ? "error" : "primary"} 
-       variant="outlined"
-       onClick={() => setClicked(true)}
-     >
-      Unirse
-    </Button>
+      <Button
+        data-testid="unirse"
+        disabled={disabled}
+        color={disabled ? 'error' : 'primary'}
+        variant="outlined"
+        onClick={() => setClicked(true)}
+      >
+        Unirse
+      </Button>
     </div>
-  
+
   );
 }
 
-
 BotonUnirse.propTypes = {
-  disabled : PropTypes.bool, 
-  idPartida : PropTypes.number, 
-  nickName : PropTypes.string, 
-  nombrePartida : PropTypes.string,
-  password : PropTypes.string
+  disabled: PropTypes.bool,
+  idPartida: PropTypes.number,
+  nickName: PropTypes.string,
+  nombrePartida: PropTypes.string,
+  password: PropTypes.string,
 };
 
 function mostrarFilas(disabled, nickName, password, rows) {
@@ -123,20 +126,20 @@ function mostrarFilas(disabled, nickName, password, rows) {
             <TableCell component="th" scope="row">
               {row.name ? row.name
                 : undefined}
-                {row.hasPassword ? " (con contraseña)" : " (sin contraseña)"}
+              {row.hasPassword ? ' (con contraseña)' : ' (sin contraseña)'}
             </TableCell>
             <TableCell align="right">
               {row.playerCount ? row.playerCount
                 : undefined}
             </TableCell>
             <TableCell align="right">
-                  <BotonUnirse
-                    disabled={disabled}
-                    nickName={nickName}
-                    password={password}
-                    idPartida={row.id}
-                    nombrePartida={row.name}
-                  />
+              <BotonUnirse
+                disabled={disabled}
+                nickName={nickName}
+                password={password}
+                idPartida={row.id}
+                nombrePartida={row.name}
+              />
             </TableCell>
           </TableRow>
         ))
@@ -162,39 +165,42 @@ function mostrarFilas(disabled, nickName, password, rows) {
   );
 }
 
-
 function TablaPartidas(props) {
   const [rows, setRows] = useState([]);
   const [refresh, setRefresh] = useState(false);
+  const {
+    url, disabled, nickName, password,
+  } = props;
 
   useEffect(() => {
     let isMounted = true;
     async function fetchData() {
       if (refresh) {
-        const data = await getAPI(props.url);
-        switch (data.type){
+        const data = await getAPI(url);
+        switch (data.type) {
           case fetchHandlerError.SUCCESS:
-              if(isMounted){
-                setRows(data?.payload);
-                setRefresh(false);
-              }
-              break;
-            case fetchHandlerError.REQUEST_ERROR:
-              alert(response.payload);
-              break;
-            case fetchHandlerError.INTERNAL_ERROR:
-              alert(response.payload);
-              break;
-          } 
+            if (isMounted) {
+              setRows(data?.payload);
+              setRefresh(false);
+            }
+            break;
+          case fetchHandlerError.REQUEST_ERROR:
+            setRows(data?.payload);
+            break;
+          case fetchHandlerError.INTERNAL_ERROR:
+            setRows(data?.payload);
+            break;
+          default:
+            break;
+        }
       }
     }
     fetchData();
 
-    return( () => {
+    return (() => {
       isMounted = false;
-    })
-
-  }, [refresh, props.url]);
+    });
+  }, [refresh, url]);
 
   return (
     <TableContainer component={Paper}>
@@ -216,69 +222,68 @@ function TablaPartidas(props) {
                 endIcon={<RefreshIcon />}
                 onClick={() => setRefresh(true)}
               >
-                
+
                 Actualizar
               </Button>
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {mostrarFilas(props.disabled, props.nickName, props.password, rows)}
+          {mostrarFilas(disabled, nickName, password, rows)}
         </TableBody>
       </Table>
     </TableContainer>
   );
 }
 
-
 TablaPartidas.propTypes = {
   url: PropTypes.string,
 };
 
-
-const isAlphaNumeric = str => /^[a-z0-9]+$/gi.test(str);
+const isAlphaNumeric = (str) => /^[a-z0-9]+$/gi.test(str);
 
 function ListarPartidas(props) {
   const [nickName, setNickName] = useState('jugador');
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState('');
   const [badNickName, setBadNickName] = useState(false);
+  const { url } = props;
 
   useEffect(() => {
-    if (isAlphaNumeric(nickName)){
-        setBadNickName(false);    
+    if (isAlphaNumeric(nickName)) {
+      setBadNickName(false);
     } else {
-        setBadNickName(true);
-    }}, [nickName]);
+      setBadNickName(true);
+    }
+  }, [nickName]);
 
   return (
-    <div style={{margin:50}}>
+    <div style={{ margin: 50 }}>
       <TextField
-          style={{margin:10}}
-          inputProps={{ 'aria-label': 'nickname' }}
-          id="nickname"
-          label="Nickname"
-          defaultValue=""
-          error={badNickName}
-          onChange={(event) => setNickName(event.target.value)}
-        />
-        <TextField
-          style={{margin:10}}
-          inputProps={{ 'aria-label': 'password' }}
-          id="password"
-          label="Contraseña"
-          defaultValue=""
-          onChange={(event) => setPassword(event.target.value)}
-        />
-      <TablaPartidas 
-          disabled={badNickName} 
-          url={props.url} 
-          nickName={nickName}
-          password = {password}
+        style={{ margin: 10 }}
+        inputProps={{ 'aria-label': 'nickname' }}
+        id="nickname"
+        label="Nickname"
+        defaultValue=""
+        error={badNickName}
+        onChange={(event) => setNickName(event.target.value)}
+      />
+      <TextField
+        style={{ margin: 10 }}
+        inputProps={{ 'aria-label': 'password' }}
+        id="password"
+        label="Contraseña"
+        defaultValue=""
+        onChange={(event) => setPassword(event.target.value)}
+      />
+      <TablaPartidas
+        disabled={badNickName}
+        url={url}
+        nickName={nickName}
+        password={password}
       />
     </div>
   );
 }
-
 
 ListarPartidas.propTypes = {
   url: PropTypes.string,
