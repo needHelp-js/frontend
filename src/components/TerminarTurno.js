@@ -12,6 +12,7 @@ async function sendTerminarTurno(endpoint) {
 
 function TerminarTurno(props) {
   const { endpoint } = props;
+  const { disabled } = props;
   const [errorMsg, setMsg] = useState('');
   const [terminando, setTerminando] = useState(false);
 
@@ -53,6 +54,7 @@ function TerminarTurno(props) {
         onClick={() => setTerminando(true)}
         variant="contained"
         type="submit"
+        disabled = {disabled}
       >
         Terminar Turno
       </Button>
