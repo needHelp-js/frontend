@@ -17,10 +17,7 @@ async function sendTerminarTurno(endpoint) {
 function TerminarTurno(props) {
     const { endpoint } = props
     const [error_msg, setMsg] = useState(false);
-    const [clicked, setClicked] = useState(false);
 
-
-    let isMounted = true
     async function terminarTurno(endpoint) {
         sendTerminarTurno(endpoint).then((response) => {
             switch (response.type) {
@@ -28,29 +25,28 @@ function TerminarTurno(props) {
                     setMsg("")
                     break;
                 case fetchHandlerError.REQUEST_ERROR:
-                    setMsg("Error de request");
-                    isMounted = false;
+                    setMsg("No es el turno del jugador");
                     break;
                 case fetchHandlerError.INTERNAL_ERROR:
                     setMsg("Error Interno");
-                    isMounted = false;
                     break;
             }
         })
     }
-    
+
     return (
         <div>
             <Button
                 onClick={() => terminarTurno(endpoint)}
                 variant="contained"
+                type="submit"
             >
                 Terminar Turno
             </Button>
             <p>{error_msg}</p>
         </div>
     )
-    
+
 }
 
 export default TerminarTurno;
