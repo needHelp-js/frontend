@@ -54,7 +54,7 @@ function RespuestaDado(props) {
         diceRef.current.setAttribute('data-roll', message?.payload);
       }
     });
-  }, [tirando]);
+  }, []);
 
   return (
 

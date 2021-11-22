@@ -2,51 +2,63 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import { fetchRequest, fetchHandlerError } from '../utils/fetchHandler';
 
-let error_msg = ""
-
 async function sendTerminarTurno(endpoint) {
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-    }
+  const requestOptions = {
+    method: 'POST',
+  };
 
-    return fetchRequest(endpoint, requestOptions)
+  return fetchRequest(endpoint, requestOptions);
 }
 
-
 function TerminarTurno(props) {
-    const { endpoint } = props
-    const [error_msg, setMsg] = useState(false);
+  const { endpoint } = props;
+  const [errorMsg, setMsg] = useState('');
+  const [terminando, setTerminando] = useState(false);
 
-    async function terminarTurno(endpoint) {
-        sendTerminarTurno(endpoint).then((response) => {
-            switch (response.type) {
-                case fetchHandlerError.SUCCESS:
-                    setMsg("")
-                    break;
-                case fetchHandlerError.REQUEST_ERROR:
-                    setMsg("No es el turno del jugador");
-                    break;
-                case fetchHandlerError.INTERNAL_ERROR:
-                    setMsg("Error Interno");
-                    break;
+  useEffect(() => {
+    let isMounted = false;
+
+    async function terminarTurno() {
+      sendTerminarTurno(endpoint).then((response) => {
+        switch (response.type) {
+          case fetchHandlerError.SUCCESS:
+            if (isMounted) {
+              setMsg('');
             }
-        })
+            break;
+          case fetchHandlerError.REQUEST_ERROR:
+            setMsg(response.payload);
+            isMounted = false;
+            break;
+          case fetchHandlerError.INTERNAL_ERROR:
+            setMsg(response.payload);
+            isMounted = false;
+            break;
+          default:
+            break;
+        }
+      });
     }
 
-    return (
-        <div>
-            <Button
-                onClick={() => terminarTurno(endpoint)}
-                variant="contained"
-                type="submit"
-            >
-                Terminar Turno
-            </Button>
-            <p>{error_msg}</p>
-        </div>
-    )
+    if (terminando) {
+      terminarTurno();
+    }
 
+    return () => { isMounted = false; };
+  }, [terminando, endpoint]);
+
+  return (
+    <div>
+      <Button
+        onClick={() => setTerminando(true)}
+        variant="contained"
+        type="submit"
+      >
+        Terminar Turno
+      </Button>
+      <p>{errorMsg}</p>
+    </div>
+  );
 }
 
 export default TerminarTurno;
