@@ -66,11 +66,13 @@ function Lobby(props) {
             case fetchHandlerError.SUCCESS:
               break;
             case fetchHandlerError.REQUEST_ERROR:
-              console.error(response?.payload);
+              setErrorMessage(response?.payload);
+              setHasError(true);
               setStarting(false);
               break;
             case fetchHandlerError.INTERNAL_ERROR:
-              console.error(response?.payload);
+              setErrorMessage(response?.payload);
+              setHasError(true);
               setStarting(false);
               break;
           }});

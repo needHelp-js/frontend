@@ -1,12 +1,11 @@
 .suspectButton{
   text-align : center;
 }
+.centeredButton{
+  text-align : center;
+}
 .selectedCard{
-  width: 10%;
-  height: auto;
   background-color: tomato;
 }
 .optionCard{
-  width: 10%;
-  height: auto;
 }

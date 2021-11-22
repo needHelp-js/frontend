@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Stack from '@mui/material/Stack';
-import dracula from '../Misterio_cartas/dracula.png';
-import fantasma from '../Misterio_cartas/fantasma.png';
-import frankenstein from '../Misterio_cartas/frankenstein.png';
-import hombreLobo from '../Misterio_cartas/hombre_lobo.png';
-import jekyllHyde from '../Misterio_cartas/Jekyll_hyde.png';
-import momia from '../Misterio_cartas/momia.png';
+import Card from './Carta';
+import { monstersNames } from '../utils/constants';
 import './Partida.css';
 
 function ElegirMonstruo(props) {
@@ -13,7 +9,6 @@ function ElegirMonstruo(props) {
   const [newSelected, setNewSelected] = useState('');
 
   function handleClick(id) {
-    console.log('vamos a sospechar', id);
     setNewSelected(id);
     const img = document.getElementById(id);
     img.className = 'selectedCard';
@@ -26,52 +21,25 @@ function ElegirMonstruo(props) {
       document.getElementById(monstruo).className = 'optionCard';
       setMonstruo(newSelected);
     }
-  }, [newSelected]);
+  }, [newSelected, monstruo, setMonstruo]);
+
+  const monstersCards = [];
+  for (const key in monstersNames) {
+    if (!monstersNames.hasOwnProperty(key)) continue;
+    const id = monstersNames[key];
+    monstersCards.push(
+      <Card
+        id={id}
+        key={id}
+        cardName={id}
+        onClick={() => handleClick(id)}
+      />,
+    );
+  }
 
   return (
     <Stack direction="row" alignItems="center" spacing={2}>
-      <img
-        id="Drácula"
-        className="optionCard"
-        src={dracula}
-        alt="Drácula"
-        onClick={() => { handleClick('Drácula'); }}
-      />
-      <img
-        id="Fantasma"
-        className="optionCard"
-        src={fantasma}
-        alt="Fantasma"
-        onClick={() => { handleClick('Fantasma'); }}
-      />
-      <img
-        id="Frankenstein"
-        className="optionCard"
-        src={frankenstein}
-        alt="Frankenstein"
-        onClick={() => { handleClick('Frankenstein'); }}
-      />
-      <img
-        id="Momia"
-        className="optionCard"
-        src={momia}
-        alt="Momia"
-        onClick={() => { handleClick('Momia'); }}
-      />
-      <img
-        id="Hombre Lobo"
-        className="optionCard"
-        src={hombreLobo}
-        alt="Hombre Lobo"
-        onClick={() => { handleClick('Hombre Lobo'); }}
-      />
-      <img
-        id="Dr. Jekyll Mr Hyde"
-        className="optionCard"
-        src={jekyllHyde}
-        alt="Dr. Jekyll Mr Hyde"
-        onClick={() => { handleClick('Dr. Jekyll Mr Hyde'); }}
-      />
+      {monstersCards}
     </Stack>
   );
 }
