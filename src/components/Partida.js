@@ -68,6 +68,7 @@ function Partida(props) {
   const [tiroCompleto, setTiroCompleto] = useState(false);
   const [moveComplete, setMoveComplete] = useState(false);
   const [availablePositions, setAvailablePositions] = useState([]);
+  const [availableRooms, setAvailableRooms] = useState([]);
   const [showAvailable, setShowAvailable] = useState(false);
   const [gettingTurn, setGettingTurn] = useState(false);
 
@@ -77,6 +78,7 @@ function Partida(props) {
     console.log('en partida ws singleton:', SocketSingleton.getInstance());
     SocketSingleton.getInstance().onmessage = (event) => {
       const message = JSON.parse(event.data);
+      console.log(message);
       if (message.type === 'SUSPICION_MADE_EVENT') {
         const mensajeSospecha = 'Se sospecho por '.concat(message.payload.card1Name, ' y ', message.payload.card2Name);
         setSuspectMessage(mensajeSospecha);
@@ -84,6 +86,7 @@ function Partida(props) {
       } else if (message.type === 'MOVE_PLAYER_EVENT') {
         setDado(0);
         setShowAvailable(false);
+        setAvailableRooms([]);
         setMoveComplete(true);
         setStarting(true);
       } else if (message.type === 'DICE_ROLL_EVENT') {
@@ -92,6 +95,12 @@ function Partida(props) {
           setDado(message?.payload);
           setTiroCompleto(true);
         }
+      } else if(message.type === "ENTER_ROOM_EVENT"){
+        setDado(0);
+        setShowAvailable(false);
+        setAvailableRooms([]);
+        setMoveComplete(true);
+        setStarting(true);
       }
     };
     setStarting(true);
@@ -148,6 +157,7 @@ function Partida(props) {
       getPositions(idPartida, idPlayer, dado)
         .then((response) => {
           setAvailablePositions(response?.availablePositions);
+          setAvailableRooms(response?.availableRooms);
           setShowAvailable(true);
         })
         .catch((error) => {
@@ -187,6 +197,7 @@ function Partida(props) {
                 idPartida={idPartida}
                 idPlayer={idPlayer}
                 availablePositions={availablePositions}
+                availableRooms={availableRooms}
               />
             </Box>
           </Grid>
@@ -246,6 +257,7 @@ function Partida(props) {
                 idPartida={idPartida}
                 idPlayer={idPlayer}
                 availablePositions={availablePositions}
+                availableRooms={availableRooms}
               />
             </Box>
           </Grid>
@@ -293,6 +305,7 @@ function Partida(props) {
                 idPartida={idPartida}
                 idPlayer={idPlayer}
                 availablePositions={availablePositions}
+                availableRooms={availableRooms}
               />
             </Box>
           </Grid>
@@ -341,6 +354,7 @@ function Partida(props) {
                 idPartida={idPartida}
                 idPlayer={idPlayer}
                 availablePositions={availablePositions}
+                availableRooms={availableRooms}
               />
             </Box>
           </Grid>
@@ -388,6 +402,7 @@ function Partida(props) {
                 idPartida={idPartida}
                 idPlayer={idPlayer}
                 availablePositions={availablePositions}
+                availableRooms={availableRooms}
               />
             </Box>
           </Grid>
@@ -430,6 +445,7 @@ function Partida(props) {
               idPartida={idPartida}
               idPlayer={idPlayer}
               availablePositions={availablePositions}
+              availableRooms={availableRooms}
             />
           </Box>
         </Grid>
