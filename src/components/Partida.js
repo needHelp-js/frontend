@@ -1,59 +1,43 @@
-import React, { useEffect, useState } from "react";
-import { Button } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import CartasJugador from './CartasJugador';
 import SocketSingleton from './connectionSocket';
 import './Partida.css';
 import RespuestaDado from './RespuestaDado';
 import TerminarTurno from './TerminarTurno'
 
+function Partida(props) {
+  const { location } = props;
+  const { idPartida, idPlayer } = location.state;
+  const [playerCards, setPlayerCards] = useState([]);
 
-
-async function getGameInfo(idPartida, idPlayer) {
-  const requestOptions = {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  };
-  const endpoint = process.env.REACT_APP_URL_SERVER.concat(
-    '/', idPartida, '?gameId=', idPartida, '&playerId=', idPlayer);
-  const data = fetch(endpoint, requestOptions)
-    .then(async (response) => {
-      const isJson = response.headers.get('content-type')?.includes('application/json');
-      const payload = isJson && await response.json();
-      if (!response.ok) {
-        const error = (payload && payload.Error) || response.status;
-        return Promise.reject(error);
-      }
-      return payload;
-    })
-    .catch((error) => Promise.reject(error));
-  return data;
-}
-
-function Partida(props){
-  const { idPartida, idPlayer } = props.location.state;
-
-  useEffect(() =>{
-    console.log('en partida ws singleton:', SocketSingleton.getInstance());
-    SocketSingleton.getInstance().onmessage = (event) =>{
+  useEffect(() => {
+    let isMounted = true;
+    SocketSingleton.getInstance().addEventListener('message', (event) => {
       const message = JSON.parse(event.data);
-        if (message.type === 'SUSPICION_MADE_EVENT') {
-          console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
-        }
+      if (message.type === 'SUSPICION_MADE_EVENT') {
+        console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
+      } else if (message.type === 'DEAL_CARDS_EVENT' && isMounted) {
+        setPlayerCards(message.payload);
+        console.log(message);
+      }
+    });
+    return () => {
+      isMounted = false;
     };
-  },[]);
+  }, [playerCards]);
 
 
-const url = 'http://localhost:8000/games/'.concat(idPartida,'/dice/', idPlayer);
-const terminarTurnoUrl = 'http://localhost:8000/games/'.concat(idPartida,'/endTurn/', idPlayer);
+const url = process.env.REACT_APP_URL_SERVER.concat('/', idPartida, '/dice/', idPlayer);
+const terminarTurnoUrl = process.env.REACT_APP_URL_SERVER.concat('/', idPartida, '/endTurn/', idPlayer);
 
-  return(
+  return (
     <div>
       <h2>Bienvenido a la Partida</h2>
       <RespuestaDado DadoUrl={url}/>
       <TerminarTurno endpoint={terminarTurnoUrl}/>
+      <CartasJugador cards={playerCards} />
     </div>
-  )
-
-
+  );
 }
 
 export default Partida;
