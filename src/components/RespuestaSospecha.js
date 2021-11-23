@@ -74,13 +74,8 @@ function RespuestaSospecha(props){
 
   },[respondido]);
 
-  useEffect(() =>{
-    if(!mostrandoRespuesta) console.log('dejamos de mostrar respuesta');
-    
-  },[mostrandoRespuesta])
   
   if(mostrandoRespuesta){
-    console.log('mostramos')
     return(
       <div>
         <h2>
