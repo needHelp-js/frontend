@@ -28,12 +28,12 @@ function TerminarTurno(props) {
             }
             break;
           case fetchHandlerError.REQUEST_ERROR:
+            setTerminando(false);
             setMsg(response.payload);
-            isMounted = false;
             break;
           case fetchHandlerError.INTERNAL_ERROR:
+            setTerminando(false);
             setMsg(response.payload);
-            isMounted = false;
             break;
           default:
             break;

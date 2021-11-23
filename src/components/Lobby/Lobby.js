@@ -21,7 +21,7 @@ async function requestStart(idPartida, idPlayer) {
 function Lobby(props) {
   const {
     idPartida, nombrePartida, idPlayer, isHost,
-  } = props.location.state;
+  } = props.location.state; // eslint-disable-line
   const [playerJoined, setPlayerJoined] = useState(false);
   const [starting, setStarting] = useState(false);
   const [started, setStarted] = useState(false);
@@ -37,7 +37,6 @@ function Lobby(props) {
       // se agrega para no volver a instanciar el socket
       SocketSingleton.init(new WebSocket(socketURL));
     }
-    console.log('ws singleton es:', SocketSingleton.getInstance());
     setPlayerJoined(true);
 
     SocketSingleton.getInstance().onopen = () => {
@@ -66,11 +65,13 @@ function Lobby(props) {
             case fetchHandlerError.SUCCESS:
               break;
             case fetchHandlerError.REQUEST_ERROR:
-              console.error(response?.payload);
+              setErrorMessage(response?.payload);
+              setHasError(true);
               setStarting(false);
               break;
             case fetchHandlerError.INTERNAL_ERROR:
-              console.error(response?.payload);
+              setErrorMessage(response?.payload);
+              setHasError(true);
               setStarting(false);
               break;
           }});

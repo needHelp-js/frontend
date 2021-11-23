@@ -1,7 +1,7 @@
 import './RespuestaDado.css';
 import Button from '@mui/material/Button';
 import React, { useEffect, useState, createRef } from 'react';
-import SocketSingleton from "./connectionSocket"
+import SocketSingleton from './connectionSocket';
 
 async function get(url) {
   const requestOptions = {
@@ -123,12 +123,14 @@ function RespuestaDado(props) {
   return (
 
     <div>
-      <Button
-        onClick={() => setTirando(true)}
-        variant="contained"
-      >
-        Tirar Dado
-      </Button>
+      <div className="centeredButton">
+        <Button
+          onClick={() => setTirando(true)}
+          variant="contained"
+        >
+          Tirar Dado
+        </Button>
+      </div>
       <div className="dice">
         <ol className="die-list even-roll" data-roll="1" id="die-1" ref={diceRef}>
           <li className="die-item" data-side="1">
