@@ -56,14 +56,11 @@ async function getPositions(idPartida, idPlayer, dado) {
 }
 
 function Partida(props) {
-  const { idPartida, idPlayer } = props.location.state; // eslint-disable-line
+  const { location } = props;
+  const { idPartida, idPlayer } = location.state;
   const [suspecting, setSuspecting] = useState(false);
   const [suspectComplete, setSuspectComplete] = useState(false);
-  const [suspectDisabled, setSuspectDisabled] = useState(false);
-  const [hasError, setHasError] = useState(false);
   const [respondiendo, setRespondiendo] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [suspectMessage, setSuspectMessage] = useState('');
   const [status, setStatus] = useState('');
   const [idPlayerAsking, setIdPlayerAsking] = useState(false);
   const [mostrandoRespuesta, setMostrandoRespuesta] = useState(false);
@@ -95,26 +92,21 @@ function Partida(props) {
         const mensajeEvento = `El jugador ${message.payload.playerId} sospecho por ${message.payload.card1Name}, ${message.payload.card2Name} y ${message.payload.roomName} `;
         console.log(message, mensajeEvento);
         setStatus(mensajeEvento);
-        setHasError(false);
       } else if (message.type === 'DEAL_CARDS_EVENT' && isMounted) {
         setPlayerCards(message.payload);
         console.log(message);
       } else if (message.type === 'YOU_ARE_SUSPICIOUS_EVENT' && isMounted) {
-        setHasError(false);
         setSuspectedCards(message.payload.cards);
         setIdPlayerAsking(message.payload.playerId);
         setRespondiendo(true);
       } else if (message.type === 'SUSPICION_RESPONSE_EVENT') {
-        setHasError(false);
         setResponseCard(message.payload.cardName);
         setMostrandoRespuesta(true);
       } else if (message.type === 'PLAYER_REPLIED_EVENT') {
         const mensajeEvento = `El jugador ${message.payload.playerId} respondio a la sospecha`;
         setStatus(mensajeEvento);
-        setHasError(false);
       } else if (message.type === 'SUSPICION_FAILED_EVENT') {
         setStatus(message.payload.Error);
-        setHasError(false);
        } else if (message.type === 'MOVE_PLAYER_EVENT') {
         setDado(0);
         setShowAvailable(false);
@@ -136,6 +128,12 @@ function Partida(props) {
       } else if(message.type === "TURN_ENDED_EVENT"){
         if(message.payload.playerId === idPlayer){
           setIsTurn(true);
+          setTiroCompleto(false);
+          setMoveComplete(false);
+          setSuspectComplete(false);
+          setStatus('');
+        }else{
+          setIsTurn(false);
         }
       }
     });
@@ -168,7 +166,6 @@ function Partida(props) {
         .catch((error) => {
           console.error(error);
           setStatus(error);
-          setHasError(true);
         });
     }
 
@@ -201,7 +198,6 @@ function Partida(props) {
         })
         .catch((error) => {
           setStatus(error);
-          setHasError(true);
           console.error(error);
         });
     }
@@ -217,7 +213,6 @@ function Partida(props) {
   useEffect(() => {
     if (suspectComplete) {
       setShowAvailable(false);
-      setSuspectDisabled(true);
     }
   }, [suspectComplete]);
 
@@ -242,11 +237,9 @@ function Partida(props) {
         suspecting={suspecting}
         setSuspecting={setSuspecting}
         setSuspectComplete={setSuspectComplete}
-        setHasError={setHasError}
         setErrorMessage={setStatus}
         idPartida={idPartida}
         idPlayer={idPlayer}
-        disabled={suspectDisabled}
       />
     );
   }
@@ -294,245 +287,6 @@ function Partida(props) {
     );
   }
 
-  if (hasError && !tiroCompleto) {
-    return (
-      <div>
-        <h2>Bienvenido a la Partida</h2>
-        <Grid container spacing={4}>
-          <Grid item>
-            <Box sx={{
-              width: 640,
-              height: 640,
-            }}
-            >
-              <Tablero
-                players={players}
-                showAvailable={showAvailable}
-                setShowAvailable={setShowAvailable}
-                dado={dado}
-                idPartida={idPartida}
-                idPlayer={idPlayer}
-                availablePositions={availablePositions}
-                availableRooms={availableRooms}
-              />
-            </Box>
-          </Grid>
-          <Grid item>
-            <Stack spacing={2} alignItems="center">
-            <Sospechar disabled />
-              <div className="centeredButton">
-                <RespuestaDado
-                  DadoUrl={urlDado}
-                  dado={dado}
-                  tiroCompleto={tiroCompleto}
-                />
-              </div>
-              <TerminarTurno endpoint={terminarTurnoUrl} disabled />
-              <p>
-                {status}
-              </p>
-            </Stack>
-          </Grid>
-          <Grid item>
-            <CartasJugador cards={playerCards} />
-          </Grid>
-        </Grid>
-      </div>
-    );
-  }
-
-  if (hasError && tiroCompleto) {
-    return (
-      <div>
-        <h2>Bienvenido a la Partida</h2>
-        <Grid container spacing={4}>
-          <Grid item>
-            <Box sx={{
-              width: 640,
-              height: 640,
-            }}
-            >
-              <Tablero
-                players={players}
-                showAvailable={showAvailable}
-                setShowAvailable={setShowAvailable}
-                dado={dado}
-                idPartida={idPartida}
-                idPlayer={idPlayer}
-                availablePositions={availablePositions}
-                availableRooms={availableRooms}
-              />
-            </Box>
-          </Grid>
-          <Grid item>
-            <Stack spacing={2} alignItems="center">
-            <Sospechar disabled={suspectDisabled} />
-              <div className="centeredButton">
-                <RespuestaDado disabled />
-              </div>
-              <p>
-                {errorMessage}
-              </p>
-              <TerminarTurno endpoint={terminarTurnoUrl} disabled={true}/>
-              <p>
-                {status}
-              </p>
-            </Stack>
-          </Grid>
-          <Grid item>
-            <CartasJugador cards={playerCards} />
-          </Grid>
-        </Grid>
-      </div>
-    );
-  }
-
-  if (moveComplete) {
-    return (
-      <div>
-        <h2>Bienvenido a la Partida</h2>
-        <Grid container spacing={4}>
-          <Grid item>
-            <Box sx={{
-              width: 640,
-              height: 640,
-            }}
-            >
-              <Tablero
-                players={players}
-                showAvailable={false}
-                setShowAvailable={setShowAvailable}
-                dado={dado}
-                idPartida={idPartida}
-                idPlayer={idPlayer}
-                availablePositions={availablePositions}
-                availableRooms={availableRooms}
-              />
-            </Box>
-          </Grid>
-          <Grid item>
-            <Stack spacing={2} alignItems="center">
-              <Sospechar
-                suspecting={suspecting}
-                setSuspecting={setSuspecting}
-                setSuspectComplete={setSuspectComplete}
-                setHasError={setHasError}
-                setErrorMessage={setStatus}
-                idPartida={idPartida}
-                idPlayer={idPlayer}
-              />
-              <div className="centeredButton">
-                <RespuestaDado disabled />
-              </div>
-              <TerminarTurno endpoint={terminarTurnoUrl} />
-              <p>
-                {status}
-              </p>
-            </Stack>
-          </Grid>
-          <Grid item>
-            <CartasJugador cards={playerCards} />
-          </Grid>
-        </Grid>
-      </div>
-    );
-  }
-
-  if (suspectComplete) {
-    return (
-      <div>
-        <h2>Bienvenido a la Partida</h2>
-        <Grid container spacing={4}>
-          <Grid item>
-            <Box sx={{
-              width: 640,
-              height: 640,
-            }}
-            >
-              <Tablero
-                players={players}
-                showAvailable={showAvailable}
-                setShowAvailable={setShowAvailable}
-                dado={dado}
-                idPartida={idPartida}
-                idPlayer={idPlayer}
-                availablePositions={availablePositions}
-                availableRooms={availableRooms}
-              />
-            </Box>
-          </Grid>
-          <Grid item>
-            <Stack spacing={2} alignItems="center">
-              <Sospechar disabled />
-              <RespuestaDado disabled />
-              <TerminarTurno endpoint={terminarTurnoUrl}/>
-              <p>
-                {status}
-              </p>
-            </Stack>
-          </Grid>
-          <Grid item>
-            <CartasJugador cards={playerCards} />
-          </Grid>
-        </Grid>
-      </div>
-   );
-  }
-  
-
-
-  if (tiroCompleto) {
-    return (
-      <div>
-        <h2>Bienvenido a la Partida</h2>
-        <Grid container spacing={4}>
-          <Grid item>
-            <Box sx={{
-              width: 640,
-              height: 640,
-            }}
-            >
-              <Tablero
-                players={players}
-                showAvailable={showAvailable}
-                setShowAvailable={setShowAvailable}
-                dado={dado}
-                idPartida={idPartida}
-                idPlayer={idPlayer}
-                availablePositions={availablePositions}
-                availableRooms={availableRooms}
-              />
-            </Box>
-          </Grid>
-          <Grid item>
-            <Stack spacing={2} alignItems="center">
-              <Sospechar
-                suspecting={suspecting}
-                setSuspecting={setSuspecting}
-                setSuspectComplete={setSuspectComplete}
-                setHasError={setHasError}
-                setErrorMessage={setStatus}
-                idPartida={idPartida}
-                idPlayer={idPlayer}
-                disabled={suspectDisabled}
-              />
-              <div className="suspectButton">
-                <RespuestaDado disabled />
-              </div>
-              <TerminarTurno endpoint={terminarTurnoUrl} disabled={true} />
-              <p>
-                {status}
-              </p>
-            </Stack>
-          </Grid>
-          <Grid item>
-            <CartasJugador cards={playerCards} />
-          </Grid>
-        </Grid>
-      </div>
-    );
-  }
-
 
   return (
     <div>
@@ -565,14 +319,20 @@ function Partida(props) {
               suspecting={suspecting}
               setSuspecting={setSuspecting}
               setSuspectComplete={setSuspectComplete}
-              setHasError={setHasError}
               setErrorMessage={setStatus}
               idPartida={idPartida}
               idPlayer={idPlayer}
-              disabled={suspectDisabled}
+              disabled={(suspectComplete || !moveComplete)}
             />
-            <RespuestaDado DadoUrl={urlDado} />
-            <TerminarTurno endpoint={terminarTurnoUrl} disabled={true} />
+            <div className="centeredButton">
+              <RespuestaDado
+                DadoUrl={urlDado}
+                dado={dado}
+                tiroCompleto={tiroCompleto}
+                disabled={(tiroCompleto || moveComplete)}
+              />
+            </div>
+            <TerminarTurno endpoint={terminarTurnoUrl} disabled={(!moveComplete)} />
             <p>
               {status}
             </p>
