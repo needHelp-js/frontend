@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Container, Button, Stack } from "@mui/material";
-import CartasJugador from "./CartasJugador";
-import SocketSingleton from "./connectionSocket";
-import "./Partida.css";
-import Sospechar from "./Sospechar";
-import RespuestaDado from "./RespuestaDado";
-import Acusar from "./Acusar";
-import { accusationState } from "../utils/constants";
-import { URL_HOME } from "../routes";
+import React, { useEffect, useState } from 'react';
+import { Container, Button, Stack } from '@mui/material';
 import { Redirect } from 'react-router-dom';
+import CartasJugador from './CartasJugador';
+import SocketSingleton from './connectionSocket';
+import './Partida.css';
+import Sospechar from './Sospechar';
+import RespuestaDado from './RespuestaDado';
+import Acusar from './Acusar';
+import { accusationState } from '../utils/constants';
+import { URL_HOME } from '../routes';
 
 function Partida(props) {
   const { location } = props;
@@ -17,45 +17,45 @@ function Partida(props) {
   const [suspectDisabled, setSuspectDisabled] = useState(false);
   const [suspectComplete, setSuspectComplete] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [suspectMessage, setSuspectMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
+  const [suspectMessage, setSuspectMessage] = useState('');
   const [playerCards, setPlayerCards] = useState([]);
 
   /* Estados de la acusacion */
   const [accusationStage, setAccusationStage] = useState(
-    accusationState.NOT_ACCUSING
+    accusationState.NOT_ACCUSING,
   );
   const [playerWon, setPlayerWon] = useState(false);
   const [envelopeCards, setEnvelopeCards] = useState([]);
-  const [accusingPlayerNickname, setAccusingPlayerNickname] = useState("");
+  const [accusingPlayerNickname, setAccusingPlayerNickname] = useState('');
   const [accusingPlayerId, setAccusingPlayerId] = useState(0);
-  const [accusationDisabled, setAccusationDisabled] = useState(false); // colocarlo en la integracion donde no sea el turno del jugador
+  const [accusationDisabled, setAccusationDisabled] = useState(false);
 
   const [redirectOutofGame, setRedirectOutOfGame] = useState(false);
 
   const urlDado = `${process.env.REACT_APP_URL_SERVER}/${idPartida}/dice/${idPlayer}`;
 
   useEffect(() => {
-    SocketSingleton.getInstance().addEventListener("message", (event) => {
+    SocketSingleton.getInstance().addEventListener('message', (event) => {
       const message = JSON.parse(event.data);
 
       switch (message.type) {
-        case "SUSPICION_MADE_EVENT":
+        case 'SUSPICION_MADE_EVENT':
           const mensaje = `Se sospecho por ${message.payload.card1Name} y ${message.payload.card2Name}`;
           setSuspectMessage(mensaje);
           break;
 
-        case "DEAL_CARDS_EVENT":
+        case 'DEAL_CARDS_EVENT':
           setPlayerCards(message.payload);
           break;
 
-        case "PLAYER_ACCUSED_EVENT":
+        case 'PLAYER_ACCUSED_EVENT':
           setAccusationStage(accusationState.WAITING_FOR_ACCUSATION_RESPONSE);
           setAccusingPlayerNickname(message.payload.playerNickname);
           setAccusingPlayerId(message.payload.playerId);
           break;
 
-        case "PLAYER_LOST_EVENT":
+        case 'PLAYER_LOST_EVENT':
           setAccusationStage(accusationState.ACCUSATION_COMPLETED);
           setPlayerWon(false);
           setAccusingPlayerNickname(message.payload.playerNickname);
@@ -63,12 +63,12 @@ function Partida(props) {
 
           break;
 
-        case "GAME_ENDED_EVENT":
+        case 'GAME_ENDED_EVENT':
           setAccusationStage(accusationState.ACCUSATION_COMPLETED);
           setPlayerWon(true);
           setAccusingPlayerNickname(message.payload.playerNickname);
           setAccusingPlayerId(message.payload.playerId);
-          let cards = message.payload.cardsInEnvelope.map((card) => card.name);
+          const cards = message.payload.cardsInEnvelope.map((card) => card.name);
           setEnvelopeCards(cards);
 
           break;
@@ -77,9 +77,6 @@ function Partida(props) {
           break;
       }
     });
-    // return () => {
-    //   SocketSingleton.getInstance().removeEventListener("message");
-    // };
   }, []);
 
   useEffect(() => {
@@ -174,7 +171,12 @@ function Partida(props) {
     case accusationState.WAITING_FOR_ACCUSATION_RESPONSE:
       acusarComponent = (
         <Container>
-          <h4>Jugador {accusingPlayerNickname} esta acusando...</h4>
+          <h4>
+            Jugador
+            {accusingPlayerNickname}
+            {' '}
+            esta acusando...
+          </h4>
         </Container>
       );
 
@@ -184,7 +186,12 @@ function Partida(props) {
       if (playerWon) {
         acusarComponent = (
           <Container>
-            <h4>Jugador {accusingPlayerNickname} ha ganado!</h4>
+            <h4>
+              Jugador
+              {accusingPlayerNickname}
+              {' '}
+              ha ganado!
+            </h4>
             <CartasJugador cards={envelopeCards} />
             <Button
               variant="contained"
@@ -193,7 +200,7 @@ function Partida(props) {
                 setRedirectOutOfGame(true);
                 SocketSingleton.destroy();
               }}
-              style={{ marginTop: "5px" }}
+              style={{ marginTop: '5px' }}
             >
               Salir de la partida
             </Button>
@@ -202,13 +209,18 @@ function Partida(props) {
       } else {
         acusarComponent = (
           <Container>
-            <h4>Jugador {accusingPlayerNickname} ha perdido!</h4>
+            <h4>
+              Jugador
+              {accusingPlayerNickname}
+              {' '}
+              ha perdido!
+            </h4>
             <Button
               variant="contained"
               onClick={() => {
                 setAccusationStage(accusationState.NOT_ACCUSING);
               }}
-              style={{ marginTop: "5px" }}
+              style={{ marginTop: '5px' }}
             >
               Volver a la partida
             </Button>

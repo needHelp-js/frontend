@@ -3,17 +3,19 @@ import { act } from 'react-dom/test-utils';
 import { screen } from '@testing-library/react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import { setupServer } from 'msw/node';
-import { accusationState, monstersNames, roomsNames, victimsNames } from '../utils/constants';
-import Acusar from '../components/Acusar';
 import { rest } from 'msw';
 import userEvent from '@testing-library/user-event';
+import {
+  monstersNames, roomsNames, victimsNames,
+} from '../utils/constants';
+import Acusar from '../components/Acusar';
 
-const idPartida = "1";
-const idPlayer = "1";
+const idPartida = '1';
+const idPlayer = '1';
 const urlServer = `${process.env.REACT_APP_URL_SERVER}/${idPartida}/accuse/${idPlayer}`;
 const server = setupServer(
   rest.post(urlServer, (req, res, ctx) => {
-    localStorage.setItem('postRecibido',true);
+    localStorage.setItem('postRecibido', true);
     return res(
       ctx.status(204),
     );
@@ -36,59 +38,35 @@ afterEach(() => {
 
 afterAll(() => server.close());
 
-describe("Componente Acusar", () => {
-  it("renderiza componente", async () => {
-    let stage = accusationState.NOT_ACCUSING;
-    let error = false;
-    let setAccusationStage = (state) => {
-      stage = state;
-    };
-    let setHasError = (error) => {
-      hasError = error;
-    };
-    let setErrorMessage = (msg) => {
-      errorMessage = msg;
-    };
-
+describe('Componente Acusar', () => {
+  it('renderiza componente', async () => {
     await act(async () => {
       render(
         <Acusar
-          setAccusationStage={setAccusationStage}
-          setHasError={setHasError}
-          setErrorMessage={setErrorMessage}
+          setAccusationStage={() => {}}
+          setHasError={() => {}}
+          setErrorMessage={() => {}}
           idPartida={idPartida}
           idPlayer={idPlayer}
         />,
-        container
+        container,
       );
     });
 
-    expect(await screen.findByText("Acusar")).toBeInTheDocument();
+    expect(await screen.findByText('Acusar')).toBeInTheDocument();
   });
 
   it('Realiza la acusacion correctamente', async () => {
-    let stage = accusationState.NOT_ACCUSING;
-    let error = false;
-    let setAccusationStage = (state) => {
-      stage = state;
-    };
-    let setHasError = (error) => {
-      hasError = error;
-    };
-    let setErrorMessage = (msg) => {
-      errorMessage = msg;
-    };
-
     await act(async () => {
       render(
         <Acusar
-          setAccusationStage={setAccusationStage}
-          setHasError={setHasError}
-          setErrorMessage={setErrorMessage}
+          setAccusationStage={() => {}}
+          setHasError={() => {}}
+          setErrorMessage={() => {}}
           idPartida={idPartida}
           idPlayer={idPlayer}
         />,
-        container
+        container,
       );
     });
 
@@ -100,7 +78,7 @@ describe("Componente Acusar", () => {
       userEvent.click(await screen.findByRole('button', { name: /Acusar/ }));
     });
 
-    const recibido = localStorage.getItem("postRecibido")
-    expect(recibido).toBe("true");
+    const recibido = localStorage.getItem('postRecibido');
+    expect(recibido).toBe('true');
   });
 });

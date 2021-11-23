@@ -60,16 +60,15 @@ describe('Partida', () => {
   });
 });
 
-describe("Acusar", () => {
-  it("", async () => {
-
+describe('Acusar', () => {
+  it('Renderiza acusar en partida', async () => {
     await act(async () => {
       render(
         <Partida location={{ state: { idPartida: 1, idPlayer: 1 } }} />,
-        container
+        container,
       );
     });
 
-    expect(await screen.findByText("Acusar")).toBeInTheDocument();
+    expect(await screen.findByText('Acusar')).toBeInTheDocument();
   });
 });

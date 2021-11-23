@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import Stack from '@mui/material/Stack';
+import { Button } from '@mui/material';
 import ElegirVictima from './ElegirCartas/ElegirVictima';
 import ElegirMonstruo from './ElegirCartas/ElegirMonstruo';
 import ElegirRecinto from './ElegirCartas/ElegirRecinto';
-import { Button } from '@mui/material';
 import { fetchRequest, fetchHandlerError } from '../utils/fetchHandler';
-import { victimsNames, monstersNames, roomsNames, accusationState } from '../utils/constants';
+import {
+  victimsNames, monstersNames, roomsNames, accusationState,
+} from '../utils/constants';
 
 function sendAccusationData(idPartida, idPlayer, monstruo, recinto, victima) {
   const requestOptions = {
@@ -31,9 +33,9 @@ function Acusar(props) {
     idPlayer,
   } = props;
 
-  const [victima, setVictima] = useState("");
-  const [monstruo, setMonstruo] = useState("");
-  const [recinto, setRecinto] = useState("");
+  const [victima, setVictima] = useState('');
+  const [monstruo, setMonstruo] = useState('');
+  const [recinto, setRecinto] = useState('');
   const [accused, setAccused] = useState(false);
   useEffect(() => {
     let isMounted = true;
@@ -44,7 +46,7 @@ function Acusar(props) {
         idPlayer,
         monstersNames[monstruo],
         roomsNames[recinto],
-        victimsNames[victima]
+        victimsNames[victima],
       ).then((response) => {
         switch (response?.type) {
           case fetchHandlerError.SUCCESS:
@@ -68,13 +70,13 @@ function Acusar(props) {
   }, [accused]);
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: 'flex' }}>
       <Stack alignItems="center">
         <ElegirVictima victima={victima} setVictima={setVictima} />
         <ElegirMonstruo monstruo={monstruo} setMonstruo={setMonstruo} />
         <ElegirRecinto recinto={recinto} setRecinto={setRecinto} />
       </Stack>
-      <Stack style={{ marginTop: "1rem" }}>
+      <Stack style={{ marginTop: '1rem' }}>
         <Button variant="contained" onClick={() => setAccused(true)}>
           Acusar
         </Button>
@@ -82,11 +84,11 @@ function Acusar(props) {
           variant="contained"
           onClick={() => {
             setAccusationStage(accusationState.NOT_ACCUSING);
-            setVictima("");
-            setMonstruo("");
-            setRecinto("");
+            setVictima('');
+            setMonstruo('');
+            setRecinto('');
           }}
-          style={{ marginTop: "5px" }}
+          style={{ marginTop: '5px' }}
         >
           Volver
         </Button>
