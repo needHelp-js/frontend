@@ -34,17 +34,6 @@ function RespuestaDado(props) {
   const [tirando, setTirando] = useState(false);
 
   useEffect(() => {
-    SocketSingleton.getInstance().addEventListener('message', (event) => {
-      const message = JSON.parse(event.data);
-      if (message.type === 'DICE_ROLL_EVENT') {
-        console.log('ha tirado el dado', message?.payload);
-        toggleClasses(diceRef.current);
-        diceRef.current.setAttribute('data-roll', message?.payload);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
     async function rollDice(DadoUrl) {
       get(DadoUrl)
         .then(() => {
