@@ -105,6 +105,24 @@ function RespuestaSospecha(props) {
     />
   ));
 
+  let boton = (
+    <Button
+      variant="contained"
+      onClick={() => setRespondido(true)}
+    >
+      Responder
+    </Button>
+    );
+    if(respuesta === ''){
+      boton = (
+        <Button
+          variant="contained"
+          disabled
+        >
+          Responder
+        </Button>
+        );
+    }
   return (
     <div>
       <h2>
@@ -117,12 +135,7 @@ function RespuestaSospecha(props) {
         {suspectedElems}
       </Stack>
       <div className="centeredButton">
-        <Button
-          variant="contained"
-          onClick={() => setRespondido(true)}
-        >
-          Responder
-        </Button>
+        {boton}        
       </div>
     </div>
   );

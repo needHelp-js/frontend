@@ -4,7 +4,6 @@ import {
 } from '@mui/material';
 
 function ordenarJugadores(rows) {
-  console.log('ordenamos jugadores');
   const myData = rows
     .sort((a, b) => (a.turnOrder > b.turnOrder ? 1 : -1))
     .map((player) => (

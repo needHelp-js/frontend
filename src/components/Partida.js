@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Button, Box, Grid, Stack,
+  Box, Grid, Stack,
 } from '@mui/material';
 import CartasJugador from './CartasJugador';
 import SocketSingleton from './connectionSocket';
@@ -8,6 +8,7 @@ import './Partida.css';
 import RespuestaSospecha from './RespuestaSospecha';
 import Sospechar from './Sospechar/Sospechar';
 import Tablero from './Tablero';
+import MostrarJugadores from './MostrarJugadores';
 import RespuestaDado from './RespuestaDado';
 import TerminarTurno from './TerminarTurno';
 
@@ -107,7 +108,7 @@ function Partida(props) {
         setStatus(mensajeEvento);
       } else if (message.type === 'SUSPICION_FAILED_EVENT') {
         setStatus(message.payload.Error);
-       } else if (message.type === 'MOVE_PLAYER_EVENT') {
+      } else if (message.type === 'MOVE_PLAYER_EVENT') {
         setDado(0);
         setShowAvailable(false);
         setAvailableRooms([]);
@@ -119,28 +120,32 @@ function Partida(props) {
           setDado(message?.payload);
           setTiroCompleto(true);
         }
-      } else if(message.type === "ENTER_ROOM_EVENT"){
+      } else if (message.type === 'ENTER_ROOM_EVENT') {
         setDado(0);
         setShowAvailable(false);
         setAvailableRooms([]);
         setMoveComplete(true);
         setStarting(true);
-      } else if(message.type === "TURN_ENDED_EVENT"){
-        if(message.payload.playerId === idPlayer){
+      } else if (message.type === 'TURN_ENDED_EVENT') {
+        console.log('cambio de turno')
+        if (message.payload.playerId === idPlayer) {
+          console.log('es mi turno')
           setIsTurn(true);
           setTiroCompleto(false);
           setMoveComplete(false);
           setSuspectComplete(false);
           setStatus('');
-        }else{
+        } else {
+          console.log('no es mi turno')
+
           setIsTurn(false);
         }
       }
     });
     setStarting(true);
-    return () =>{
+    return () => {
       isMounted = false;
-    }
+    };
   }, [isTurn, playerCards]);
 
   useEffect(() => {
@@ -207,7 +212,6 @@ function Partida(props) {
     }
   }, [dado, moveComplete]);
 
-  const url = process.env.REACT_APP_URL_SERVER.concat('/', idPartida, '/dice/', idPlayer);
   const terminarTurnoUrl = process.env.REACT_APP_URL_SERVER.concat('/', idPartida, '/endTurn/', idPlayer);
   useEffect(() => {
     if (suspectComplete) {
@@ -279,6 +283,9 @@ function Partida(props) {
             </Stack>
           </Grid>
           <Grid item>
+            <MostrarJugadores playerList={players} />
+          </Grid>
+          <Grid item>
             <CartasJugador cards={playerCards} />
           </Grid>
         </Grid>
@@ -335,6 +342,9 @@ function Partida(props) {
               {status}
             </p>
           </Stack>
+        </Grid>
+        <Grid item>
+          <MostrarJugadores playerList={players} />
         </Grid>
         <Grid item>
           <CartasJugador cards={playerCards} />
