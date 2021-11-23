@@ -9,7 +9,6 @@ async function getPlayers(idPartida, idPlayer) {
     headers: { 'Content-Type': 'application/json' },
   };
   const params = {
-    gameId: idPartida,
     playerId: idPlayer,
   }
   return fetchRequest(

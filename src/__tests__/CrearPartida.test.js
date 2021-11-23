@@ -120,7 +120,7 @@ describe('CrearPartida', () => {
 
     userEvent.type(screen.getByLabelText(/Nombre de la Partida/), nombrePartida);
     userEvent.type(screen.getByLabelText(/Nickname/), nickname);
-    userEvent.type(screen.getByLabelText(/Clave/), '1234');
+    userEvent.type(screen.getByLabelText(/Contraseña/), '1234');
     userEvent.click(screen.getByRole('button'));
 
     const requestOptions = {
@@ -133,5 +133,6 @@ describe('CrearPartida', () => {
       }),
     };
     expect(spy).toBeCalledWith(endpointCreate, requestOptions);
+    spy.mockRestore();
   });
 });

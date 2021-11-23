@@ -33,7 +33,7 @@ function InputCrearPartida(props) {
             id="password"
             name="password"
             type="password"
-            label="Clave"
+            label="Contraseña"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
           />

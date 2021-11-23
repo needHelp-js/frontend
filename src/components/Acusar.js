@@ -27,7 +27,6 @@ function sendAccusationData(idPartida, idPlayer, monstruo, recinto, victima) {
 function Acusar(props) {
   const {
     setAccusationStage,
-    setHasError,
     setErrorMessage,
     idPartida,
     idPlayer,
@@ -54,7 +53,6 @@ function Acusar(props) {
             break;
           case fetchHandlerError.REQUEST_ERROR:
           case fetchHandlerError.INTERNAL_ERROR:
-            setHasError(true);
             setErrorMessage(response.payload);
             setAccusationStage(accusationState.NOT_ACCUSING);
             break;

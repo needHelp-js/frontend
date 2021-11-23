@@ -24,7 +24,7 @@ async function sendSuspect(idPartida, idPlayer, victima, monstruo) {
 function Sospechar(props) {
   const {
     setSuspecting, idPartida, idPlayer,
-    setHasError, setErrorMessage, setSuspectComplete, suspecting, disabled,
+    setErrorMessage, setSuspectComplete, suspecting, disabled,
   } = props;
   const [victima, setVictima] = useState('');
   const [monstruo, setMonstruo] = useState('');
@@ -48,7 +48,6 @@ function Sospechar(props) {
                   setSuspected(false);
                   setSuspecting(false);
                   setErrorMessage(response.payload);
-                  setHasError(true);
                 }
                 break;
               case fetchHandlerError.INTERNAL_ERROR:
@@ -56,7 +55,6 @@ function Sospechar(props) {
                   setSuspected(false);
                   setSuspecting(false);
                   setErrorMessage(response.payload);
-                  setHasError(true);
                 }
                 break;
               default:
@@ -74,13 +72,8 @@ function Sospechar(props) {
       isMounted = false;
     };
   }, [suspected, idPartida, idPlayer, monstruo, victima, setSuspecting,
-    setErrorMessage, setHasError, setSuspectComplete]);
+    setErrorMessage, setSuspectComplete]);
 
-  useEffect(() => {
-    if (suspecting) {
-      setHasError(false);
-    }
-  }, [suspecting, setHasError]);
 
   if (suspecting) {
     return (
