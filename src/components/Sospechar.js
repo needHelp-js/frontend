@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 import Stack from '@mui/material/Stack';
-import ElegirVictima from './ElegirVictima';
-import ElegirMonstruo from './ElegirMonstruo';
-import { victimsNames, monstersNames } from '../../utils/constants';
-import '../Partida.css';
-import { fetchRequest, fetchHandlerError } from '../../utils/fetchHandler';
+import ElegirVictima from './ElegirCartas/ElegirVictima';
+import ElegirMonstruo from './ElegirCartas/ElegirMonstruo';
+import { victimsNames, monstersNames } from '../utils/constants';
+import './Partida.css';
+import { fetchRequest, fetchHandlerError } from '../utils/fetchHandler';
 
 async function sendSuspect(idPartida, idPlayer, victima, monstruo) {
   const requestOptions = {
