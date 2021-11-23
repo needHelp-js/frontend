@@ -86,7 +86,8 @@ function Lobby(props) {
         pathname: URL_PARTIDA,
         state: {
           idPartida,
-          idPlayer
+          idPlayer,
+          nPlayers,
         },
       }}
       />
