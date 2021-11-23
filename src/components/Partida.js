@@ -32,7 +32,7 @@ function Partida(props) {
       const message = JSON.parse(event.data);
       if (message.type === 'SUSPICION_MADE_EVENT') {
         console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
-        const mensajeEvento = `El jugador ${message.payload.playerId} sospecho por ${message.payload.card1Name}, ${message.payload.card2Name} y ${message.payload.roomName} `
+        const mensajeEvento = `El jugador ${message.payload.playerId} sospecho por ${message.payload.card1Name}, ${message.payload.card2Name} y ${message.payload.roomName} `;
         console.log(message, mensajeEvento);
         setStatus(mensajeEvento);
         setHasError(false);
@@ -44,15 +44,15 @@ function Partida(props) {
         setSuspectedCards(message.payload.cards);
         setIdPlayerAsking(message.payload.playerId);
         setRespondiendo(true);
-      } else if(message.type === 'SUSPICION_RESPONSE_EVENT'){
+      } else if (message.type === 'SUSPICION_RESPONSE_EVENT') {
         setHasError(false);
         setResponseCard(message.payload.cardName);
         setMostrandoRespuesta(true);
-      } else if(message.type === 'PLAYER_REPLIED_EVENT'){
-        const mensajeEvento = `El jugador ${message.payload.playerId} respondio a la sospecha`
+      } else if (message.type === 'PLAYER_REPLIED_EVENT') {
+        const mensajeEvento = `El jugador ${message.payload.playerId} respondio a la sospecha`;
         setStatus(mensajeEvento);
         setHasError(false);
-      } else if(message.type === 'SUSPICION_FAILED_EVENT'){
+      } else if (message.type === 'SUSPICION_FAILED_EVENT') {
         setStatus(message.payload.Error);
         setHasError(false);
       }
@@ -87,9 +87,9 @@ function Partida(props) {
             disabled={suspectDisabled}
           />
           <RespuestaDado DadoUrl={urlDado} />
-            <p>
-              {status}
-            </p>
+          <p>
+            {status}
+          </p>
           <p>
             {errorMessage}
           </p>
@@ -143,9 +143,9 @@ function Partida(props) {
     );
   }
 
-  if(respondiendo || mostrandoRespuesta){
-    return(
-      <RespuestaSospecha 
+  if (respondiendo || mostrandoRespuesta) {
+    return (
+      <RespuestaSospecha
         idPartida={idPartida}
         idPlayer={idPlayer}
         suspectedCards={suspectedCards}
@@ -157,7 +157,6 @@ function Partida(props) {
       />
     );
   }
-
 
   return (
     <div>

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import Card from './Carta'
+import { Button, Stack } from '@mui/material';
+import Card from './Carta';
 import { fetchRequest, fetchHandlerError } from '../utils/fetchHandler';
 import SocketSingleton from './connectionSocket';
-import {Button, Stack} from '@mui/material'
-import './Partida.css'
+import './Partida.css';
 
-
-async function sendAnswerData(idPartida, idPlayer, idPlayerAsking, card){
+async function sendAnswerData(idPartida, idPlayer, idPlayerAsking, card) {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -17,17 +16,17 @@ async function sendAnswerData(idPartida, idPlayer, idPlayerAsking, card){
   };
   const endpoint = `${process.env.REACT_APP_URL_SERVER}/${idPartida}/replySuspect/${idPlayer}`;
   const params = {
-    playerId: idPlayer
+    playerId: idPlayer,
   };
 
   return fetchRequest(endpoint, requestOptions, params);
 }
 
-
-
-function RespuestaSospecha(props){
-  const { idPartida, idPlayer, idPlayerAsking, suspectedCards,
-    setRespondiendo, mostrandoRespuesta, setMostrandoRespuesta, cartaRespuesta} = props;
+function RespuestaSospecha(props) {
+  const {
+    idPartida, idPlayer, idPlayerAsking, suspectedCards,
+    setRespondiendo, mostrandoRespuesta, setMostrandoRespuesta, cartaRespuesta,
+  } = props;
 
   const [respuesta, setRespuesta] = useState('');
   const [newSelected, setNewSelected] = useState('');
@@ -49,34 +48,29 @@ function RespuestaSospecha(props){
   }, [newSelected, setRespuesta]);
 
   useEffect(() => {
-    let isMounted = true;
-    async function sendAnswer(){
+    const isMounted = true;
+    async function sendAnswer() {
       sendAnswerData(idPartida, idPlayer, idPlayerAsking, respuesta)
-      .then((response) =>{
-        switch (response.type){
-          case fetchHandlerError.SUCCESS:
-            setRespondiendo(false);
-            break;
-          case fetchHandlerError.REQUEST_ERROR:
-            alert(response.payload);
-            break;
-          case fetchHandlerError.INTERNAL_ERROR:
-            alert(response.payload);
-            break;
-        }
-        
-      });
-
-
+        .then((response) => {
+          switch (response.type) {
+            case fetchHandlerError.SUCCESS:
+              setRespondiendo(false);
+              break;
+            case fetchHandlerError.REQUEST_ERROR:
+              alert(response.payload);
+              break;
+            case fetchHandlerError.INTERNAL_ERROR:
+              alert(response.payload);
+              break;
+          }
+        });
     }
 
-    if(respondido) sendAnswer();
+    if (respondido) sendAnswer();
+  }, [respondido]);
 
-  },[respondido]);
-
-  
-  if(mostrandoRespuesta){
-    return(
+  if (mostrandoRespuesta) {
+    return (
       <div>
         <h2>
           Una Respuesta !
@@ -85,7 +79,7 @@ function RespuestaSospecha(props){
           Han respondido a su sospecha con:
         </p>
         <div className="centeredButton">
-          <Card 
+          <Card
             id={cartaRespuesta}
             key={cartaRespuesta}
             cardName={cartaRespuesta}
@@ -101,12 +95,9 @@ function RespuestaSospecha(props){
       </div>
     );
   }
-  
-
-
 
   const suspectedElems = suspectedCards.map((elem) => (
-    <Card 
+    <Card
       id={elem}
       key={elem}
       cardName={elem}
@@ -114,7 +105,7 @@ function RespuestaSospecha(props){
     />
   ));
 
-  return(
+  return (
     <div>
       <h2>
         Una sospecha !
