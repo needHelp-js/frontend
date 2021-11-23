@@ -14,7 +14,7 @@ export function fetchRequest(url, requestOptions, params={}){
   const data = fetch(endpoint, requestOptions)
     .then(async (response) => {
       if(response.status === 204){
-        return {type: fetchHandlerError.SUCCESS}
+        return {type: fetchHandlerError.SUCCESS, payload: {}};
       }
       const isJson = response.headers.get('content-type')?.includes('application/json');
       const payload = isJson && await response.json();

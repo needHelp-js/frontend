@@ -3,8 +3,8 @@ import { Stack } from '@mui/material';
 import CartasJugador from './CartasJugador';
 import SocketSingleton from './connectionSocket';
 import './Partida.css';
-import Sospechar from './Sospechar';
 import RespuestaSospecha from './RespuestaSospecha';
+import Sospechar from './Sospechar/Sospechar';
 import RespuestaDado from './RespuestaDado';
 
 function Partida(props) {
@@ -75,13 +75,13 @@ function Partida(props) {
         <Stack
           alignItems="center"
           spacing={2}
-          >
+        >
           <Sospechar
             suspecting={suspecting}
             setSuspecting={setSuspecting}
             setSuspectComplete={setSuspectComplete}
             setHasError={setHasError}
-            setErrorMessage={setStatus}
+            setErrorMessage={setErrorMessage}
             idPartida={idPartida}
             idPlayer={idPlayer}
             disabled={suspectDisabled}
@@ -126,7 +126,7 @@ function Partida(props) {
             setSuspecting={setSuspecting}
             setSuspectComplete={setSuspectComplete}
             setHasError={setHasError}
-            setErrorMessage={setStatus}
+            setErrorMessage={setErrorMessage}
             idPartida={idPartida}
             idPlayer={idPlayer}
             disabled={suspectDisabled}
@@ -171,16 +171,16 @@ function Partida(props) {
           setSuspecting={setSuspecting}
           setSuspectComplete={setSuspectComplete}
           setHasError={setHasError}
-          setErrorMessage={setStatus}
+          setErrorMessage={setErrorMessage}
           idPartida={idPartida}
           idPlayer={idPlayer}
           disabled={suspectDisabled}
         />
         <RespuestaDado DadoUrl={urlDado} />
-        <CartasJugador cards={playerCards} />
         <p>
           {status}
         </p>
+        <CartasJugador cards={playerCards} />
       </Stack>
 
     </div>

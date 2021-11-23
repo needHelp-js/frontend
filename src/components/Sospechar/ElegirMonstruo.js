@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Stack from '@mui/material/Stack';
-import Card from './Carta';
-import { monstersNames } from '../utils/constants';
-import './Partida.css';
+import Card from '../Carta';
+import { monstersNames } from '../../utils/constants';
+import '../Partida.css';
 
 function ElegirMonstruo(props) {
   const { monstruo, setMonstruo } = props;
@@ -26,12 +26,12 @@ function ElegirMonstruo(props) {
   const monstersCards = [];
   for (const key in monstersNames) {
     if (!monstersNames.hasOwnProperty(key)) continue;
-    const id = monstersNames[key];
+    const id = key;
     monstersCards.push(
       <Card
         id={id}
         key={id}
-        cardName={id}
+        cardName={monstersNames[key]}
         onClick={() => handleClick(id)}
       />,
     );

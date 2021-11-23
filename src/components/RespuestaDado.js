@@ -2,6 +2,7 @@ import './RespuestaDado.css';
 import Button from '@mui/material/Button';
 import React, { useEffect, useState } from 'react';
 import SocketSingleton from './connectionSocket';
+import './Partida.css';
 
 async function get(url) {
   const requestOptions = {
@@ -44,10 +45,8 @@ function RespuestaDado(props) {
   const [tirando, setTirando] = useState(false);
 
   useEffect(() => {
-    console.log('en dado', SocketSingleton.getInstance());
     SocketSingleton.getInstance().addEventListener('message', (event) => {
       const message = JSON.parse(event.data);
-      console.log(message);
       if (message.type === 'DICE_ROLL_EVENT') {
         console.log('ha tirado el dado', message?.payload);
         toggleClasses(diceRef.current);
@@ -59,16 +58,19 @@ function RespuestaDado(props) {
   return (
 
     <div>
+      <div className="centeredButton">
+        <Button          
+          onClick={() => {
+            rollDice(DadoUrl, setTirando);
+            setTirando(true);
+          }}
+          variant="contained"
+        >
+          Tirar Dado
+        </Button>
 
-      <Button
-        onClick={() => {
-          rollDice(DadoUrl, setTirando);
-          setTirando(true);
-        }}
-        variant="contained"
-      >
-        Tirar Dado
-      </Button>
+      </div>
+
       <div className="dice">
         <ol className="die-list even-roll" data-roll="1" id="die-1" ref={diceRef}>
           <li className="die-item" data-side="1">

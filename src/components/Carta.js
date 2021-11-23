@@ -2,7 +2,9 @@ import React from 'react';
 import { getCardSource } from '../utils/utils';
 
 function Card(props) {
-  const { cardName, id, width, height, onClick } = props;
+  const {
+    cardName, id, width, height, onClick,
+  } = props;
 
   const cardSrc = getCardSource(cardName);
 
@@ -11,7 +13,7 @@ function Card(props) {
     height: height || 300,
   };
 
-  if(onClick !== null){
+  if (onClick !== null) {
     return (
       <div>
         <img
@@ -23,10 +25,9 @@ function Card(props) {
           onClick={() => onClick()}
         />
       </div>
-    );  
+    );
   }
 
-  console.log('hechamos moco',id);
   return (
     <div>
       <img
