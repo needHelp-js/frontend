@@ -9,7 +9,7 @@ import RespuestaSospecha from './RespuestaSospecha';
 import Sospechar from './Sospechar/Sospechar';
 import Tablero from './Tablero';
 import RespuestaDado from './RespuestaDado';
-import TerminarTurno from './TerminarTurno'
+import TerminarTurno from './TerminarTurno';
 
 async function getGameInfo(idPartida, idPlayer) {
   const requestOptions = {
@@ -207,7 +207,6 @@ function Partida(props) {
     }
   }, [dado, moveComplete]);
 
-
   const url = process.env.REACT_APP_URL_SERVER.concat('/', idPartida, '/dice/', idPlayer);
   const terminarTurnoUrl = process.env.REACT_APP_URL_SERVER.concat('/', idPartida, '/endTurn/', idPlayer);
   useEffect(() => {
@@ -286,7 +285,6 @@ function Partida(props) {
       </div>
     );
   }
-
 
   return (
     <div>

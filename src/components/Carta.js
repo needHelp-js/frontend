@@ -13,7 +13,7 @@ function Card(props) {
     height: height || 300,
   };
 
-  if (onClick !== null) {
+  if (onClick) {
     return (
       <div>
         <img
