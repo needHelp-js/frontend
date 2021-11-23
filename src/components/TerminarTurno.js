@@ -58,7 +58,7 @@ function TerminarTurno(props) {
       >
         Terminar Turno
       </Button>
-      <p>{errorMsg}</p>
+      <p> {errorMsg} </p>
     </div>
   );
 }
