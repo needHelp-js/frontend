@@ -234,6 +234,8 @@ function Partida(props) {
                 {errorMessage}
               </p>
             </Stack>
+          </Grid>
+          <Grid item>
             <CartasJugador cards={playerCards} />
           </Grid>
         </Grid>
@@ -288,6 +290,8 @@ function Partida(props) {
                 {errorMessage}
               </p>
             </Stack>
+          </Grid>
+          <Grid item>
             <CartasJugador cards={playerCards} />
           </Grid>
         </Grid>
@@ -353,6 +357,8 @@ function Partida(props) {
                 {suspectMessage}
               </p>
             </Stack>
+          </Grid>
+          <Grid item>
             <CartasJugador cards={playerCards} />
           </Grid>
         </Grid>
@@ -402,6 +408,8 @@ function Partida(props) {
                 />
               </div>
             </Stack>
+          </Grid>
+          <Grid item>
             <CartasJugador cards={playerCards} />
           </Grid>
         </Grid>
@@ -456,6 +464,8 @@ function Partida(props) {
                 {suspectMessage}
               </p>
             </Stack>
+          </Grid>
+          <Grid item>
             <CartasJugador cards={playerCards} />
           </Grid>
         </Grid>
@@ -505,6 +515,8 @@ function Partida(props) {
                 />
               </div>
             </Stack>
+          </Grid>
+          <Grid item>
             <CartasJugador cards={playerCards} />
           </Grid>
         </Grid>
@@ -555,6 +567,8 @@ function Partida(props) {
                 />
               </div>
             </Stack>
+          </Grid>
+          <Grid item>
             <CartasJugador cards={playerCards} />
           </Grid>
         </Grid>
@@ -600,6 +614,8 @@ function Partida(props) {
                 Tirar Dado
               </Button>
             </Stack>
+          </Grid>
+          <Grid item>
             <CartasJugador cards={playerCards} />
           </Grid>
         </Grid>
@@ -645,8 +661,10 @@ function Partida(props) {
               disabled={suspectDisabled}
             />
             <RespuestaDado DadoUrl={urlDado} />
-            <CartasJugador cards={playerCards} />
           </Stack>
+        </Grid>
+        <Grid item>
+          <CartasJugador cards={playerCards} />
         </Grid>
       </Grid>
     </div>
