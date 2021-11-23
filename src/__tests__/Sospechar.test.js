@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';import { render, screen } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
-import Sospechar from '../components/Sospechar/Sospechar';
+import Sospechar from '../components/Sospechar';
 
 const idPartida = 1;
 const idPlayer = 1;
@@ -74,32 +74,5 @@ describe('Sospechar', () => {
     });
     const recibido = localStorage.getItem("postRecibido")
     expect(recibido).toBe("true");
-  });
-  it('Maneja caso de error', async () => {
-    server.use(
-      rest.post(urlServer, (req, res, ctx) => {
-        return res(
-          ctx.status(403),
-        );
-      }),
-    );
-    const mockHasError = jest.fn();
-
-    render(
-      <Sospechar
-        idPlayer={idPlayer}
-        idPartida={idPartida}
-        suspecting
-        setHasError={() => mockHasError()}
-      />
-    );
-
-    await act(async () => {
-      userEvent.click(await screen.findByRole('button', { name: /Sospechar/ }));
-      userEvent.click(screen.getByRole('img', { name: card1Name }));
-      userEvent.click(screen.getByRole('img', { name: card2Name }));
-      userEvent.click(await screen.findByRole('button', { name: /Sospechar/ }));
-    });
-    expect(mockHasError).toBeCalledTimes(1);
   });
 });

@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Grid, Stack,
+  Container, Button, Stack, Grid, Box,
 } from '@mui/material';
+import { Redirect } from 'react-router-dom';
 import CartasJugador from './CartasJugador';
 import SocketSingleton from './connectionSocket';
 import './Partida.css';
+import Sospechar from './Sospechar';
+import RespuestaDado from './RespuestaDado';
+import Acusar from './Acusar';
+import { accusationState } from '../utils/constants';
+import { URL_HOME } from '../routes';
 import RespuestaSospecha from './RespuestaSospecha';
-import Sospechar from './Sospechar/Sospechar';
 import Tablero from './Tablero';
 import MostrarJugadores from './MostrarJugadores';
-import RespuestaDado from './RespuestaDado';
 import TerminarTurno from './TerminarTurno';
 
 async function getGameInfo(idPartida, idPlayer) {
@@ -68,6 +72,12 @@ function Partida(props) {
   const [responseCard, setResponseCard] = useState([]);
   const [suspectedCards, setSuspectedCards] = useState([]);
   const [playerCards, setPlayerCards] = useState([]);
+  const [playerWon, setPlayerWon] = useState(false);
+  const [envelopeCards, setEnvelopeCards] = useState([]);
+  const [accusingPlayerNickname, setAccusingPlayerNickname] = useState('');
+  const [accusingPlayerId, setAccusingPlayerId] = useState(0);
+  const [accusationDisabled, setAccusationDisabled] = useState(false);
+  const [redirectOutofGame, setRedirectOutOfGame] = useState(false);
   const [order, setOrder] = useState(-1);
   const [players, setPlayers] = useState([]);
   const [starting, setStarting] = useState(false);
@@ -81,68 +91,119 @@ function Partida(props) {
   const [showAvailable, setShowAvailable] = useState(false);
   const [gettingTurn, setGettingTurn] = useState(false);
 
+  /* Estados de la acusacion */
+  const [accusationStage, setAccusationStage] = useState(
+    accusationState.NOT_ACCUSING,
+  );
+
   const urlDado = `${process.env.REACT_APP_URL_SERVER}/${idPartida}/dice/${idPlayer}`;
 
   useEffect(() => {
     let isMounted = true;
     SocketSingleton.getInstance().addEventListener('message', (event) => {
       const message = JSON.parse(event.data);
-      console.log(message);
-      if (message.type === 'SUSPICION_MADE_EVENT') {
-        console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
-        const mensajeEvento = `El jugador ${message.payload.playerNickname} sospecho por ${message.payload.card1Name}, ${message.payload.card2Name} y ${message.payload.roomName} `;
-        console.log(message, mensajeEvento);
-        setStatus(mensajeEvento);
-      } else if (message.type === 'DEAL_CARDS_EVENT' && isMounted) {
-        setPlayerCards(message.payload);
-        console.log(message);
-      } else if (message.type === 'YOU_ARE_SUSPICIOUS_EVENT' && isMounted) {
-        setSuspectedCards(message.payload.cards);
-        setIdPlayerAsking(message.payload.playerId);
-        setRespondiendo(true);
-      } else if (message.type === 'SUSPICION_RESPONSE_EVENT') {
-        setResponseCard(message.payload.cardName);
-        setMostrandoRespuesta(true);
-      } else if (message.type === 'PLAYER_REPLIED_EVENT') {
-        const mensajeEvento = `El jugador ${message.payload.playerNickname} respondio a la sospecha`;
-        setStatus(mensajeEvento);
-      } else if (message.type === 'SUSPICION_FAILED_EVENT') {
-        setStatus(message.payload.Error);
-      } else if (message.type === 'MOVE_PLAYER_EVENT') {
-        setDado(0);
-        setShowAvailable(false);
-        setAvailableRooms([]);
-        setMoveComplete(true);
-        setStarting(true);
-      } else if (message.type === 'DICE_ROLL_EVENT') {
-        if (isTurn) {
-          console.log('ha tirado el dado', message?.payload);
-          setDado(message?.payload);
-          setTiroCompleto(true);
-        }
-      } else if (message.type === 'ENTER_ROOM_EVENT') {
-        setDado(0);
-        setShowAvailable(false);
-        setAvailableRooms([]);
-        setMoveComplete(true);
-        setStarting(true);
-      } else if (message.type === 'TURN_ENDED_EVENT') {
-        console.log('cambio de turno')
-        if (message.payload.playerId === idPlayer) {
-          console.log('es mi turno')
-          setIsTurn(true);
-          setTiroCompleto(false);
-          setMoveComplete(false);
-          setSuspectComplete(false);
-          setStatus('');
-        } else {
-          console.log('no es mi turno')
+      if (isMounted) {
+        switch (message.type) {
+          case 'SUSPICION_MADE_EVENT':
+            const mensajeSospecha = `El jugador ${message.payload.playerNickname} sospecho por 
+              ${message.payload.card1Name}, ${message.payload.card2Name} y ${message.payload.roomName} `;
+            setStatus(mensajeSospecha);
+            break;
 
-          setIsTurn(false);
+          case 'DEAL_CARDS_EVENT':
+            setPlayerCards(message.payload);
+            break;
+
+          case 'PLAYER_ACCUSED_EVENT':
+            setAccusationStage(accusationState.WAITING_FOR_ACCUSATION_RESPONSE);
+            setAccusingPlayerNickname(message.payload.playerNickname);
+            setAccusingPlayerId(message.payload.playerId);
+            break;
+
+          case 'PLAYER_LOST_EVENT':
+            setAccusationStage(accusationState.ACCUSATION_COMPLETED);
+            setPlayerWon(false);
+            setAccusingPlayerNickname(message.payload.playerNickname);
+            setAccusingPlayerId(message.payload.playerId);
+
+            break;
+
+          case 'GAME_ENDED_EVENT':
+            setAccusationStage(accusationState.ACCUSATION_COMPLETED);
+            setPlayerWon(true);
+            setAccusingPlayerNickname(message.payload.playerNickname);
+            setAccusingPlayerId(message.payload.playerId);
+            const cards = message.payload.cardsInEnvelope.map((card) => card.name);
+            setEnvelopeCards(cards);
+
+            break;
+          case 'YOU_ARE_SUSPICIOUS_EVENT':
+            setSuspectedCards(message.payload.cards);
+            setIdPlayerAsking(message.payload.playerId);
+            setRespondiendo(true);
+            break;
+          case 'SUSPICION_RESPONSE_EVENT':
+            setResponseCard(message.payload.cardName);
+            setMostrandoRespuesta(true);
+            break;
+          case 'PLAYER_REPLIED_EVENT':
+            const mensajeRespuesta = `El jugador ${message.payload.playerNickname} respondio a la sospecha`;
+            setStatus(mensajeRespuesta);
+            break;
+          case 'SUSPICION_FAILED_EVENT':
+            setStatus(message.payload.Error);
+            break;
+          case 'MOVE_PLAYER_EVENT':
+            setDado(0);
+            setShowAvailable(false);
+            setAvailableRooms([]);
+            setMoveComplete(true);
+            setStarting(true);
+            break;
+          case 'DICE_ROLL_EVENT':
+            if (isTurn) {
+              setDado(message?.payload);
+              setTiroCompleto(true);
+            }
+            break;
+          case 'ENTER_ROOM_EVENT':
+            setDado(0);
+            setShowAvailable(false);
+            setAvailableRooms([]);
+            setMoveComplete(true);
+            setStarting(true);
+            break;
+          case 'TURN_ENDED_EVENT':
+            if (message.payload.playerId === idPlayer) {
+              setIsTurn(true);
+              setTiroCompleto(false);
+              setMoveComplete(false);
+              setAccusationDisabled(false);
+              setSuspectComplete(false);
+              setStatus('');
+            }else{
+              setIsTurn(false);
+              setTiroCompleto(false);
+              setMoveComplete(false);
+              setAccusationDisabled(true);
+              setSuspectComplete(false);
+              setStatus('');
+            }
+            break;
+          case 'SUSPICION_MADE_EVENT':
+            if(message.payload.playerId == idPlayer){
+              setAccusationDisabled(true);
+            }
+            break;
+          default:
+            setIsTurn(false);
+            break;
         }
       }
     });
+
     setStarting(true);
+
     return () => {
       isMounted = false;
     };
@@ -219,6 +280,132 @@ function Partida(props) {
     }
   }, [suspectComplete]);
 
+  if (redirectOutofGame) {
+    return (
+      <Redirect
+        to={{
+          pathname: URL_HOME,
+        }}
+      />
+    );
+  }
+
+  /* Componente de acusacion */
+  let acusarComponent;
+
+  switch (accusationStage) {
+    case accusationState.ACCUSING:
+      acusarComponent = (
+        <Acusar
+          setAccusationStage={setAccusationStage}
+          setErrorMessage={setStatus}
+          idPartida={idPartida}
+          idPlayer={idPlayer}
+        />
+      );
+
+      break;
+    case accusationState.WAITING_FOR_ACCUSATION_RESPONSE:
+      acusarComponent = (
+        <Container>
+          <h4>
+            Jugador
+            {accusingPlayerNickname}
+            {' '}
+            esta acusando...
+          </h4>
+        </Container>
+      );
+
+      break;
+
+    case accusationState.ACCUSATION_COMPLETED:
+      if (playerWon) {
+        acusarComponent = (
+          <Container>
+            <h4>
+              Jugador
+              {' '}
+              {accusingPlayerNickname}
+              {' '}
+              ha ganado!
+            </h4>
+            <br/>
+            <h4>
+              Cartas en el sobre:
+            </h4>
+            <CartasJugador cards={envelopeCards} />
+            <Button
+              variant="contained"
+              onClick={() => {
+                setAccusationStage(accusationState.NOT_ACCUSING);
+                setRedirectOutOfGame(true);
+                SocketSingleton.destroy();
+              }}
+              style={{ marginTop: '5px' }}
+            >
+              Salir de la partida
+            </Button>
+          </Container>
+        );
+      } else {
+        acusarComponent = (
+          <Container>
+            <h4>
+              Jugador
+              {' '}
+              {accusingPlayerNickname}
+              {' '}
+              ha perdido!
+            </h4>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setAccusationStage(accusationState.NOT_ACCUSING);
+              }}
+              style={{ marginTop: '5px' }}
+            >
+              Volver a la partida
+            </Button>
+          </Container>
+        );
+      }
+
+      break;
+
+    default:
+      if (accusationDisabled) {
+        acusarComponent = (
+          <div>
+            <Button variant="contained" disabled>
+              Acusar
+            </Button>
+          </div>
+        );
+      } else {
+        acusarComponent = (
+          <div>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setAccusationStage(accusationState.ACCUSING);
+              }}
+            >
+              Acusar
+            </Button>
+          </div>
+        );
+      }
+
+      break;
+  }
+
+  /* Termina componente de acusacion */
+
+  if (accusationStage !== accusationState.NOT_ACCUSING) {
+    return acusarComponent;
+  }
+
   if (respondiendo || mostrandoRespuesta) {
     return (
       <RespuestaSospecha
@@ -293,6 +480,8 @@ function Partida(props) {
     );
   }
 
+
+  
   return (
     <div>
       <h2>Bienvenido a la Partida</h2>
@@ -329,6 +518,7 @@ function Partida(props) {
               idPlayer={idPlayer}
               disabled={(suspectComplete || !moveComplete)}
             />
+            {acusarComponent}
             <div className="centeredButton">
               <RespuestaDado
                 DadoUrl={urlDado}

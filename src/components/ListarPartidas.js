@@ -272,6 +272,7 @@ function ListarPartidas(props) {
         inputProps={{ 'aria-label': 'password' }}
         id="password"
         label="Contraseña"
+        type="password"
         defaultValue=""
         onChange={(event) => setPassword(event.target.value)}
       />

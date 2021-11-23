@@ -122,11 +122,11 @@ it('5. Caso de exito: password cambia cuando se escribe', async () => {
        render(<ListarPartidas url={urlPartidas}/>);
        const button = screen.getByText('Actualizar');
        await userEvent.click(button);
-       const fieldPassword = screen.getByRole('textbox', {name: 'password'});
+       const fieldPassword = screen.getByRole('textbox', {type: 'password'});
        userEvent.type(fieldPassword, 'password');
      });
  
-     expect(screen.getByRole('textbox', {name: 'password'})).toHaveValue('password');
+     expect(screen.getByRole('textbox', {type: 'password'})).toHaveValue('password');
      let buttons = await screen.findAllByTestId("unirse");
   
      for(let i = 0; i < 3; i++){
