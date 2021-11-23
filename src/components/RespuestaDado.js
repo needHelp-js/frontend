@@ -1,8 +1,6 @@
 import './RespuestaDado.css';
 import Button from '@mui/material/Button';
-import React, { useEffect, useState } from 'react';
-import SocketSingleton from './connectionSocket';
-import './Partida.css';
+import React, { useEffect, useState, createRef } from 'react';
 
 async function get(url) {
   const requestOptions = {
@@ -23,17 +21,7 @@ async function get(url) {
   return data;
 }
 
-const diceRef = React.createRef();
-
-async function rollDice(DadoUrl, setTirando) {
-  get(DadoUrl)
-    .then(() => {
-      setTirando(false);
-    })
-    .catch((error) => {
-      alert(error.Error);
-    });
-}
+const diceRef = createRef();
 
 function toggleClasses(die) {
   die.classList.toggle('odd-roll');
@@ -41,7 +29,7 @@ function toggleClasses(die) {
 }
 
 function RespuestaDado(props) {
-  const { DadoUrl } = props;
+  const { DadoUrl, dado, tiroCompleto, disabled } = props;
   const [tirando, setTirando] = useState(false);
 
   useEffect(() => {
@@ -55,22 +43,91 @@ function RespuestaDado(props) {
     });
   }, []);
 
-  return (
+  useEffect(() => {
+    async function rollDice(DadoUrl) {
+      get(DadoUrl)
+        .then(() => {
+          setTirando(false);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
 
-    <div>
-      <div className="centeredButton">
-        <Button          
-          onClick={() => {
-            rollDice(DadoUrl, setTirando);
-            setTirando(true);
-          }}
+    if (tirando) {
+      rollDice(DadoUrl);
+    }
+  }, [tirando]);
+
+  useEffect(() => {
+    if (tiroCompleto) {
+      toggleClasses(diceRef.current);
+      diceRef.current.setAttribute('data-roll', dado);
+    }
+  }, [tiroCompleto]);
+
+  if(disabled){
+    return (
+
+      <div>
+        <Button
+          disabled
           variant="contained"
         >
           Tirar Dado
         </Button>
-
+        <div className="dice">
+          <ol className="die-list even-roll" data-roll="1" id="die-1" ref={diceRef}>
+            <li className="die-item" data-side="1">
+              <span className="dot" />
+            </li>
+            <li className="die-item" data-side="2">
+              <span className="dot" />
+              <span className="dot" />
+            </li>
+            <li className="die-item" data-side="3">
+              <span className="dot" />
+              <span className="dot" />
+              <span className="dot" />
+            </li>
+            <li className="die-item" data-side="4">
+              <span className="dot" />
+              <span className="dot" />
+              <span className="dot" />
+              <span className="dot" />
+            </li>
+            <li className="die-item" data-side="5">
+              <span className="dot" />
+              <span className="dot" />
+              <span className="dot" />
+              <span className="dot" />
+              <span className="dot" />
+            </li>
+            <li className="die-item" data-side="6">
+              <span className="dot" />
+              <span className="dot" />
+              <span className="dot" />
+              <span className="dot" />
+              <span className="dot" />
+              <span className="dot" />
+            </li>
+          </ol>
+        </div>
       </div>
+  
+    );
 
+  }
+
+  return (
+
+    <div>
+      <Button
+        onClick={() => setTirando(true)}
+        variant="contained"
+      >
+        Tirar Dado
+      </Button>
       <div className="dice">
         <ol className="die-list even-roll" data-roll="1" id="die-1" ref={diceRef}>
           <li className="die-item" data-side="1">
