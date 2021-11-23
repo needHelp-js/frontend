@@ -1,20 +1,21 @@
 import * as React from 'react';
-import { TableCell, TableHead, TableRow, TableBody, Table } from '@mui/material';
-import PropTypes from 'prop-types';
+import {
+  TableCell, TableHead, TableRow, TableBody, Table,
+} from '@mui/material';
 
 function ordenarJugadores(rows) {
   console.log('ordenamos jugadores');
   const myData = rows
-    .sort((a,b) => a.turnOrder > b.turnOrder ? 1 : -1)
+    .sort((a, b) => (a.turnOrder > b.turnOrder ? 1 : -1))
     .map((player) => (
-      
-        <TableRow key={player.id}>
-          <TableCell>{player.turnOrder}</TableCell>
-          <TableCell>{player.nickname}</TableCell>
-        </TableRow>
-      
+
+      <TableRow key={player.id}>
+        <TableCell>{player.turnOrder}</TableCell>
+        <TableCell>{player.nickname}</TableCell>
+      </TableRow>
+
     ));
-    
+
   return myData;
 }
 
@@ -24,9 +25,8 @@ function MostrarJugadores(props) {
   } = props;
 
   return (
-    <div>
-      <Table
-          style={{maxWidth:'10%', margin: '0 auto'}}>
+    <div style={{ maxWidth: '10%', margin: '0 auto' }}>
+      <Table>
         <TableHead>
           <TableRow>
             <TableCell>Turno</TableCell>
@@ -38,14 +38,8 @@ function MostrarJugadores(props) {
         </TableBody>
       </Table>
     </div>
-        
-     
+
   );
-    
-
-}     
-
-MostrarJugadores.propTypes = { playerList: PropTypes.array };
+}
 
 export default MostrarJugadores;
-
