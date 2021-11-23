@@ -35,6 +35,13 @@ const roomsNames = {
 
 const ASSETS_PATH = 'assets';
 
+const accusationState = {
+  NOT_ACCUSING: 0,
+  ACCUSING: 1,
+  WAITING_FOR_ACCUSATION_RESPONSE: 2,
+  ACCUSATION_COMPLETED: 3
+};
+
 export {
-  cardTypes, victimsNames, monstersNames, roomsNames, ASSETS_PATH,
+  cardTypes, victimsNames, monstersNames, roomsNames, ASSETS_PATH, accusationState
 };
