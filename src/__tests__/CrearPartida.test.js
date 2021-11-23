@@ -133,5 +133,6 @@ describe('CrearPartida', () => {
       }),
     };
     expect(spy).toBeCalledWith(endpointCreate, requestOptions);
+    spy.mockRestore();
   });
 });

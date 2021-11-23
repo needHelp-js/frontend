@@ -8,6 +8,7 @@ import './Partida.css';
 import Sospechar from './Sospechar/Sospechar';
 import Tablero from './Tablero';
 import RespuestaDado from './RespuestaDado';
+import TerminarTurno from './TerminarTurno';
 
 async function getGameInfo(idPartida, idPlayer) {
   const requestOptions = {
@@ -181,6 +182,8 @@ function Partida(props) {
     }
   }, [dado, moveComplete]);
 
+  const url = process.env.REACT_APP_URL_SERVER.concat('/', idPartida, '/dice/', idPlayer);
+  const terminarTurnoUrl = process.env.REACT_APP_URL_SERVER.concat('/', idPartida, '/endTurn/', idPlayer);
   useEffect(() => {
     if (suspectComplete) {
       setShowAvailable(false);
@@ -233,6 +236,7 @@ function Partida(props) {
               <p>
                 {errorMessage}
               </p>
+            <TerminarTurno endpoint={terminarTurnoUrl} disabled={true} />
             </Stack>
           </Grid>
           <Grid item>
@@ -289,6 +293,7 @@ function Partida(props) {
               <p>
                 {errorMessage}
               </p>
+            <TerminarTurno endpoint={terminarTurnoUrl} disabled={true}/>
             </Stack>
           </Grid>
           <Grid item>
@@ -356,6 +361,7 @@ function Partida(props) {
               <p>
                 {suspectMessage}
               </p>
+            <TerminarTurno endpoint={terminarTurnoUrl}/>
             </Stack>
           </Grid>
           <Grid item>
@@ -407,6 +413,7 @@ function Partida(props) {
                   disabled
                 />
               </div>
+            <TerminarTurno endpoint={terminarTurnoUrl} />
             </Stack>
           </Grid>
           <Grid item>
@@ -463,6 +470,7 @@ function Partida(props) {
               <p>
                 {suspectMessage}
               </p>
+            <TerminarTurno endpoint={terminarTurnoUrl} disabled={true} />
             </Stack>
           </Grid>
           <Grid item>
@@ -514,6 +522,7 @@ function Partida(props) {
                   disabled
                 />
               </div>
+            <TerminarTurno endpoint={terminarTurnoUrl} disabled={false} />
             </Stack>
           </Grid>
           <Grid item>
@@ -566,6 +575,7 @@ function Partida(props) {
                   disabled
                 />
               </div>
+            <TerminarTurno endpoint={terminarTurnoUrl} disabled={true} />
             </Stack>
           </Grid>
           <Grid item>
@@ -613,6 +623,7 @@ function Partida(props) {
               >
                 Tirar Dado
               </Button>
+              <TerminarTurno endpoint={terminarTurnoUrl} disabled={true} />
             </Stack>
           </Grid>
           <Grid item>
@@ -661,6 +672,7 @@ function Partida(props) {
               disabled={suspectDisabled}
             />
             <RespuestaDado DadoUrl={urlDado} />
+            <TerminarTurno endpoint={terminarTurnoUrl} disabled={true} />
           </Stack>
         </Grid>
         <Grid item>

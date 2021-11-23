@@ -17,6 +17,9 @@ export function fetchRequest(url, requestOptions, params={}){
         return {type: fetchHandlerError.SUCCESS, payload: {}};
       }
       const isJson = response.headers.get('content-type')?.includes('application/json');
+      if (response.status === 204){
+        return {type: fetchHandlerError.SUCCESS, payload: {}}
+      }
       const payload = isJson && await response.json();
       if (!response.ok) {
         const error = payload || response.status;
