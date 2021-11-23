@@ -32,10 +32,7 @@ function Lobby(props) {
   const socketURL = wsPrefix.concat('/', idPartida, '/ws/', idPlayer);
 
   useEffect(() => {
-<<<<<<< HEAD
-=======
     let isMounted = true;
->>>>>>> dev
     if (SocketSingleton.getInstance() === null) {
       // se agrega para no volver a instanciar el socket
       SocketSingleton.init(new WebSocket(socketURL));
