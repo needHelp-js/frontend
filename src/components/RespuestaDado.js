@@ -1,6 +1,7 @@
 import './RespuestaDado.css';
 import Button from '@mui/material/Button';
 import React, { useEffect, useState, createRef } from 'react';
+import SocketSingleton from "./connectionSocket"
 
 async function get(url) {
   const requestOptions = {
