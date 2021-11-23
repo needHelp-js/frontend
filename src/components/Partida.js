@@ -89,7 +89,7 @@ function Partida(props) {
       console.log(message);
       if (message.type === 'SUSPICION_MADE_EVENT') {
         console.log('se sospecho por:', message.payload.card1Name, message.payload.card2Name);
-        const mensajeEvento = `El jugador ${message.payload.playerId} sospecho por ${message.payload.card1Name}, ${message.payload.card2Name} y ${message.payload.roomName} `;
+        const mensajeEvento = `El jugador ${message.payload.playerNickname} sospecho por ${message.payload.card1Name}, ${message.payload.card2Name} y ${message.payload.roomName} `;
         console.log(message, mensajeEvento);
         setStatus(mensajeEvento);
       } else if (message.type === 'DEAL_CARDS_EVENT' && isMounted) {
@@ -103,7 +103,7 @@ function Partida(props) {
         setResponseCard(message.payload.cardName);
         setMostrandoRespuesta(true);
       } else if (message.type === 'PLAYER_REPLIED_EVENT') {
-        const mensajeEvento = `El jugador ${message.payload.playerId} respondio a la sospecha`;
+        const mensajeEvento = `El jugador ${message.payload.playerNickname} respondio a la sospecha`;
         setStatus(mensajeEvento);
       } else if (message.type === 'SUSPICION_FAILED_EVENT') {
         setStatus(message.payload.Error);
