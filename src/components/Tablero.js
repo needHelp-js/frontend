@@ -472,9 +472,12 @@ function dibujarPosicionesJugadores(ctx, colores, players) {
       posJ = position[1];
     }
 
-    if (posI !== -1 && posJ !== -1){
+    if (posI == -1 && posJ == -1 && player.room !== null){
+      const [iRoom , jRoom] = recintoToPos(player.room);
+      dibujarCasilleroOcupado(ctx, colores[i], nickName, iRoom, jRoom);
+    } else if(posI !== -1 && posJ !== -1){
       dibujarCasilleroOcupado(ctx, colores[i], nickName, posI, posJ);
-    }
+   }
   }
 }
 
