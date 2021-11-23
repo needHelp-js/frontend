@@ -1,8 +1,8 @@
-import MostrarJugadores from "./MostrarJugadores";
 import React, { useEffect, useState } from "react";
 import SocketSingleton from './connectionSocket';
 import './Partida.css';
 import RespuestaDado from './RespuestaDado';
+import MostrarJugadores from "./MostrarJugadores";
 import { fetchRequest, fetchHandlerError } from "../utils/fetchHandler";
 
 

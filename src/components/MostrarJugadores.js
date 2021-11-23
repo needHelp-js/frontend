@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { ListItem, ListItemText } from '@mui/material';
-import style from './MostrarJugadores.module.css'
+import { TableCell, TableHead, TableRow, TableBody, Table } from '@mui/material';
 
 
 function ordenarJugadores(rows) {
+  console.log('ordenamos jugadores');
   const myData = rows
     .sort((a,b) => a.turnOrder > b.turnOrder ? 1 : -1)
     .map((player) => (
       
-        <ListItem key={player.myData}>
-          <ListItemText primary={player.turnOrder} />
-          <ListItemText primary={player.nickname} />
-        </ListItem>
+        <TableRow key={player.id}>
+          <TableCell>{player.turnOrder}</TableCell>
+          <TableCell>{player.nickname}</TableCell>
+        </TableRow>
       
     ));
   return myData;
@@ -23,21 +23,22 @@ function MostrarJugadores(props) {
   } = props;
 
   return (
-    playerList.length > 0 && (
     <div>
-		<table className={style.table}>
-    <thead>
-						<tr className={style.row}>
-							<th className={style['row-data']}>Jugadores</th>
-						</tr>
-		</thead>
-        <tbody>
-            {ordenarJugadores(playerList)}
-        </tbody>
-      </table>
-	</div>
-      
-    )
+      <Table
+          style={{maxWidth:'10%', margin: '0 auto'}}>
+        <TableHead>
+          <TableRow>
+            <TableCell>Turno</TableCell>
+            <TableCell>Jugadores</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {ordenarJugadores(playerList)}
+        </TableBody>
+      </Table>
+    </div>
+        
+     
   );
 
 
