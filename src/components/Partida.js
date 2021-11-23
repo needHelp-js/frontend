@@ -181,6 +181,13 @@ function Partida(props) {
               setAccusationDisabled(false);
               setSuspectComplete(false);
               setStatus('');
+            }else{
+              setIsTurn(false);
+              setTiroCompleto(false);
+              setMoveComplete(false);
+              setAccusationDisabled(true);
+              setSuspectComplete(false);
+              setStatus('');
             }
             break;
           case 'SUSPICION_MADE_EVENT':
@@ -323,6 +330,10 @@ function Partida(props) {
               {' '}
               ha ganado!
             </h4>
+            <br/>
+            <h4>
+              Cartas en el sobre:
+            </h4>
             <CartasJugador cards={envelopeCards} />
             <Button
               variant="contained"
@@ -342,6 +353,7 @@ function Partida(props) {
           <Container>
             <h4>
               Jugador
+              {' '}
               {accusingPlayerNickname}
               {' '}
               ha perdido!
@@ -448,7 +460,6 @@ function Partida(props) {
           <Grid item>
             <Stack spacing={2} alignItems="center">
               <Sospechar disabled />
-              {acusarComponent}
               <div className="centeredButton">
                 <RespuestaDado disabled />
               </div>
