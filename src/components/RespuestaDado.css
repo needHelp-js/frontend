@@ -10,7 +10,6 @@
     display: grid;
     grid-template-columns: 1fr;
     height: 100vh;
-    overflow: hidden;
     width: 100%;
   }
   .dice {

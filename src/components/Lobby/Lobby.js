@@ -37,7 +37,6 @@ function Lobby(props) {
       // se agrega para no volver a instanciar el socket
       SocketSingleton.init(new WebSocket(socketURL));
     }
-    console.log('ws singleton es:', SocketSingleton.getInstance());
     setPlayerJoined(true);
 
     SocketSingleton.getInstance().onopen = () => {
