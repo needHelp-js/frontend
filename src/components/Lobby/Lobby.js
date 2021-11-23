@@ -1,10 +1,10 @@
 import { Button } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { URL_PARTIDA } from '../routes';
+import { URL_PARTIDA } from '../../routes';
 import ListarJugadores from './ListarJugadores';
-import SocketSingleton from './connectionSocket';
-import { fetchRequest, fetchHandlerError } from '../utils/fetchHandler';
+import SocketSingleton from '../connectionSocket';
+import { fetchRequest, fetchHandlerError } from '../../utils/fetchHandler';
 import './Lobby.css';
 
 async function requestStart(idPartida, idPlayer) {
@@ -32,10 +32,13 @@ function Lobby(props) {
   const socketURL = wsPrefix.concat('/', idPartida, '/ws/', idPlayer);
 
   useEffect(() => {
-    SocketSingleton.init(new WebSocket(socketURL));
+    let isMounted = true;
+    if (SocketSingleton.getInstance() === null) {
+      // se agrega para no volver a instanciar el socket
+      SocketSingleton.init(new WebSocket(socketURL));
+    }
     console.log('ws singleton es:', SocketSingleton.getInstance());
     setPlayerJoined(true);
-    let isMounted = true;
 
     SocketSingleton.getInstance().onopen = () => {
       console.log('socket created:', idPartida, idPlayer);
@@ -47,7 +50,7 @@ function Lobby(props) {
       } else if (message.type === 'BEGIN_GAME_EVENT' && isMounted) {
         setStarted(true);
         isMounted = false;
-      }
+      } 
     };
 
     return () => {
