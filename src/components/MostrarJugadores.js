@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TableCell, TableHead, TableRow, TableBody, Table } from '@mui/material';
-
+import PropTypes from 'prop-types';
 
 function ordenarJugadores(rows) {
   console.log('ordenamos jugadores');
@@ -14,6 +14,7 @@ function ordenarJugadores(rows) {
         </TableRow>
       
     ));
+    
   return myData;
 }
 
@@ -40,11 +41,11 @@ function MostrarJugadores(props) {
         
      
   );
-
-
-   
+    
 
 }     
+
+MostrarJugadores.propTypes = { playerList: PropTypes.array };
 
 export default MostrarJugadores;
 
