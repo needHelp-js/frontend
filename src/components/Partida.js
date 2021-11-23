@@ -75,25 +75,25 @@ function Partida(props) {
         <Stack
           alignItems="center"
           spacing={2}
-        >
+          >
           <Sospechar
             suspecting={suspecting}
             setSuspecting={setSuspecting}
             setSuspectComplete={setSuspectComplete}
             setHasError={setHasError}
-            setErrorMessage={setErrorMessage}
+            setErrorMessage={setStatus}
             idPartida={idPartida}
             idPlayer={idPlayer}
             disabled={suspectDisabled}
           />
           <RespuestaDado DadoUrl={urlDado} />
-          <CartasJugador cards={playerCards} />
+            <p>
+              {status}
+            </p>
           <p>
             {errorMessage}
           </p>
-          <p>
-            {status}
-          </p>
+          <CartasJugador cards={playerCards} />
         </Stack>
       </div>
     );
@@ -106,7 +106,7 @@ function Partida(props) {
         setSuspecting={setSuspecting}
         setSuspectComplete={setSuspectComplete}
         setHasError={setHasError}
-        setErrorMessage={setErrorMessage}
+        setErrorMessage={setStatus}
         idPartida={idPartida}
         idPlayer={idPlayer}
       />
@@ -126,18 +126,18 @@ function Partida(props) {
             setSuspecting={setSuspecting}
             setSuspectComplete={setSuspectComplete}
             setHasError={setHasError}
-            setErrorMessage={setErrorMessage}
+            setErrorMessage={setStatus}
             idPartida={idPartida}
             idPlayer={idPlayer}
             disabled={suspectDisabled}
           />
-          <CartasJugador cards={playerCards} />
           <p>
             {suspectMessage}
           </p>
           <p>
             {status}
           </p>
+          <CartasJugador cards={playerCards} />
         </Stack>
       </div>
     );
@@ -171,7 +171,7 @@ function Partida(props) {
           setSuspecting={setSuspecting}
           setSuspectComplete={setSuspectComplete}
           setHasError={setHasError}
-          setErrorMessage={setErrorMessage}
+          setErrorMessage={setStatus}
           idPartida={idPartida}
           idPlayer={idPlayer}
           disabled={suspectDisabled}
