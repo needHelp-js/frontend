@@ -54,11 +54,15 @@ function TerminarTurno(props) {
         onClick={() => setTerminando(true)}
         variant="contained"
         type="submit"
-        disabled = {disabled}
+        disabled={disabled}
       >
         Terminar Turno
       </Button>
-      <p> {errorMsg} </p>
+      <p>
+        {' '}
+        {errorMsg}
+        {' '}
+      </p>
     </div>
   );
 }
