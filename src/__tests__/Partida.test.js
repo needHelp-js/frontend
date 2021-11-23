@@ -1,6 +1,7 @@
 import React from 'react';
 import WS from 'jest-websocket-mock';
 import { render, unmountComponentAtNode } from 'react-dom';
+import { screen } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import Partida from '../components/Partida';
 import SocketSingleton from '../components/connectionSocket';
@@ -56,5 +57,19 @@ describe('Partida', () => {
 
       expect(imageElem.alt).toBe(elem);
     }
+  });
+});
+
+describe("Acusar", () => {
+  it("", async () => {
+
+    await act(async () => {
+      render(
+        <Partida location={{ state: { idPartida: 1, idPlayer: 1 } }} />,
+        container
+      );
+    });
+
+    expect(await screen.findByText("Acusar")).toBeInTheDocument();
   });
 });
