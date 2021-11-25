@@ -633,11 +633,11 @@ function Tablero(props) {
     
     dibujarRecintos(ctx, availableRooms, mouse);
 
+    dibujarGrilla(ctx, mouse);
+
     if (showAvailable) {
       dibujarCasillerosDisponibles(ctx, availablePositions);
     }
-
-    dibujarGrilla(ctx, mouse);
 
     if (players){ 
       dibujarPosicionesJugadores(ctx, colores, players);
