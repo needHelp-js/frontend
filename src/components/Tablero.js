@@ -19,6 +19,7 @@ import spriteCobra from '../sprites/spriteCobra.jpg';
 import spriteSpider from '../sprites/spriteSpider.jpg';
 import spriteMurcielago from '../sprites/spriteMurcielago.jpg';
 import spriteEscorpion from '../sprites/spriteEscorpion.jpg';
+import spriteTrampa from '../sprites/spriteTrampa.jpg';
 import PropTypes from 'prop-types';
 
 function arrayEquals(a, b) {
@@ -194,6 +195,13 @@ function dibujarCasillerosEspeciales(ctx){
   dibujarCasillero(ctx, spriteEscorpion, 3, 13); 
   dibujarCasillero(ctx, spriteEscorpion, 14, 13);         
   
+}
+
+function dibujarCasillasTrampa(ctx) {
+  dibujarCasillero(ctx, spriteTrampa, 6, 6);
+  dibujarCasillero(ctx, spriteTrampa, 6, 13);
+  dibujarCasillero(ctx, spriteTrampa, 13, 6);
+  dibujarCasillero(ctx, spriteTrampa, 13, 13);
 }
 
 function dibujarRecintoVestibulo(ctx, availableRooms, mouse) {
@@ -503,6 +511,7 @@ function dibujarGrilla(ctx, mouse){
     }
   }
   dibujarCasillerosEspeciales(ctx);
+  dibujarCasillasTrampa(ctx)
   dibujarEntradas(ctx);
   const iMouse = Math.floor((mouse.y) / casilleroSize);
   const jMouse = Math.floor((mouse.x) / casilleroSize);
@@ -633,11 +642,11 @@ function Tablero(props) {
     
     dibujarRecintos(ctx, availableRooms, mouse);
 
+    dibujarGrilla(ctx, mouse);
+
     if (showAvailable) {
       dibujarCasillerosDisponibles(ctx, availablePositions);
     }
-
-    dibujarGrilla(ctx, mouse);
 
     if (players){ 
       dibujarPosicionesJugadores(ctx, colores, players);
