@@ -145,6 +145,7 @@ function Partida(props) {
           case 'SUSPICION_RESPONSE_EVENT':
             setResponseCard(message.payload.cardName);
             setMostrandoRespuesta(true);
+            setAccusationDisabled(true);
             break;
           case 'PLAYER_REPLIED_EVENT':
             const mensajeRespuesta = `El jugador ${message.payload.playerNickname} respondio a la sospecha`;
@@ -152,6 +153,7 @@ function Partida(props) {
             break;
           case 'SUSPICION_FAILED_EVENT':
             setStatus(message.payload.Error);
+            setAccusationDisabled(true);
             break;
           case 'MOVE_PLAYER_EVENT':
             setDado(0);
